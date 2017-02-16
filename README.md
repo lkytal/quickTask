@@ -1,13 +1,15 @@
 # Quick Task for VS Code
 
+> Adapted form [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
+
 Quick Task will automatically trawl your project directory for task scripts, e.g. npm, gulp, shell, python, ruby, powershell, perl scripts etc... and allow you to execute each task with the click of a mouse!
 
-The days of having to configure a task runner per project, or manually type out task scripts are over!
+![Preview](screenshot.png)
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 1.0.2
+Bug fixes
 
 ### 1.0.0
-
 Initial release of quicktask

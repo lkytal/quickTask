@@ -2,25 +2,99 @@
     "name": "quicktask",
     "displayName": "QuickTask",
     "description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "publisher": "lkytal",
     "engines": {
-        "vscode": "^1.5.0"
+        "vscode": "^1.1.0"
     },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-        "onCommand:quicktask.showTasks"
+        "*"
     ],
     "main": "./extension",
 	"icon": "icon.png",
     "contributes": {
         "commands": [{
             "command": "quicktask.showTasks",
-            "title": "Hello World"
-        }]
+            "title": "Show Tasks"
+        }],
+		"configuration": {
+			"type": "object",
+			"title": "Quick Task Configuration",
+			"properties": {
+				"quicktask.excludesGlob": {
+					"type": "array",
+					"default": [
+						"**/node_modules"
+					],
+					"description": "The glob which Quick Task will exclude from scans."
+				},
+				"quicktask.showTerminal": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show terminal when executing."
+				},
+				"quicktask.gulpGlob": {
+					"type": "array",
+					"default": [
+						"gulpfile.js"
+					],
+					"description": "The glob which Quick Task will scan for gulp tasks."
+				},
+				"quicktask.npmGlob": {
+					"type": "array",
+					"default": [
+						"package.json"
+					],
+					"description": "The glob which Quick Task will scan for npm tasks."
+				},
+				"quicktask.enableGulp": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Gulp tasks."
+				},
+				"quicktask.enableNpm": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of NPM tasks."
+				},
+				"quicktask.enableShell": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Shell scripts."
+				},
+				"quicktask.enablePython": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Python scripts."
+				},
+				"quicktask.enableRuby": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Ruby scripts."
+				},
+				"quicktask.enablePerl": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Perl scripts."
+				},
+				"quicktask.enablePowershell": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Powershell scripts."
+				}
+			}
+		}
     },
+    "keywords": [
+		"Task",
+		"Node",
+		"NPM",
+		"Gulp",
+		"Manager"
+	],
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
