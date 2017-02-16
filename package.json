@@ -1,0 +1,36 @@
+{
+    "name": "quicktask",
+    "displayName": "QuickTask",
+    "description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
+    "version": "1.0.0",
+    "publisher": "lkytal",
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:quicktask.showTasks"
+    ],
+    "main": "./extension",
+	"icon": "icon.png",
+    "contributes": {
+        "commands": [{
+            "command": "quicktask.showTasks",
+            "title": "Hello World"
+        }]
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "eslint": "^3.6.0",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
+}
