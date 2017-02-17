@@ -18,22 +18,27 @@ function activate(context) {
 	_statusBarItem.tooltip = loadingString;
 	_statusBarItem.show();
 
+	var findTaskFiles = function (list) {
+		return vscode.workspace.findFiles(list, config.excludesGlob);
+	}
+
 	// Check if gulpfile exists in project.
 	if (config.enableGulp) {
-		vscode.workspace.findFiles(config.gulpGlob, config.excludesGlob).then(function (file) {
+		findTaskFiles(config.gulpGlob).then(function (file) {
 			readGulpFile(file);
 			gulpScan = true;
 		});
 	}
 	// Check if package.json exists in project.
 	if (config.enableNpm) {
-		vscode.workspace.findFiles(config.npmGlob, config.excludesGlob).then(function (file) {
+		findTaskFiles(config.npmGlob).then(function (file) {
 			readPackageFile(file);
 			npmScan = true;
 		});
 	}
+
 	// Check if scripts exists in project.
-	vscode.workspace.findFiles(glob, config.excludesGlob).then(function (file) {
+	findTaskFiles(glob).then(function (file) {
 		scriptScan = scriptScan + 1;
 		readFile(file);
 	});
@@ -60,7 +65,9 @@ function activate(context) {
 	function buildGulpCmds(file) {
 		var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
+
 		cmdsList = file.getText().match(regexpMatcher);
+
 		if (typeof file === 'object') {
 			for (var i = 0; i < cmdsList.length; ++i) {
 				if (cmdsList[i].match(regexpMatcher)) {
@@ -138,14 +145,10 @@ function activate(context) {
 	}
 
 	function buildStatusBar() {
-		// Create StatusBar.
-		if (!_statusBarItem) {
-			_statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-		}
-
 		var options = {
 			placeHolder: 'Select a Task to Run...'
 		};
+
 		// Register cmd for showing tasks.
 		vscode.commands.registerCommand('quicktask.showTasks', function () {
 			vscode.window.showQuickPick(getCmds(), options).then(function (result) {
@@ -154,10 +157,17 @@ function activate(context) {
 					if (config.showTerminal) {
 						terminal.show();
 					}
-					terminal.sendText(result);
+					if (config.closeTerminalafterExecution) {
+						terminal.sendText(result + "\nexit");
+					}
+					else {
+						terminal.sendText(result);
+					}
+					vscode.window.setStatusBarMessage(`Task ${result} started`, 3000);
 				}
 			});
 		});
+
 		// Loading configuration variables.
 		if (cmdsList.length >= 1) {
 			_statusBarItem.text = '$(clippy) Tasks';
@@ -168,10 +178,9 @@ function activate(context) {
 	}
 }
 
-exports.activate = activate;
-
 function deactivate() {
-	console.log('Task Master disabled.');
+	console.log('QuickTask disabled.');
 }
 
+exports.activate = activate;
 exports.deactivate = deactivate;
