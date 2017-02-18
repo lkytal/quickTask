@@ -11,7 +11,7 @@ Quick Task will automatically trawl your project directory for task scripts, e.g
 ## [1.2.0] - 2017-02-18
 ### Added
 - Option to close terminal after execution finished. (experimental)
--
+
 ## [1.1.0] - 2017-02-16
 ### Added
 - Option to control show terminal or notable.
