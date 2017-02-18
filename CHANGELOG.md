@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Performance enhance
 
+## [2.0.0] - 2017-02-18
+### Added
+- Option to watch for task changes.
+
 ## [1.2.0] - 2017-02-18
 ### Added
 - Option to close terminal after execution finished. (experimental)

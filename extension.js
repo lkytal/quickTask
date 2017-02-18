@@ -93,7 +93,7 @@ function enableButtonTimer() {
 		enableButton();
 	}
 	else {
-		if (checkCount >= 5) {
+		if (checkCount >= 4) {
 			_statusBarItem.text = _statusBarItem.tooltip = '$(x) No Task Found';
 			_statusBarItem.command = 'quicktask.showTasks';
 		}
@@ -162,7 +162,7 @@ function setWatcher() {
 		cmdsList = [];
 		loadTaskFiles();
 
-		setTimeout(enableButtonTimer, 4000);
+		setTimeout(enableButtonTimer, 2500);
 	}
 
 	watcher = vscode.workspace.createFileSystemWatcher("{**/gulpfile.js,**/package.json}");
