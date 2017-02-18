@@ -100,7 +100,8 @@
         "Node",
         "NPM",
         "Gulp",
-        "Runer"
+        "Script",
+        "Runner"
     ],
     "repository": {
         "type": "git",
