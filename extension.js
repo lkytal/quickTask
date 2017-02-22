@@ -10,9 +10,9 @@ var scriptList = [];
 var gulpList = [];
 var npmList = [];
 var _statusBarItem;
-var checkCount;
 var npmScaned = false;
 var gulpScaned = false;
+var scriptScaned = false;
 
 function isJsScaned() {
 	if (!config.enableNpm) {
@@ -24,6 +24,10 @@ function isJsScaned() {
 	}
 
 	return npmScaned && gulpScaned;
+}
+
+function isScriptScaned() {
+	return scriptScaned;
 }
 
 function getCmds() {
@@ -62,38 +66,71 @@ function buildScripts(file, exec) {
 	}
 }
 
-function parseTasksFromFile(file, handleFunc) {
-	if (Array.isArray(file) && file.length >= 1) {
-		for (var i = 0; i < file.length; i++) {
-			vscode.workspace.openTextDocument(file[i].fsPath).then(function (file) {
-				handleFunc(file);
-			});
-		}
+function buildScriptsDispatcher(file) {
+	if (file.languageId === 'shellscript' && config.enableShell) {
+		buildScripts(file, '');
+	}
+	else if (file.languageId === 'python' && config.enablePython) {
+		buildScripts(file, 'python ');
+	}
+	else if (file.languageId === 'ruby' && config.enableRuby) {
+		buildScripts(file, 'ruby ');
+	}
+	else if (file.languageId === 'powershell' && config.enablePowershell) {
+		buildScripts(file, 'powershell ');
+	}
+	else if (file.languageId === 'perl' && config.enablePerl) {
+		buildScripts(file, 'perl ');
+	}
+	else if (file.languageId === 'bat') {
+		buildScripts(file, '');
 	}
 }
 
-// Read File.
-function parseFile(file) {
-	parseTasksFromFile(file, function (file) {
-		if (file.languageId === 'shellscript' && config.enableShell) {
-			buildScripts(file, '');
-		}
-		else if (file.languageId === 'python' && config.enablePython) {
-			buildScripts(file, 'python ');
-		}
-		else if (file.languageId === 'ruby' && config.enableRuby) {
-			buildScripts(file, 'ruby ');
-		}
-		else if (file.languageId === 'powershell' && config.enablePowershell) {
-			buildScripts(file, 'powershell ');
-		}
-		else if (file.languageId === 'perl' && config.enablePerl) {
-			buildScripts(file, 'perl ');
-		}
-		else if (file.languageId === 'bat') {
-			buildScripts(file, '');
-		}
+function parseTasksFromFile(fileList, handleFunc, onFinish) {
+	if (!Array.isArray(fileList)) return;
+
+	if (fileList.length == 0) {
+		return onFinish();
+	}
+
+	async.each(fileList, function (item, callback) {
+		vscode.workspace.openTextDocument(item.fsPath).then(function (file) {
+			handleFunc(file);
+			return callback();
+		});
+	}, onFinish);
+}
+
+function LoadTask(configKey, findSyntex, handleFunc, onFinish) {
+	if (!configKey) return;
+
+	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
+		parseTasksFromFile(foundList, handleFunc, onFinish);
 	});
+}
+
+function loadJsTasks() {
+	LoadTask(config.enableGulp, config.gulpGlob, buildGulpTasks, function (err) {
+		gulpScaned = true;
+		checkScanFinished();
+	});
+	LoadTask(config.enableNpm, config.npmGlob, buildNpmTasks, function (err) {
+		npmScaned = true;
+		checkScanFinished();
+	});
+}
+
+function loadScripts() {
+	LoadTask(1, glob, buildScriptsDispatcher, function (err) {
+		scriptScaned = true;
+		checkScanFinished();
+	});
+}
+
+function loadAll() {
+	loadScripts();
+	loadJsTasks();
 }
 
 function enableButton() {
@@ -102,18 +139,14 @@ function enableButton() {
 	_statusBarItem.command = 'quicktask.showTasks';
 }
 
-function enableButtonTimer() {
-	if (getCmds().length >= 1) {
-		enableButton();
-	}
-	else {
-		if (checkCount >= 4) {
-			_statusBarItem.text = _statusBarItem.tooltip = '$(x) No Task Found';
-			_statusBarItem.command = 'quicktask.showTasks';
+function checkScanFinished() {
+	if (isJsScaned() && isScriptScaned()) {
+		if (getCmds().length >= 1) {
+			enableButton();
 		}
 		else {
-			checkCount += 1;
-			setTimeout(enableButtonTimer, 5000);
+			_statusBarItem.text = _statusBarItem.tooltip = '$(x) No Task Found';
+			_statusBarItem.command = 'quicktask.showTasks';
 		}
 	}
 }
@@ -153,45 +186,17 @@ function buildStatusBar() {
 	});
 }
 
-var LoadTask = function (configKey, list, handleFunc) {
-	if (configKey) {
-		vscode.workspace.findFiles(list, config.excludesGlob).then(handleFunc);
-	}
-}
-
-function loadJsTasks() {
-	LoadTask(config.enableGulp, config.gulpGlob, function (file) {
-		parseTasksFromFile(file, buildGulpTasks);
-	});
-	LoadTask(config.enableNpm, config.npmGlob, function (file) {
-		parseTasksFromFile(file, buildNpmTasks);
-	});
-}
-
-function loadScripts() {
-	LoadTask(1, glob, function (file) {
-		parseFile(file);
-	});
-}
-
-function loadAll() {
-	loadScripts();
-	loadJsTasks();
-}
-
 function setWatcher() {
 	var rebuildJs = function (file) {
+		npmScaned = gulpScaned = false;
 		npmList = gulpList = [];
 		loadJsTasks();
-
-		setTimeout(enableButtonTimer, 2500);
 	}
 
 	var rebuildScripts = function (file) {
+		scriptScaned = false;
 		scriptList = [];
 		loadScripts();
-
-		setTimeout(enableButtonTimer, 2500);
 	}
 
 	var setupWatcher = function (files, handler) {
@@ -210,13 +215,10 @@ function setWatcher() {
 
 function activate(context) {
 	config = vscode.workspace.getConfiguration('quicktask');
-	checkCount = 0;
 
 	buildStatusBar();
-	loadAll();
 	setWatcher();
-
-	setTimeout(enableButtonTimer, 3000);
+	loadAll();
 }
 
 function deactivate() {
