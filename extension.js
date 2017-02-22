@@ -1,8 +1,9 @@
 'use strict';
 var vscode = require('vscode');
+var async = require('async');
 
 var config;
-var watcher;
+var jsWatcher;
 var scriptWatcher;
 var glob = '**/*.{sh,py,rb,ps1,pl,bat}';
 var scriptList = [];
@@ -10,6 +11,20 @@ var gulpList = [];
 var npmList = [];
 var _statusBarItem;
 var checkCount;
+var npmScaned = false;
+var gulpScaned = false;
+
+function isJsScaned() {
+	if (!config.enableNpm) {
+		npmScaned = true;
+	}
+
+	if (!config.enableGulp) {
+		gulpScaned = true;
+	}
+
+	return npmScaned && gulpScaned;
+}
 
 function getCmds() {
 	return scriptList.concat(gulpList).concat(npmList).sort();
@@ -165,13 +180,6 @@ function loadAll() {
 }
 
 function setWatcher() {
-	var rebuildScripts = function (file) {
-		scriptList = [];
-		loadScripts();
-
-		setTimeout(enableButtonTimer, 2500);
-	}
-
 	var rebuildJs = function (file) {
 		npmList = gulpList = [];
 		loadJsTasks();
@@ -179,16 +187,25 @@ function setWatcher() {
 		setTimeout(enableButtonTimer, 2500);
 	}
 
-	watcher = vscode.workspace.createFileSystemWatcher("{**/gulpfile.js,**/package.json}");
-	scriptWatcher = vscode.workspace.createFileSystemWatcher(glob);
+	var rebuildScripts = function (file) {
+		scriptList = [];
+		loadScripts();
 
-	watcher.onDidChange(rebuildJs);
-	watcher.onDidCreate(rebuildJs);
-	watcher.onDidDelete(rebuildJs);
+		setTimeout(enableButtonTimer, 2500);
+	}
 
-	scriptWatcher.onDidChange(rebuildScripts);
-	scriptWatcher.onDidCreate(rebuildScripts);
-	scriptWatcher.onDidDelete(rebuildScripts);
+	var setupWatcher = function (files, handler) {
+		var watcher = vscode.workspace.createFileSystemWatcher(files);
+
+		watcher.onDidChange(handler);
+		watcher.onDidCreate(handler);
+		watcher.onDidDelete(handler);
+
+		return watcher;
+	}
+
+	jsWatcher = setupWatcher("{**/gulpfile.js,**/package.json}", rebuildJs);
+	scriptWatcher = setupWatcher(glob, rebuildScripts);
 }
 
 function activate(context) {
@@ -203,7 +220,7 @@ function activate(context) {
 }
 
 function deactivate() {
-	watcher.dispose();
+	jsWatcher.dispose();
 	scriptWatcher.dispose();
 	console.log('QuickTask disabled.');
 }
