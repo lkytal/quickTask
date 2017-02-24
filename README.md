@@ -7,19 +7,39 @@ e.g. npm, gulp, shell, bat, python, ruby, powershell, perl scripts etc...
 and allow you to execute each task with the click of a mouse!
 
 As shown bellow, all tasks will showup after click the task button on statusbar and you can
-execute any item simply by clicking those it.
+execute any item simply by clicking it.
+
+Highlights:
+- Auto rescan after task files changed / added / deleted.
+- Allow you to close terminal window automatically after execution.
 
 ![Preview](screenshot.png)
 
-Features:
-1. Autorescan after task files changed / added / deleted
-2. Allow you to close terminal window automatically after execution
+Hint: Task button is usually here:
+![Preview](button.png)
+
+Support Tasks:
+- NPM Tasks.
+- Gulp Tasks.
+- Shell Scripts.
+- Python Scripts.
+- Ruby Scripts.
+- Perl Scripts.
+- batch file and Powershell Scripts.
 
 ## Release Notes
 
+## [2.1.1] - 2017-02-24
+### Changed
+- Show error message when task loading failed.
+
+### Fixed
+- Duplicated items.
+- ".Cmd" included.
+
 ## [2.1.0] - 2017-02-22
 ### Changed
-- Quicker reaction towards task changes.
+- Instant reaction towards task changes.
 
 ## [2.0.1] - 2017-02-21
 ### Changed
@@ -45,3 +65,5 @@ Features:
 
 ## [1.0.0] - 2017-02-16
 - First release.
+
+> <div>Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

@@ -6,6 +6,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Performance enhance
 
+## [2.1.1] - 2017-02-24
+### Changed
+- Show error message when task loading failed.
+
+### Fixed
+- Duplicated items.
+- ".Cmd" included.
+
 ## [2.1.0] - 2017-02-22
 ### Changed
 - Quicker reaction towards task changes.

@@ -5,7 +5,7 @@ var async = require('async');
 var config;
 var jsWatcher;
 var scriptWatcher;
-var glob = '**/*.{sh,py,rb,ps1,pl,bat}';
+var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd}';
 var scriptList = [];
 var gulpList = [];
 var npmList = [];
@@ -39,10 +39,10 @@ function buildGulpTasks(file) {
 	var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
 	if (typeof file === 'object') {
-		var tmpList = file.getText().match(regexpMatcher);
+		gulpList = [];
 
-		for (var i = 0; i < tmpList.length; ++i) {
-			gulpList[i] = 'gulp ' + tmpList[i].replace(regexpReplacer, "$1");
+		for (var item of file.getText().match(regexpMatcher)) {
+			gulpList.push('gulp ' + item.replace(regexpReplacer, "$1"));
 		}
 	}
 }
@@ -52,6 +52,8 @@ function buildNpmTasks(file) {
 		var pattern = JSON.parse(file.getText());
 
 		if (typeof pattern.scripts === 'object') {
+			npmList = [];
+
 			for (var item in pattern.scripts) {
 				npmList.push('npm run ' + item);
 			}
@@ -112,10 +114,18 @@ function LoadTask(configKey, findSyntex, handleFunc, onFinish) {
 
 function loadJsTasks() {
 	LoadTask(config.enableGulp, config.gulpGlob, buildGulpTasks, function (err) {
+		if (err) {
+			vscode.window.showInformationMessage("Error when scanning gulp tasks.");
+			return;
+		}
 		gulpScaned = true;
 		checkScanFinished();
 	});
 	LoadTask(config.enableNpm, config.npmGlob, buildNpmTasks, function (err) {
+		if (err) {
+			vscode.window.showInformationMessage("Error when scanning npm tasks.");
+			return;
+		}
 		npmScaned = true;
 		checkScanFinished();
 	});
@@ -123,6 +133,10 @@ function loadJsTasks() {
 
 function loadScripts() {
 	LoadTask(1, glob, buildScriptsDispatcher, function (err) {
+		if (err) {
+			vscode.window.showInformationMessage("Error when scanning scripts.");
+			return;
+		}
 		scriptScaned = true;
 		checkScanFinished();
 	});
@@ -194,13 +208,20 @@ function setWatcher() {
 	}
 
 	var rebuildScripts = function (file) {
+		// for (var item of getCmds()) {
+		// 	if (item.indexOf(file.fsPath) != -1) {
+		// 		console.log("exist");
+		// 		return;
+		// 	}
+		// }
+
 		scriptScaned = false;
 		scriptList = [];
 		loadScripts();
 	}
 
-	var setupWatcher = function (files, handler) {
-		var watcher = vscode.workspace.createFileSystemWatcher(files);
+	var setupWatcher = function (files, handler, ignoreChange) {
+		var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
 
 		watcher.onDidChange(handler);
 		watcher.onDidCreate(handler);
@@ -209,8 +230,8 @@ function setWatcher() {
 		return watcher;
 	}
 
-	jsWatcher = setupWatcher("{**/gulpfile.js,**/package.json}", rebuildJs);
-	scriptWatcher = setupWatcher(glob, rebuildScripts);
+	jsWatcher = setupWatcher("{**/gulpfile.js,**/package.json}", rebuildJs, false);
+	scriptWatcher = setupWatcher(glob, rebuildScripts, true);
 }
 
 function activate(context) {
