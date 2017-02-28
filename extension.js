@@ -5,7 +5,7 @@ var async = require('async');
 var config;
 var jsWatcher;
 var scriptWatcher;
-var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd}';
+var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 var scriptList = [];
 var gulpList = [];
 var npmList = [];
@@ -30,8 +30,12 @@ function isScriptScaned() {
 	return scriptScaned;
 }
 
+function unique(arr) {
+	return Array.from(new Set(arr))
+}
+
 function getCmds() {
-	return scriptList.concat(gulpList).concat(npmList).sort();
+	return unique(scriptList.concat(gulpList).concat(npmList).sort());
 }
 
 function buildGulpTasks(file) {
@@ -86,6 +90,12 @@ function buildScriptsDispatcher(file) {
 	}
 	else if (file.languageId === 'bat') {
 		buildScripts(file, '');
+	}
+	else if (/.*\.ahk$/.test(file.fileName) === true) {
+		buildScripts(file, '');
+	}
+	else if (/.*\.vbs$/.test(file.fileName) === true) {
+		buildScripts(file, 'cscript ');
 	}
 }
 
@@ -223,8 +233,8 @@ function setWatcher() {
 	var setupWatcher = function (files, handler, ignoreChange) {
 		var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
 
-		watcher.onDidChange(handler);
 		watcher.onDidCreate(handler);
+		watcher.onDidChange(handler);
 		watcher.onDidDelete(handler);
 
 		return watcher;
