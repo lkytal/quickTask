@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Performance enhance
 
+## [2.1.3] - 2017-03-02
+### Changed
+- Seperate rescan process of npm and gulp.
+
 ## [2.1.2] - 2017-02-28
 ### Changed
 - ".vbs" and ".ahk" included.

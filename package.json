@@ -2,7 +2,7 @@
   "name": "quicktask",
   "displayName": "QuickTask",
   "description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "publisher": "lkytal",
   "engines": {
     "vscode": "^1.1.0"

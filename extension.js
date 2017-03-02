@@ -3,8 +3,6 @@ var vscode = require('vscode');
 var async = require('async');
 
 var config;
-var jsWatcher;
-var scriptWatcher;
 var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 var scriptList = [];
 var gulpList = [];
@@ -14,16 +12,26 @@ var npmScaned = false;
 var gulpScaned = false;
 var scriptScaned = false;
 
-function isJsScaned() {
+var taskWatcher = {
+	gulpWatcher: null,
+	npmWatcher: null,
+	scriptWatcher: null
+}
+
+function isNpmScaned() {
 	if (!config.enableNpm) {
 		npmScaned = true;
 	}
 
+	return npmScaned;
+}
+
+function isGulpScaned() {
 	if (!config.enableGulp) {
 		gulpScaned = true;
 	}
 
-	return npmScaned && gulpScaned;
+	return gulpScaned;
 }
 
 function isScriptScaned() {
@@ -122,7 +130,10 @@ function LoadTask(configKey, findSyntex, handleFunc, onFinish) {
 	});
 }
 
-function loadJsTasks() {
+function loadGulpTasks() {
+	gulpScaned = false;
+	gulpList = [];
+
 	LoadTask(config.enableGulp, config.gulpGlob, buildGulpTasks, function (err) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning gulp tasks.");
@@ -131,6 +142,12 @@ function loadJsTasks() {
 		gulpScaned = true;
 		checkScanFinished();
 	});
+}
+
+function loadNpmTasks() {
+	npmScaned = false;
+	npmList = [];
+
 	LoadTask(config.enableNpm, config.npmGlob, buildNpmTasks, function (err) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning npm tasks.");
@@ -142,6 +159,9 @@ function loadJsTasks() {
 }
 
 function loadScripts() {
+	scriptScaned = false;
+	scriptList = [];
+
 	LoadTask(1, glob, buildScriptsDispatcher, function (err) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning scripts.");
@@ -152,11 +172,6 @@ function loadScripts() {
 	});
 }
 
-function loadAll() {
-	loadScripts();
-	loadJsTasks();
-}
-
 function enableButton() {
 	_statusBarItem.text = '$(list-unordered) Tasks';
 	_statusBarItem.tooltip = 'Click to select a Task';
@@ -164,7 +179,7 @@ function enableButton() {
 }
 
 function checkScanFinished() {
-	if (isJsScaned() && isScriptScaned()) {
+	if (isNpmScaned() && isGulpScaned() && isScriptScaned()) {
 		if (getCmds().length >= 1) {
 			enableButton();
 		}
@@ -205,32 +220,14 @@ function buildStatusBar() {
 			else {
 				terminal.sendText(result);
 			}
+
 			vscode.window.setStatusBarMessage(`Task ${result} started`, 3000);
 		});
 	});
 }
 
 function setWatcher() {
-	var rebuildJs = function (file) {
-		npmScaned = gulpScaned = false;
-		npmList = gulpList = [];
-		loadJsTasks();
-	}
-
-	var rebuildScripts = function (file) {
-		// for (var item of getCmds()) {
-		// 	if (item.indexOf(file.fsPath) != -1) {
-		// 		console.log("exist");
-		// 		return;
-		// 	}
-		// }
-
-		scriptScaned = false;
-		scriptList = [];
-		loadScripts();
-	}
-
-	var setupWatcher = function (files, handler, ignoreChange) {
+	var createWatcher = function (files, handler, ignoreChange) {
 		var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
 
 		watcher.onDidCreate(handler);
@@ -240,8 +237,9 @@ function setWatcher() {
 		return watcher;
 	}
 
-	jsWatcher = setupWatcher("{**/gulpfile.js,**/package.json}", rebuildJs, false);
-	scriptWatcher = setupWatcher(glob, rebuildScripts, true);
+	taskWatcher.gulpWatcher = createWatcher("**/gulpfile.js", loadGulpTasks, false);
+	taskWatcher.npmWatcher = createWatcher("**/package.json", loadNpmTasks, false);
+	taskWatcher.scriptWatcher = createWatcher(glob, loadScripts, true);
 }
 
 function activate(context) {
@@ -249,12 +247,19 @@ function activate(context) {
 
 	buildStatusBar();
 	setWatcher();
-	loadAll();
+
+	loadScripts();
+	loadGulpTasks();
+	loadNpmTasks();
 }
 
 function deactivate() {
-	jsWatcher.dispose();
-	scriptWatcher.dispose();
+	for (var watcher in taskWatcher) {
+		if (taskWatcher.hasOwnProperty(watcher) && watcher != null) {
+			watcher.dispose();
+		}
+	}
+
 	console.log('QuickTask disabled.');
 }
 
