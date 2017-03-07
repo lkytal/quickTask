@@ -30,7 +30,13 @@ Support Tasks:
 - AutoHotKey Scripts.
 - batch file and Powershell Scripts.
 
+>Install on vs market [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+
 ## Release Notes
+
+## [2.2.0] - 2017-03-07
+### Added
+- "defaultTask" option to add your own default tasks.
 
 ## [2.1.3] - 2017-03-02
 ### Changed

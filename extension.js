@@ -43,7 +43,7 @@ function unique(arr) {
 }
 
 function getCmds() {
-	return unique(scriptList.concat(gulpList).concat(npmList).sort());
+	return unique(scriptList.concat(gulpList).concat(npmList).concat(config.defaultTasks)).sort();
 }
 
 function buildGulpTasks(file) {
