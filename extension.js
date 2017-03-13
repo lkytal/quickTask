@@ -7,10 +7,13 @@ var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 var scriptList = [];
 var gulpList = [];
 var npmList = [];
-var _statusBarItem;
-var npmScaned = false;
-var gulpScaned = false;
-var scriptScaned = false;
+var statusBarItem;
+
+var flags = {
+	npmScaned: false,
+	gulpScaned: false,
+	scriptScaned: false
+};
 
 var taskWatcher = {
 	gulpWatcher: null,
@@ -20,22 +23,22 @@ var taskWatcher = {
 
 function isNpmScaned() {
 	if (!config.enableNpm) {
-		npmScaned = true;
+		flags.npmScaned = true;
 	}
 
-	return npmScaned;
+	return flags.npmScaned;
 }
 
 function isGulpScaned() {
 	if (!config.enableGulp) {
-		gulpScaned = true;
+		flags.gulpScaned = true;
 	}
 
-	return gulpScaned;
+	return flags.gulpScaned;
 }
 
 function isScriptScaned() {
-	return scriptScaned;
+	return flags.scriptScaned;
 }
 
 function unique(arr) {
@@ -73,7 +76,7 @@ function buildNpmTasks(file) {
 	}
 }
 
-function buildScripts(file, exec) {
+function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
 		var scriptPath = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
 		scriptList.push(scriptPath);
@@ -82,28 +85,28 @@ function buildScripts(file, exec) {
 
 function buildScriptsDispatcher(file) {
 	if (file.languageId === 'shellscript' && config.enableShell) {
-		buildScripts(file, '');
+		generateTaskFromScript(file, '');
 	}
 	else if (file.languageId === 'python' && config.enablePython) {
-		buildScripts(file, 'python ');
+		generateTaskFromScript(file, 'python ');
 	}
 	else if (file.languageId === 'ruby' && config.enableRuby) {
-		buildScripts(file, 'ruby ');
+		generateTaskFromScript(file, 'ruby ');
 	}
 	else if (file.languageId === 'powershell' && config.enablePowershell) {
-		buildScripts(file, 'powershell ');
+		generateTaskFromScript(file, 'powershell ');
 	}
 	else if (file.languageId === 'perl' && config.enablePerl) {
-		buildScripts(file, 'perl ');
+		generateTaskFromScript(file, 'perl ');
 	}
 	else if (file.languageId === 'bat') {
-		buildScripts(file, '');
+		generateTaskFromScript(file, '');
 	}
 	else if (/.*\.ahk$/.test(file.fileName) === true) {
-		buildScripts(file, '');
+		generateTaskFromScript(file, '');
 	}
 	else if (/.*\.vbs$/.test(file.fileName) === true) {
-		buildScripts(file, 'cscript ');
+		generateTaskFromScript(file, 'cscript ');
 	}
 }
 
@@ -122,88 +125,30 @@ function parseTasksFromFile(fileList, handleFunc, onFinish) {
 	}, onFinish);
 }
 
-function LoadTask(configKey, findSyntex, handleFunc, onFinish) {
-	if (!configKey) return;
-
-	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
-		parseTasksFromFile(foundList, handleFunc, onFinish);
-	});
-}
-
-function loadGulpTasks() {
-	gulpScaned = false;
-	gulpList = [];
-
-	LoadTask(config.enableGulp, config.gulpGlob, buildGulpTasks, function (err) {
-		if (err) {
-			vscode.window.showInformationMessage("Error when scanning gulp tasks.");
-			return;
-		}
-		gulpScaned = true;
-		checkScanFinished();
-	});
-}
-
-function loadNpmTasks() {
-	npmScaned = false;
-	npmList = [];
-
-	LoadTask(config.enableNpm, config.npmGlob, buildNpmTasks, function (err) {
-		if (err) {
-			vscode.window.showInformationMessage("Error when scanning npm tasks.");
-			return;
-		}
-		npmScaned = true;
-		checkScanFinished();
-	});
-}
-
-function loadScripts() {
-	scriptScaned = false;
-	scriptList = [];
-
-	LoadTask(1, glob, buildScriptsDispatcher, function (err) {
-		if (err) {
-			vscode.window.showInformationMessage("Error when scanning scripts.");
-			return;
-		}
-		scriptScaned = true;
-		checkScanFinished();
-	});
-}
-
-function enableButton() {
-	_statusBarItem.text = '$(list-unordered) Tasks';
-	_statusBarItem.tooltip = 'Click to select a Task';
-	_statusBarItem.command = 'quicktask.showTasks';
-}
-
 function checkScanFinished() {
 	if (isNpmScaned() && isGulpScaned() && isScriptScaned()) {
 		if (getCmds().length >= 1) {
-			enableButton();
+			statusBarItem.text = '$(list-unordered) Tasks';
+			statusBarItem.tooltip = 'Click to select a Task';
+			statusBarItem.command = 'quicktask.showTasks';
 		}
 		else {
-			_statusBarItem.text = _statusBarItem.tooltip = '$(x) No Task Found';
-			_statusBarItem.command = 'quicktask.showTasks';
+			statusBarItem.text = statusBarItem.tooltip = '$(x) No Task Found';
+			statusBarItem.command = 'quicktask.showTasks';
 		}
 	}
 }
 
-function buildStatusBar() {
-	_statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-	_statusBarItem.text = _statusBarItem.tooltip = '$(search) Scanning Tasks...';
-	_statusBarItem.show();
-
-	var options = {
-		placeHolder: 'Select a Task to Run...'
-	};
-
-	vscode.commands.registerCommand('quicktask.showTasks', function () {
+function addCommand() {
+	return vscode.commands.registerCommand('quicktask.showTasks', function () {
 		if (getCmds().length < 1) {
 			vscode.window.showInformationMessage("No task found.");
 			return;
 		}
+
+		var options = {
+			placeHolder: 'Select a Task to Run...'
+		};
 
 		vscode.window.showQuickPick(getCmds(), options).then(function (result) {
 			if (typeof result === 'undefined') {
@@ -214,6 +159,7 @@ function buildStatusBar() {
 			if (config.showTerminal) {
 				terminal.show();
 			}
+
 			if (config.closeTerminalafterExecution) {
 				terminal.sendText(result + "\nexit");
 			}
@@ -226,31 +172,77 @@ function buildStatusBar() {
 	});
 }
 
-function setWatcher() {
-	var createWatcher = function (files, handler, ignoreChange) {
-		var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
+var createWatcher = function (files, handler, ignoreChange) {
+	var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
 
-		watcher.onDidCreate(handler);
-		watcher.onDidChange(handler);
-		watcher.onDidDelete(handler);
+	watcher.onDidCreate(handler);
+	watcher.onDidChange(handler);
+	watcher.onDidDelete(handler);
 
-		return watcher;
+	return watcher;
+}
+
+function loadTasks(enableFlag, findSyntex, handleFunc, flagKey) {
+	if (!enableFlag) {
+		flags[flagKey] = true;
+		return;
 	}
 
-	taskWatcher.gulpWatcher = createWatcher("**/gulpfile.js", loadGulpTasks, false);
-	taskWatcher.npmWatcher = createWatcher("**/package.json", loadNpmTasks, false);
-	taskWatcher.scriptWatcher = createWatcher(glob, loadScripts, true);
+	flags[flagKey] = false;
+
+	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
+ 		parseTasksFromFile(foundList, handleFunc, function (err) {
+			if (err) {
+				vscode.window.showInformationMessage("Error when scanning tasks.");
+				return;
+			}
+
+			flags[flagKey] = true;
+			checkScanFinished();
+		});
+	});
+}
+
+function loadGulpTasks() {
+	flags.gulpScaned = false;
+	gulpList = [];
+
+	loadTasks(config.enableGulp, config.gulpGlob, buildGulpTasks, "gulpScaned");
+}
+
+function loadNpmTasks() {
+	flags.npmScaned = false;
+	npmList = [];
+
+	loadTasks(config.enableNpm, config.npmGlob, buildNpmTasks, "npmScaned");
+}
+
+function loadScripts() {
+	flags.scriptScaned = false;
+	scriptList = [];
+
+	loadTasks(1, glob, buildScriptsDispatcher, "scriptScaned");
 }
 
 function activate(context) {
 	config = vscode.workspace.getConfiguration('quicktask');
 
-	buildStatusBar();
-	setWatcher();
+	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	statusBarItem.text = statusBarItem.tooltip = '$(search) Scanning Tasks...';
+	statusBarItem.show();
 
-	loadScripts();
+	var showTaskCommand = addCommand();
+
+	taskWatcher.gulpWatcher = createWatcher("**/gulpfile.js", loadGulpTasks, false);
+	taskWatcher.npmWatcher = createWatcher("**/package.json", loadNpmTasks, false);
+	taskWatcher.scriptWatcher = createWatcher(glob, loadScripts, true);
+
 	loadGulpTasks();
 	loadNpmTasks();
+	loadScripts();
+
+	context.subscriptions.push(showTaskCommand);
+	context.subscriptions.push(statusBarItem);
 }
 
 function deactivate() {

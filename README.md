@@ -1,6 +1,6 @@
 # Quick Task for VS Code
 
-> Adapted form [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
+> Based on [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
 
 Quick Task will automatically trawl your project directory for task scripts,
 e.g. npm, gulp, shell, bat, python, ruby, powershell, perl scripts etc...
@@ -30,9 +30,18 @@ Support Tasks:
 - AutoHotKey Scripts.
 - batch file and Powershell Scripts.
 
->Install on vs market [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+>Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
+
+## My Other extensions:
+
+### [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
 
 ## Release Notes
+
+## [2.2.1] - 2017-03-13
+### Fixed
+- Tiny fixes.
 
 ## [2.2.0] - 2017-03-07
 ### Added
