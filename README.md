@@ -34,12 +34,12 @@ Support Tasks:
 
 ## My Other extensions:
 
-### [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+### [FlatUI](https://marketplace.visualstudio.com/items?itemName=lkytal.FlatUI)
 ### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
 
 ## Release Notes
 
-## [2.2.1] - 2017-03-13
+## [2.2.2] - 2017-03-13
 ### Fixed
 - Tiny fixes.
 
@@ -87,7 +87,7 @@ Support Tasks:
 
 ## [1.1.0] - 2017-02-16
 ### Added
-- Option to control show terminal or notable.
+- Option to control show terminal or not.
 
 ### Fixed
 - Task scanning loop.
