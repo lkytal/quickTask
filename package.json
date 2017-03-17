@@ -82,6 +82,11 @@
 					"default": true,
 					"description": "Enables the scanning of Shell scripts."
 				},
+				"quicktask.enableVsTasks": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of vscode tasks (in tasks.json)."
+				},
 				"quicktask.enablePython": {
 					"type": "boolean",
 					"default": true,

@@ -4,21 +4,27 @@ var async = require('async');
 
 var config;
 var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
-var scriptList = [];
-var gulpList = [];
-var npmList = [];
 var statusBarItem;
+
+var taskList = {
+	scriptList: [],
+	gulpList: [],
+	npmList: [],
+	vsList: []
+}
 
 var flags = {
 	npmScaned: false,
 	gulpScaned: false,
-	scriptScaned: false
+	scriptScaned: false,
+	vsScaned: false
 };
 
 var taskWatcher = {
 	gulpWatcher: null,
 	npmWatcher: null,
-	scriptWatcher: null
+	scriptWatcher: null,
+	vsWatcher: null
 }
 
 function isNpmScaned() {
@@ -41,23 +47,42 @@ function isScriptScaned() {
 	return flags.scriptScaned;
 }
 
+function isVsScaned() {
+	if (!config.enableVsTasks) {
+		flags.vsScaned = true;
+	}
+
+	return flags.vsScaned;
+}
+
 function unique(arr) {
 	return Array.from(new Set(arr))
 }
 
 function getCmds() {
-	return unique(scriptList.concat(gulpList).concat(npmList).concat(config.defaultTasks)).sort();
+	var list = [];
+
+	for (var item in taskList) {
+		if (taskList.hasOwnProperty(item) && item != null) {
+			list = list.concat(taskList[item]);
+		}
+	}
+
+	return unique(list).sort();
 }
+
+const VSCodePrefix = "$(code)  VS Code Tasks: ";
+const NormalPrefix = "$(terminal)  ";
 
 function buildGulpTasks(file) {
 	var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 	var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
 	if (typeof file === 'object') {
-		gulpList = [];
+		taskList.gulpList = [];
 
 		for (var item of file.getText().match(regexpMatcher)) {
-			gulpList.push('gulp ' + item.replace(regexpReplacer, "$1"));
+			taskList.gulpList.push(NormalPrefix + 'gulp ' + item.replace(regexpReplacer, "$1"));
 		}
 	}
 }
@@ -67,10 +92,10 @@ function buildNpmTasks(file) {
 		var pattern = JSON.parse(file.getText());
 
 		if (typeof pattern.scripts === 'object') {
-			npmList = [];
+			taskList.npmList = [];
 
 			for (var item in pattern.scripts) {
-				npmList.push('npm run ' + item);
+				taskList.npmList.push(NormalPrefix + 'npm run ' + item);
 			}
 		}
 	}
@@ -79,7 +104,7 @@ function buildNpmTasks(file) {
 function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
 		var scriptPath = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
-		scriptList.push(scriptPath);
+		taskList.scriptList.push(NormalPrefix + scriptPath);
 	}
 }
 
@@ -126,7 +151,7 @@ function parseTasksFromFile(fileList, handleFunc, onFinish) {
 }
 
 function checkScanFinished() {
-	if (isNpmScaned() && isGulpScaned() && isScriptScaned()) {
+	if (isNpmScaned() && isGulpScaned() && isScriptScaned() && isVsScaned()) {
 		if (getCmds().length >= 1) {
 			statusBarItem.text = '$(list-unordered) Tasks';
 			statusBarItem.tooltip = 'Click to select a Task';
@@ -155,16 +180,22 @@ function addCommand() {
 				return;
 			}
 
-			var terminal = vscode.window.createTerminal();
-			if (config.showTerminal) {
-				terminal.show();
-			}
-
-			if (config.closeTerminalafterExecution) {
-				terminal.sendText(result + "\nexit");
+			if (result.indexOf(VSCodePrefix) == 0) {
+				vscode.commands.executeCommand("workbench.action.tasks.runTask", result.slice(VSCodePrefix.length));
 			}
 			else {
-				terminal.sendText(result);
+				var terminal = vscode.window.createTerminal();
+				if (config.showTerminal) {
+					terminal.show();
+				}
+
+				result = result.slice(NormalPrefix.length);
+				if (config.closeTerminalafterExecution) {
+					terminal.sendText(result + "\nexit");
+				}
+				else {
+					terminal.sendText(result);
+				}
 			}
 
 			vscode.window.setStatusBarMessage(`Task ${result} started`, 3000);
@@ -191,7 +222,7 @@ function loadTasks(enableFlag, findSyntex, handleFunc, flagKey) {
 	flags[flagKey] = false;
 
 	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
- 		parseTasksFromFile(foundList, handleFunc, function (err) {
+		parseTasksFromFile(foundList, handleFunc, function (err) {
 			if (err) {
 				vscode.window.showInformationMessage("Error when scanning tasks.");
 				return;
@@ -205,23 +236,56 @@ function loadTasks(enableFlag, findSyntex, handleFunc, flagKey) {
 
 function loadGulpTasks() {
 	flags.gulpScaned = false;
-	gulpList = [];
+	taskList.gulpList = [];
 
 	loadTasks(config.enableGulp, config.gulpGlob, buildGulpTasks, "gulpScaned");
 }
 
 function loadNpmTasks() {
 	flags.npmScaned = false;
-	npmList = [];
+	taskList.npmList = [];
 
 	loadTasks(config.enableNpm, config.npmGlob, buildNpmTasks, "npmScaned");
 }
 
 function loadScripts() {
 	flags.scriptScaned = false;
-	scriptList = [];
+	taskList.scriptList = [];
 
 	loadTasks(1, glob, buildScriptsDispatcher, "scriptScaned");
+}
+
+function loadVsTasks() {
+	if (!config.enableVsTasks) {
+		flags.vsScaned = true;
+		return;
+	}
+
+	flags.vsScaned = false;
+	taskList.vsList = [];
+
+	vscode.workspace.openTextDocument(vscode.workspace.rootPath + "/.vscode/tasks.json")
+		.catch(function (e) {
+			taskList.vsList = [];
+			flags.vsScaned = true;
+		})
+		.then(function (file) {
+			taskList.vsList = [];
+			flags.vsScaned = true;
+
+			try {
+				var pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+
+				if (Array.isArray(pattern.tasks)) {
+					for (var i = 0; i < pattern.tasks.length; i++) {
+						taskList.vsList.push(VSCodePrefix + pattern.tasks[i].taskName);
+					}
+				}
+			}
+			catch (e) {
+				console.log("Invaild tasks.json");
+			}
+		});
 }
 
 function activate(context) {
@@ -236,10 +300,12 @@ function activate(context) {
 	taskWatcher.gulpWatcher = createWatcher("**/gulpfile.js", loadGulpTasks, false);
 	taskWatcher.npmWatcher = createWatcher("**/package.json", loadNpmTasks, false);
 	taskWatcher.scriptWatcher = createWatcher(glob, loadScripts, true);
+	taskWatcher.vsWatcher = createWatcher("**/tasks.json", loadVsTasks, false);
 
 	loadGulpTasks();
 	loadNpmTasks();
 	loadScripts();
+	loadVsTasks();
 
 	context.subscriptions.push(showTaskCommand);
 	context.subscriptions.push(statusBarItem);
@@ -248,7 +314,7 @@ function activate(context) {
 function deactivate() {
 	for (var watcher in taskWatcher) {
 		if (taskWatcher.hasOwnProperty(watcher) && watcher != null) {
-			watcher.dispose();
+			taskWatcher[watcher].dispose();
 		}
 	}
 
