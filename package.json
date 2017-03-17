@@ -2,7 +2,7 @@
 	"name": "quicktask",
 	"displayName": "QuickTask",
 	"description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
-	"version": "2.2.2",
+	"version": "2.3.0",
 	"publisher": "lkytal",
 	"engines": {
 		"vscode": "^1.1.0"
@@ -77,15 +77,15 @@
 					"default": true,
 					"description": "Enables the scanning of NPM tasks."
 				},
-				"quicktask.enableShell": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Shell scripts."
-				},
 				"quicktask.enableVsTasks": {
 					"type": "boolean",
 					"default": true,
 					"description": "Enables the scanning of vscode tasks (in tasks.json)."
+				},
+				"quicktask.enableShell": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of Shell scripts."
 				},
 				"quicktask.enablePython": {
 					"type": "boolean",
@@ -101,6 +101,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Enables the scanning of Perl scripts."
+				},
+				"quicktask.enableBatchFile": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enables the scanning of batch file."
 				},
 				"quicktask.enablePowershell": {
 					"type": "boolean",

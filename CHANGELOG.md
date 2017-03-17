@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 ### Performance enhance
 
+## [2.3.0] - 2017-03-17
+### Added
+- Ability to scan for VSCode tasks (those in tasks.json).
+### Fixed
+- Batch file config item.
+
 ## [2.2.0] - 2017-03-07
 ### Added
 - "defaultTask" option to add your own default tasks.

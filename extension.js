@@ -71,7 +71,7 @@ function getCmds() {
 	return unique(list).sort();
 }
 
-const VSCodePrefix = "$(code)  VS Code Tasks: ";
+const VSCodePrefix = "$(code)  ";
 const NormalPrefix = "$(terminal)  ";
 
 function buildGulpTasks(file) {
@@ -82,7 +82,9 @@ function buildGulpTasks(file) {
 		taskList.gulpList = [];
 
 		for (var item of file.getText().match(regexpMatcher)) {
-			taskList.gulpList.push(NormalPrefix + 'gulp ' + item.replace(regexpReplacer, "$1"));
+			var cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
+			var gulpItem = { label: NormalPrefix + cmdLine, cmdLine: cmdLine, isVS: false }
+			taskList.gulpList.push(gulpItem);
 		}
 	}
 }
@@ -95,7 +97,9 @@ function buildNpmTasks(file) {
 			taskList.npmList = [];
 
 			for (var item in pattern.scripts) {
-				taskList.npmList.push(NormalPrefix + 'npm run ' + item);
+				var cmdLine = 'npm run ' + item;
+				var npmItem = { label: NormalPrefix + cmdLine, cmdLine: cmdLine, isVS: false }
+				taskList.npmList.push(npmItem);
 			}
 		}
 	}
@@ -103,8 +107,9 @@ function buildNpmTasks(file) {
 
 function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
-		var scriptPath = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
-		taskList.scriptList.push(NormalPrefix + scriptPath);
+		var cmdLine = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
+		var scriptItem = { label: NormalPrefix + cmdLine, cmd: cmdLine, isVS: false }
+		taskList.scriptList.push(scriptItem);
 	}
 }
 
@@ -124,7 +129,7 @@ function buildScriptsDispatcher(file) {
 	else if (file.languageId === 'perl' && config.enablePerl) {
 		generateTaskFromScript(file, 'perl ');
 	}
-	else if (file.languageId === 'bat') {
+	else if (file.languageId === 'bat' && config.enableBatchFile) {
 		generateTaskFromScript(file, '');
 	}
 	else if (/.*\.ahk$/.test(file.fileName) === true) {
@@ -180,8 +185,8 @@ function addCommand() {
 				return;
 			}
 
-			if (result.indexOf(VSCodePrefix) == 0) {
-				vscode.commands.executeCommand("workbench.action.tasks.runTask", result.slice(VSCodePrefix.length));
+			if (result.isVS) {
+				vscode.commands.executeCommand("workbench.action.tasks.runTask", result.cmdLine);
 			}
 			else {
 				var terminal = vscode.window.createTerminal();
@@ -189,16 +194,15 @@ function addCommand() {
 					terminal.show();
 				}
 
-				result = result.slice(NormalPrefix.length);
 				if (config.closeTerminalafterExecution) {
-					terminal.sendText(result + "\nexit");
+					terminal.sendText(result.cmdLine + "\nexit");
 				}
 				else {
-					terminal.sendText(result);
+					terminal.sendText(result.cmdLine);
 				}
 			}
 
-			vscode.window.setStatusBarMessage(`Task ${result} started`, 3000);
+			vscode.window.setStatusBarMessage(`Task ${result.cmdLine} started`, 3000);
 		});
 	});
 }
@@ -265,10 +269,6 @@ function loadVsTasks() {
 	taskList.vsList = [];
 
 	vscode.workspace.openTextDocument(vscode.workspace.rootPath + "/.vscode/tasks.json")
-		.catch(function (e) {
-			taskList.vsList = [];
-			flags.vsScaned = true;
-		})
 		.then(function (file) {
 			taskList.vsList = [];
 			flags.vsScaned = true;
@@ -278,13 +278,23 @@ function loadVsTasks() {
 
 				if (Array.isArray(pattern.tasks)) {
 					for (var i = 0; i < pattern.tasks.length; i++) {
-						taskList.vsList.push(VSCodePrefix + pattern.tasks[i].taskName);
+						var cmdLine = pattern.tasks[i].taskName;
+						var vsItem = {
+							label: VSCodePrefix + cmdLine,
+							description: "Task from VSCode Task.json",
+							cmdLine: cmdLine,
+							isVS: true
+						}
+						taskList.vsList.push(vsItem);
 					}
 				}
 			}
 			catch (e) {
 				console.log("Invaild tasks.json");
 			}
+		}, function () {
+			taskList.vsList = [];
+			flags.vsScaned = true;
 		});
 }
 

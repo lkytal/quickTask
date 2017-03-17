@@ -39,6 +39,12 @@ Support Tasks:
 
 ## Release Notes
 
+## [2.3.0] - 2017-03-17
+### Added
+- Ability to scan for VSCode tasks (those in tasks.json).
+### Fixed
+- Batch file config item.
+
 ## [2.2.2] - 2017-03-13
 ### Fixed
 - Tiny fixes.
