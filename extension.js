@@ -108,7 +108,7 @@ function buildNpmTasks(file) {
 function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
 		var cmdLine = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
-		var scriptItem = { label: NormalPrefix + cmdLine, cmd: cmdLine, isVS: false }
+		var scriptItem = { label: NormalPrefix + cmdLine, cmdLine: cmdLine, isVS: false }
 		taskList.scriptList.push(scriptItem);
 	}
 }

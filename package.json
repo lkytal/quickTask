@@ -2,7 +2,7 @@
 	"name": "quicktask",
 	"displayName": "QuickTask",
 	"description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
-	"version": "2.3.0",
+	"version": "2.3.1",
 	"publisher": "lkytal",
 	"engines": {
 		"vscode": "^1.1.0"
@@ -134,7 +134,7 @@
 	"devDependencies": {
 		"@types/mocha": "^2.2.40",
 		"@types/node": "^7.0.8",
-		"eslint": "^3.17.1",
+		"eslint": "^3.18.0",
 		"mocha": "^3.2.0",
 		"typescript": "^2.2.1",
 		"vscode": "^1.1.0"

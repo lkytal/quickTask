@@ -39,6 +39,10 @@ Support Tasks:
 
 ## Release Notes
 
+## [2.3.1] - 2017-03-18
+### Fixed
+- Script file can now execute correctly.
+
 ## [2.3.0] - 2017-03-17
 ### Added
 - Ability to scan for VSCode tasks (those in tasks.json).
