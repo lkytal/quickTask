@@ -36,8 +36,14 @@ Support Tasks:
 
 ### [FlatUI](https://marketplace.visualstudio.com/items?itemName=lkytal.FlatUI)
 ### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
+### [Coffee Lint](https://marketplace.visualstudio.com/items?itemName=lkytal.coffeelinter)
+### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+## [2.4.0] - 2017-03-18
+### Added
+- Option to use yarn instead of npm.
 
 ## [2.3.1] - 2017-03-18
 ### Fixed
@@ -46,6 +52,7 @@ Support Tasks:
 ## [2.3.0] - 2017-03-17
 ### Added
 - Ability to scan for VSCode tasks (those in tasks.json).
+
 ### Fixed
 - Batch file config item.
 

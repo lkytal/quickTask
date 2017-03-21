@@ -2,7 +2,7 @@
 	"name": "quicktask",
 	"displayName": "QuickTask",
 	"description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
-	"version": "2.3.1",
+	"version": "2.4.0",
 	"publisher": "lkytal",
 	"engines": {
 		"vscode": "^1.1.0"
@@ -86,6 +86,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Enables the scanning of Shell scripts."
+				},
+				"quicktask.useYarn": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use yarn instead of npm."
 				},
 				"quicktask.enablePython": {
 					"type": "boolean",
