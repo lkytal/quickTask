@@ -64,7 +64,11 @@ function unique(arr) {
 function getCmds() {
 	var list = [];
 
-	for (var item in taskList) {
+	for (let item of config.defaultTasks) {
+		list.push(generateItem(item, "user"));
+	}
+
+	for (let item in taskList) {
 		if (taskList.hasOwnProperty(item) && item != null) {
 			list = list.concat(taskList[item]);
 		}
@@ -73,8 +77,13 @@ function getCmds() {
 	return unique(list).sort();
 }
 
-const VSCodePrefix = "$(code)  ";
-const NormalPrefix = "$(terminal)  ";
+const prefix = {
+	vs: "$(code)  ",
+	gulp: "$(browser)  ",
+	npm: "$(package)  ",
+	script: "$(terminal)  ",
+	user: "$(tag)  "
+}
 
 function generateItem(cmdLine, type) {
 	switch (type) {
@@ -82,17 +91,25 @@ function generateItem(cmdLine, type) {
 		case "gulp":
 		case "script":
 			return {
-				label: NormalPrefix + cmdLine,
+				label: prefix[type] + cmdLine,
 				cmdLine: cmdLine,
 				isVS: false
 			};
 
 		case "vs":
 			return {
-				label: VSCodePrefix + cmdLine,
+				label: prefix.vs + cmdLine,
 				cmdLine: cmdLine,
-				description: "Task from VSCode Task.json",
+				description: "Task from VS Code Task.json",
 				isVS: true
+			};
+
+		case "user":
+			return {
+				label: prefix.user + cmdLine,
+				cmdLine: cmdLine,
+				description: "User defined tasks",
+				isVS: false
 			};
 	}
 }
@@ -104,8 +121,8 @@ function buildGulpTasks(file) {
 	if (typeof file === 'object') {
 		taskList.gulpList = [];
 
-		for (var item of file.getText().match(regexpMatcher)) {
-			var cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
+		for (let item of file.getText().match(regexpMatcher)) {
+			let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
 			taskList.gulpList.push(generateItem(cmdLine, "gulp"));
 		}
 	}
@@ -118,8 +135,8 @@ function buildNpmTasks(file) {
 		if (typeof pattern.scripts === 'object') {
 			taskList.npmList = [];
 
-			for (var item in pattern.scripts) {
-				var cmdLine = 'npm run ' + item;
+			for (let item in pattern.scripts) {
+				let cmdLine = 'npm run ' + item;
 				if (config.useYarn === true) {
 					cmdLine = 'yarn run ' + item;
 				}
@@ -168,11 +185,11 @@ function buildVsTasks(file) {
 		taskList.vsList = [];
 
 		try {
-			var pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+			let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
 
 			if (Array.isArray(pattern.tasks)) {
-				for (var i = 0; i < pattern.tasks.length; i++) {
-					var cmdLine = pattern.tasks[i].taskName;
+				for (let task of pattern.tasks) {
+					let cmdLine = task.taskName;
 					taskList.vsList.push(generateItem(cmdLine, "vs"));
 				}
 			}
@@ -309,8 +326,8 @@ function activate(context) {
 
 	var showTaskCommand = addCommand();
 
-	var createWatcher = function (files, handler, ignoreChange) {
-		var watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
+	let createWatcher = function (files, handler, ignoreChange) {
+		let watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
 
 		watcher.onDidCreate(handler);
 		watcher.onDidChange(handler);
