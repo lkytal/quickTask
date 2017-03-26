@@ -68,10 +68,8 @@ function getCmds() {
 		list.push(generateItem(item, "user"));
 	}
 
-	for (let item in taskList) {
-		if (taskList.hasOwnProperty(item) && item != null) {
-			list = list.concat(taskList[item]);
-		}
+	for (let item of Object.keys(taskList)) {
+		list = list.concat(taskList[item]);
 	}
 
 	return unique(list).sort();
@@ -100,7 +98,7 @@ function generateItem(cmdLine, type) {
 			return {
 				label: prefix.vs + cmdLine,
 				cmdLine: cmdLine,
-				description: "Task from VS Code Task.json",
+				description: "VS Code Tasks",
 				isVS: true
 			};
 
@@ -192,6 +190,9 @@ function buildVsTasks(file) {
 					let cmdLine = task.taskName;
 					taskList.vsList.push(generateItem(cmdLine, "vs"));
 				}
+			}
+			else if(pattern.command != null) {
+				taskList.vsList.push(generateItem(pattern.command, "vs"));
 			}
 		}
 		catch (e) {
@@ -324,7 +325,7 @@ function activate(context) {
 	statusBarItem.text = statusBarItem.tooltip = '$(search) Scanning Tasks...';
 	statusBarItem.show();
 
-	var showTaskCommand = addCommand();
+	let showTaskCommand = addCommand();
 
 	let createWatcher = function (files, handler, ignoreChange) {
 		let watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);

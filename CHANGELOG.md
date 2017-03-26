@@ -1,10 +1,17 @@
 # Change Log
-All notable changes to the "quicktask" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+All notable changes to the "quicktask" extension will be documented in this file.
 
 ## [Unreleased]
 ### Performance enhance
+
+## [2.4.2] - 2017-03-26
+### Added
+- Support VS code default task.
+
+## [2.4.1] - 2017-03-22
+### Fixed
+- Generate default task correctly.
 
 ## [2.4.0] - 2017-03-18
 ### Added
