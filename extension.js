@@ -8,46 +8,17 @@ var config;
 var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 var statusBarItem;
 
-const taskList = {
-	scriptList: [],
-	gulpList: [],
-	npmList: [],
-	vsList: []
-}
-
-const flags = {
-	npmScaned: false,
-	gulpScaned: false,
-	scriptScaned: false,
-	vsScaned: false
-}
-
-function isNpmScaned() {
-	if (!config.enableNpm) {
-		flags.npmScaned = true;
+const data = {
+	flags: {},
+	taskList: {},
+	enable: {},
+	prefix : {
+		vs: "$(code)  ",
+		gulp: "$(browser)  ",
+		npm: "$(package)  ",
+		script: "$(terminal)  ",
+		user: "$(tag)  "
 	}
-
-	return flags.npmScaned;
-}
-
-function isGulpScaned() {
-	if (!config.enableGulp) {
-		flags.gulpScaned = true;
-	}
-
-	return flags.gulpScaned;
-}
-
-function isScriptScaned() {
-	return flags.scriptScaned;
-}
-
-function isVsScaned() {
-	if (!config.enableVsTasks) {
-		flags.vsScaned = true;
-	}
-
-	return flags.vsScaned;
 }
 
 function unique(arr) {
@@ -61,19 +32,11 @@ function getCmds() {
 		list.push(generateItem(item, "user"));
 	}
 
-	for (let item of Object.keys(taskList)) {
-		list = list.concat(taskList[item]);
+	for (let item of Object.keys(data.taskList)) {
+		list = list.concat(data.taskList[item]);
 	}
 
 	return unique(list).sort();
-}
-
-const prefix = {
-	vs: "$(code)  ",
-	gulp: "$(browser)  ",
-	npm: "$(package)  ",
-	script: "$(terminal)  ",
-	user: "$(tag)  "
 }
 
 function generateItem(cmdLine, type) {
@@ -82,14 +45,14 @@ function generateItem(cmdLine, type) {
 		case "gulp":
 		case "script":
 			return {
-				label: prefix[type] + cmdLine,
+				label: data.prefix[type] + cmdLine,
 				cmdLine: cmdLine,
 				isVS: false
 			};
 
 		case "vs":
 			return {
-				label: prefix.vs + cmdLine,
+				label: data.prefix.vs + cmdLine,
 				cmdLine: cmdLine,
 				description: "VS Code Tasks",
 				isVS: true
@@ -97,7 +60,7 @@ function generateItem(cmdLine, type) {
 
 		case "user":
 			return {
-				label: prefix.user + cmdLine,
+				label: data.prefix.user + cmdLine,
 				cmdLine: cmdLine,
 				description: "User defined tasks",
 				isVS: false
@@ -110,11 +73,11 @@ function buildGulpTasks(file) {
 	var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
 	if (typeof file === 'object') {
-		taskList.gulpList = [];
+		data.taskList["gulp"] = [];
 
 		for (let item of file.getText().match(regexpMatcher)) {
 			let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
-			taskList.gulpList.push(generateItem(cmdLine, "gulp"));
+			data.taskList["gulp"].push(generateItem(cmdLine, "gulp"));
 		}
 	}
 }
@@ -124,14 +87,14 @@ function buildNpmTasks(file) {
 		var pattern = JSON.parse(file.getText());
 
 		if (typeof pattern.scripts === 'object') {
-			taskList.npmList = [];
+			data.taskList["npm"] = [];
 
 			for (let item in pattern.scripts) {
 				let cmdLine = 'npm run ' + item;
 				if (config.useYarn === true) {
 					cmdLine = 'yarn run ' + item;
 				}
-				taskList.npmList.push(generateItem(cmdLine, "npm"));
+				data.taskList["npm"].push(generateItem(cmdLine, "npm"));
 			}
 		}
 	}
@@ -140,7 +103,7 @@ function buildNpmTasks(file) {
 function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
 		var cmdLine = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
-		taskList.scriptList.push(generateItem(path.normalize(cmdLine), "script"));
+		data.taskList["script"].push(generateItem(path.normalize(cmdLine), "script"));
 	}
 }
 
@@ -173,7 +136,7 @@ function buildScriptsDispatcher(file) {
 
 function buildVsTasks(file) {
 	if (typeof file === 'object') {
-		taskList.vsList = [];
+		data.taskList["vs"] = [];
 
 		try {
 			let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
@@ -181,11 +144,11 @@ function buildVsTasks(file) {
 			if (Array.isArray(pattern.tasks)) {
 				for (let task of pattern.tasks) {
 					let cmdLine = task.taskName;
-					taskList.vsList.push(generateItem(cmdLine, "vs"));
+					data.taskList.vsList.push(generateItem(cmdLine, "vs"));
 				}
 			}
-			else if(pattern.command != null) {
-				taskList.vsList.push(generateItem(pattern.command, "vs"));
+			else if (pattern.command != null) {
+				data.taskList["vs"].push(generateItem(pattern.command, "vs"));
 			}
 		}
 		catch (e) {
@@ -194,23 +157,19 @@ function buildVsTasks(file) {
 	}
 }
 
-function parseTasksFromFile(fileList, handleFunc, onFinish) {
-	if (!Array.isArray(fileList)) return;
+function checkScanFinished() {
+	let finished = true;
 
-	if (fileList.length == 0) {
-		return onFinish();
+	for (let key of Object.keys(data.flags)) {
+		data.flags[key] |= !data.enable[key];
+		finished &= data.flags[key];
 	}
 
-	async.each(fileList, function (item, callback) {
-		vscode.workspace.openTextDocument(item.fsPath).then(function (file) {
-			handleFunc(file);
-			return callback();
-		});
-	}, onFinish);
+	return finished;
 }
 
-function checkScanFinished() {
-	if (isNpmScaned() && isGulpScaned() && isScriptScaned() && isVsScaned()) {
+function finishScan() {
+	if (checkScanFinished()) {
 		if (getCmds().length >= 1) {
 			statusBarItem.text = '$(list-unordered) Tasks';
 			statusBarItem.tooltip = 'Click to select a Task';
@@ -262,53 +221,57 @@ function addCommand() {
 	});
 }
 
-function loadTasks(enableFlag, findSyntex, handleFunc, flagKey) {
-	if (!enableFlag) {
-		flags[flagKey] = true;
+function parseTasksFromFile(fileList, handleFunc, onFinish) {
+	if (!Array.isArray(fileList)) return;
+
+	if (fileList.length == 0) {
+		return onFinish();
+	}
+
+	async.each(fileList, function (item, callback) {
+		vscode.workspace.openTextDocument(item.fsPath).then(function (file) {
+			handleFunc(file);
+			return callback();
+		});
+	}, onFinish);
+}
+
+function loadTasks(findSyntex, handleFunc, key) {
+	if (data.enable[key] == false) {
+		data.flags[key] = true;
 		return;
 	}
 
-	flags[flagKey] = false;
+	data.flags[key] = false;
+	data.taskList[key] = [];
 
 	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
 		parseTasksFromFile(foundList, handleFunc, function (err) {
 			if (err) {
-				vscode.window.showInformationMessage("Error when scanning tasks.");
-				return;
+				vscode.window.showInformationMessage("Error when scanning tasks of" + key);
+				data.taskList[key] = [];
 			}
 
-			flags[flagKey] = true;
-			checkScanFinished();
+			data.flags[key] = true;
+			finishScan();
 		});
 	});
 }
 
 function loadGulpTasks() {
-	flags.gulpScaned = false;
-	taskList.gulpList = [];
-
-	loadTasks(config.enableGulp, config.gulpGlob, buildGulpTasks, "gulpScaned");
+	loadTasks(config.gulpGlob, buildGulpTasks, "gulp");
 }
 
 function loadNpmTasks() {
-	flags.npmScaned = false;
-	taskList.npmList = [];
-
-	loadTasks(config.enableNpm, config.npmGlob, buildNpmTasks, "npmScaned");
+	loadTasks(config.npmGlob, buildNpmTasks, "npm");
 }
 
 function loadScripts() {
-	flags.scriptScaned = false;
-	taskList.scriptList = [];
-
-	loadTasks(1, glob, buildScriptsDispatcher, "scriptScaned");
+	loadTasks(glob, buildScriptsDispatcher, "script");
 }
 
 function loadVsTasks() {
-	flags.vsScaned = false;
-	taskList.vsList = [];
-
-	loadTasks(config.enableVsTasks, '.vscode/tasks.json', buildVsTasks, "vsScaned");
+	loadTasks('.vscode/tasks.json', buildVsTasks, "vs");
 }
 
 function activate(context) {
@@ -331,6 +294,11 @@ function activate(context) {
 
 		return watcher;
 	}
+
+	data.enable["gulp"] = config.enableGulp;
+	data.enable["npm"] = config.enableNpm;
+	data.enable["vs"] = config.enableVsTasks;
+	data.enable["script"] = 1;
 
 	createWatcher("**/gulpfile.js", loadGulpTasks, false);
 	createWatcher("**/package.json", loadNpmTasks, false);
