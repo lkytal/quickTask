@@ -1,32 +1,25 @@
 'use strict';
 
-var path = require("path");
-var vscode = require('vscode');
-var async = require('async');
+const path = require("path");
+const vscode = require('vscode');
+const async = require('async');
 
 var config;
 var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 var statusBarItem;
 
-var taskList = {
+const taskList = {
 	scriptList: [],
 	gulpList: [],
 	npmList: [],
 	vsList: []
 }
 
-var flags = {
+const flags = {
 	npmScaned: false,
 	gulpScaned: false,
 	scriptScaned: false,
 	vsScaned: false
-};
-
-var taskWatcher = {
-	gulpWatcher: null,
-	npmWatcher: null,
-	scriptWatcher: null,
-	vsWatcher: null
 }
 
 function isNpmScaned() {
@@ -339,10 +332,10 @@ function activate(context) {
 		return watcher;
 	}
 
-	taskWatcher.gulpWatcher = createWatcher("**/gulpfile.js", loadGulpTasks, false);
-	taskWatcher.npmWatcher = createWatcher("**/package.json", loadNpmTasks, false);
-	taskWatcher.scriptWatcher = createWatcher(glob, loadScripts, true);
-	taskWatcher.vsWatcher = createWatcher("**/.vscode/tasks.json", loadVsTasks, false);
+	createWatcher("**/gulpfile.js", loadGulpTasks, false);
+	createWatcher("**/package.json", loadNpmTasks, false);
+	createWatcher(glob, loadScripts, true);
+	createWatcher("**/.vscode/tasks.json", loadVsTasks, false);
 
 	loadGulpTasks();
 	loadNpmTasks();
