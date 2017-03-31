@@ -7,7 +7,8 @@ and allow you to execute each task with the click of a mouse!
 As shown bellow, all tasks will showup after click the task button on statusbar and you can
 execute any item simply by clicking it.
 
-## Highlights:
+## Highlights
+
 - Auto rescan after task files changed / added / deleted.
 - Allow you to close terminal window automatically after execution.
 - Support VS Code task.
@@ -39,10 +40,6 @@ Hint: Task button is usually here:
 - ### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
 - ### [Coffee Lint](https://marketplace.visualstudio.com/items?itemName=lkytal.coffeelinter)
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
-
-## Acknowlegment
-
-> Based on [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
 
 ## Release Notes
 
@@ -124,5 +121,9 @@ Hint: Task button is usually here:
 
 ### [1.0.0] - 2017-02-16
 - First release.
+
+## Acknowlegment
+
+> Based on [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
 
 > <div>Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

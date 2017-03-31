@@ -3,27 +3,10 @@ const vscode = require("vscode");
 const async = require('async');
 
 class taskLoader {
-	constructor(name, data, config, findSyntex) {
-		this.name = name;
+	constructor(data, config, onFinish) {
 		this.data = data;
 		this.config = config;
-		this.findSyntex = findSyntex;
-
-		this.finished = false;
-	}
-
-	get finished() {
-		return this.data.flag[this.name];
-	}
-	set finished(value) {
-		this.data.flag[this.name] = value;
-	}
-
-	get taskList() {
-		return this.data.task[this.name];
-	}
-	set taskList(value) {
-		this.data.task[this.name] = value;
+		this.onFinish = onFinish;
 	}
 
 	parseTasksFromFile(fileList, handleFunc, onFinish) {
@@ -35,32 +18,36 @@ class taskLoader {
 
 		async.each(fileList, function (item, callback) {
 			vscode.workspace.openTextDocument(item.fsPath).then(function (file) {
-				handleFunc(file, this.taskList);
+				handleFunc(file);
 				return callback();
 			});
 		}, onFinish);
 	}
 
-	loadTasks(enableFlag, handleFunc, onFinish) {
-		if (!enableFlag) {
-			this.finished = true
+	loadTasks(findSyntex, handleFunc, key) {
+		if (this.data.enable[key] == false) {
+			this.data.flags[key] = true;
 			return;
 		}
 
-		this.finished = false;
+		this.data.flags[key] = false;
+		this.data.taskList[key] = [];
 
-		vscode.workspace.findFiles(this.findSyntex, this.config.excludesGlob).then(function (foundList) {
+		vscode.workspace.findFiles(findSyntex, this.config.excludesGlob).then(function (foundList) {
 			this.parseTasksFromFile(foundList, handleFunc, function (err) {
 				if (err) {
-					vscode.window.showInformationMessage("Error when scanning tasks.");
-					return;
+					vscode.window.showInformationMessage("Error when scanning tasks of" + key);
+					this.data.taskList[key] = [];
 				}
 
-				this.finished = true;
-
-				onFinish();
+				this.data.flags[key] = true;
+				this.finishScan();
 			});
 		});
+	}
+
+	loadTask(key) {
+		this.loadTasks(this.data.glob[key], this.data.handler[key], key);
 	}
 }
 

@@ -5,13 +5,14 @@ const vscode = require('vscode');
 const async = require('async');
 
 var config;
-var glob = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
-var statusBarItem;
 
 const data = {
+	statusBarItem: null,
 	flags: {},
 	taskList: {},
 	enable: {},
+	glob: {},
+	handler: {},
 	prefix : {
 		vs: "$(code)  ",
 		gulp: "$(browser)  ",
@@ -68,7 +69,7 @@ function generateItem(cmdLine, type) {
 	}
 }
 
-function buildGulpTasks(file) {
+data.handler["gulp"] = function buildGulpTasks(file) {
 	var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 	var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
@@ -82,7 +83,7 @@ function buildGulpTasks(file) {
 	}
 }
 
-function buildNpmTasks(file) {
+data.handler["npm"] = function buildNpmTasks(file) {
 	if (typeof file === 'object') {
 		var pattern = JSON.parse(file.getText());
 
@@ -107,7 +108,7 @@ function generateTaskFromScript(file, exec) {
 	}
 }
 
-function buildScriptsDispatcher(file) {
+data.handler["script"] = function buildScriptsDispatcher(file) {
 	if (file.languageId === 'shellscript' && config.enableShell) {
 		generateTaskFromScript(file, '');
 	}
@@ -134,7 +135,7 @@ function buildScriptsDispatcher(file) {
 	}
 }
 
-function buildVsTasks(file) {
+data.handler["vs"] = function buildVsTasks(file) {
 	if (typeof file === 'object') {
 		data.taskList["vs"] = [];
 
@@ -171,14 +172,14 @@ function checkScanFinished() {
 function finishScan() {
 	if (checkScanFinished()) {
 		if (getCmds().length >= 1) {
-			statusBarItem.text = '$(list-unordered) Tasks';
-			statusBarItem.tooltip = 'Click to select a Task';
-			statusBarItem.command = 'quicktask.showTasks';
+			data.statusBarItem.text = '$(list-unordered) Tasks';
+			data.statusBarItem.tooltip = 'Click to select a Task';
+			data.statusBarItem.command = 'quicktask.showTasks';
 		}
 		else {
-			statusBarItem.text = '$(x) No Task Found';
-			statusBarItem.tooltip = 'No Task Found Yet.';
-			statusBarItem.command = 'quicktask.showTasks';
+			data.statusBarItem.text = '$(x) No Task Found';
+			data.statusBarItem.tooltip = 'No Task Found Yet.';
+			data.statusBarItem.command = 'quicktask.showTasks';
 		}
 	}
 }
@@ -209,7 +210,8 @@ function addCommand() {
 				}
 
 				if (config.closeTerminalafterExecution) {
-					terminal.sendText(result.cmdLine + "\nexit");
+					terminal.sendText(result.cmdLine);
+					terminal.sendText("exit");
 				}
 				else {
 					terminal.sendText(result.cmdLine);
@@ -258,60 +260,52 @@ function loadTasks(findSyntex, handleFunc, key) {
 	});
 }
 
-function loadGulpTasks() {
-	loadTasks(config.gulpGlob, buildGulpTasks, "gulp");
+function loadTaskFrom(key) {
+	loadTasks(data.glob[key], data.handler[key], key);
 }
 
-function loadNpmTasks() {
-	loadTasks(config.npmGlob, buildNpmTasks, "npm");
-}
+function loadAndWatch(context, key, ignoreChange) {
+	let watcher = vscode.workspace.createFileSystemWatcher(data.glob[key], false, ignoreChange, false);
+	let handler = function () {
+		loadTaskFrom(key);
+	}
 
-function loadScripts() {
-	loadTasks(glob, buildScriptsDispatcher, "script");
-}
+	watcher.onDidCreate(handler);
+	watcher.onDidChange(handler);
+	watcher.onDidDelete(handler);
 
-function loadVsTasks() {
-	loadTasks('.vscode/tasks.json', buildVsTasks, "vs");
+	context.subscriptions.push(watcher);
+
+	loadTaskFrom(key);
+
+	return watcher;
 }
 
 function activate(context) {
 	config = vscode.workspace.getConfiguration('quicktask');
-
-	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-	statusBarItem.text = statusBarItem.tooltip = '$(search) Scanning Tasks...';
-	statusBarItem.show();
-
-	let showTaskCommand = addCommand();
-
-	let createWatcher = function (files, handler, ignoreChange) {
-		let watcher = vscode.workspace.createFileSystemWatcher(files, false, ignoreChange, false);
-
-		watcher.onDidCreate(handler);
-		watcher.onDidChange(handler);
-		watcher.onDidDelete(handler);
-
-		context.subscriptions.push(watcher);
-
-		return watcher;
-	}
 
 	data.enable["gulp"] = config.enableGulp;
 	data.enable["npm"] = config.enableNpm;
 	data.enable["vs"] = config.enableVsTasks;
 	data.enable["script"] = 1;
 
-	createWatcher("**/gulpfile.js", loadGulpTasks, false);
-	createWatcher("**/package.json", loadNpmTasks, false);
-	createWatcher(glob, loadScripts, true);
-	createWatcher("**/.vscode/tasks.json", loadVsTasks, false);
+	data.glob["gulp"] = config.gulpGlob;
+	data.glob["npm"] = config.npmGlob;
+	data.glob["vs"] = '.vscode/tasks.json';
+	data.glob["script"] = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
 
-	loadGulpTasks();
-	loadNpmTasks();
-	loadScripts();
-	loadVsTasks();
+	for (let item of Object.keys(data.glob)) {
+		loadAndWatch(context, item, false);
+	}
 
+	data.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	data.statusBarItem.text = '$(search) Scanning Tasks...';
+	data.statusBarItem.tooltip = 'Scanning Tasks...';
+	data.statusBarItem.show();
+	context.subscriptions.push(data.statusBarItem);
+
+	let showTaskCommand = addCommand();
 	context.subscriptions.push(showTaskCommand);
-	context.subscriptions.push(statusBarItem);
 }
 
 function deactivate() {
