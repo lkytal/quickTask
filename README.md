@@ -1,17 +1,14 @@
 # Quick Task for VS Code
 
-Quick Task will automatically trawl your project directory for task scripts,
-e.g. npm, gulp, shell, bat, python, ruby, powershell, perl scripts etc...
-and allow you to execute each task with the click of a mouse!
+Quick Task will automatically trawl your project directory for task files like npm, gulp, scripts files and VS Code tasks, and allow you to execute each task with the click of a mouse!
 
-As shown bellow, all tasks will showup after click the task button on statusbar and you can
-execute any item simply by clicking it.
+As shown bellow, all tasks will show up after click the task button on statusbar and you can execute any item simply by clicking it.
 
 ## Highlights
 
 - Auto rescan after task files changed / added / deleted.
-- Allow you to close terminal window automatically after execution.
 - Support VS Code task.
+- Allow you to close terminal window automatically after execution. (experimental)
 
 ![Preview](screenshot.png)
 
@@ -19,7 +16,7 @@ Hint: Task button is usually here:
 
 ![Preview](button.png)
 
-## Support Tasks:
+## Support Tasks
 
 - NPM Tasks.
 - Gulp Tasks.
@@ -34,7 +31,7 @@ Hint: Task button is usually here:
 
 > Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
 
-## My Other extensions:
+## My Other extensions
 
 - ### [FlatUI](https://marketplace.visualstudio.com/items?itemName=lkytal.FlatUI)
 - ### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
@@ -42,6 +39,10 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [2.5.0] - 2017-04-04
+#### Fixed
+- Close terminal window automatically after execution correctly.
 
 ### [2.4.2] - 2017-03-26
 #### Added
@@ -125,5 +126,4 @@ Hint: Task button is usually here:
 ## Acknowlegment
 
 > Based on [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
-
 > <div>Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
