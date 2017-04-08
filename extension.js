@@ -26,7 +26,7 @@ function unique(arr) {
 	return Array.from(new Set(arr));
 }
 
-function getCmds() {
+function getCmd() {
 	var list = [];
 
 	for (let item of config.defaultTasks) {
@@ -37,7 +37,9 @@ function getCmds() {
 		list = list.concat(data.taskList[item]);
 	}
 
-	return unique(list).sort();
+	return unique(list).sort(function (a, b) {
+		return a.label.localeCompare(b.label);
+	});
 }
 
 function generateItem(cmdLine, type) {
@@ -55,7 +57,7 @@ function generateItem(cmdLine, type) {
 			return {
 				label: data.prefix.vs + cmdLine,
 				cmdLine: cmdLine,
-				description: "VS Code Tasks",
+				description: "VS Code tasks",
 				isVS: true
 			};
 
@@ -145,7 +147,7 @@ data.handler["vs"] = function buildVsTasks(file) {
 			if (Array.isArray(pattern.tasks)) {
 				for (let task of pattern.tasks) {
 					let cmdLine = task.taskName;
-					data.taskList.vsList.push(generateItem(cmdLine, "vs"));
+					data.taskList["vs"].push(generateItem(cmdLine, "vs"));
 				}
 			}
 			else if (pattern.command != null) {
@@ -153,7 +155,7 @@ data.handler["vs"] = function buildVsTasks(file) {
 			}
 		}
 		catch (e) {
-			console.log("Invaild tasks.json");
+			console.log("Invalid tasks.json");
 		}
 	}
 }
@@ -171,7 +173,7 @@ function checkScanFinished() {
 
 function finishScan() {
 	if (checkScanFinished()) {
-		if (getCmds().length >= 1) {
+		if (getCmd().length >= 1) {
 			data.statusBarItem.text = '$(list-unordered) Tasks';
 			data.statusBarItem.tooltip = 'Click to select a Task';
 			data.statusBarItem.command = 'quicktask.showTasks';
@@ -185,7 +187,7 @@ function finishScan() {
 }
 
 function showCommand() {
-	let taskArray = getCmds();
+	let taskArray = getCmd();
 
 	if (taskArray.length < 1) {
 		vscode.window.showInformationMessage("No task found.");
@@ -238,7 +240,7 @@ function parseTasksFromFile(fileList, handleFunc, onFinish) {
 	}, onFinish);
 }
 
-function loadTasks(findSyntex, handleFunc, key) {
+function loadTasks(findSyntax, handleFunc, key) {
 	if (data.enable[key] == false) {
 		data.flags[key] = true;
 		return;
@@ -247,7 +249,7 @@ function loadTasks(findSyntex, handleFunc, key) {
 	data.flags[key] = false;
 	data.taskList[key] = [];
 
-	vscode.workspace.findFiles(findSyntex, config.excludesGlob).then(function (foundList) {
+	vscode.workspace.findFiles(findSyntax, config.excludesGlob).then(function (foundList) {
 		parseTasksFromFile(foundList, handleFunc, function (err) {
 			if (err) {
 				vscode.window.showInformationMessage("Error when scanning tasks of" + key);
@@ -265,7 +267,12 @@ function loadTaskFrom(key) {
 }
 
 function loadAndWatch(context, key, ignoreChange) {
-	let watcher = vscode.workspace.createFileSystemWatcher(data.glob[key], false, ignoreChange, false);
+	loadTaskFrom(key);
+
+	let watchPath = data.glob[key];
+	if(watchPath.indexOf("**/")!= 0) watchPath = "**/" + watchPath;
+
+	let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
 	let handler = function () {
 		loadTaskFrom(key);
 	}
@@ -275,8 +282,6 @@ function loadAndWatch(context, key, ignoreChange) {
 	watcher.onDidDelete(handler);
 
 	context.subscriptions.push(watcher);
-
-	loadTaskFrom(key);
 
 	return watcher;
 }

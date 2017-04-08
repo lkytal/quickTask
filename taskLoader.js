@@ -24,7 +24,7 @@ class taskLoader {
 		}, onFinish);
 	}
 
-	loadTasks(findSyntex, handleFunc, key) {
+	loadTasks(findSyntax, handleFunc, key) {
 		if (this.data.enable[key] == false) {
 			this.data.flags[key] = true;
 			return;
@@ -33,7 +33,7 @@ class taskLoader {
 		this.data.flags[key] = false;
 		this.data.taskList[key] = [];
 
-		vscode.workspace.findFiles(findSyntex, this.config.excludesGlob).then(function (foundList) {
+		vscode.workspace.findFiles(findSyntax, this.config.excludesGlob).then(function (foundList) {
 			this.parseTasksFromFile(foundList, handleFunc, function (err) {
 				if (err) {
 					vscode.window.showInformationMessage("Error when scanning tasks of" + key);
