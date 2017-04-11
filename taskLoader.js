@@ -12,10 +12,12 @@ class taskLoader {
 
 		this.finished = false;
 		this.taskList = [];
+
+		this.ignoreChange = false; //temp
 	}
 
 	isFinished() {
-		if(!this.enable) {
+		if (!this.enable) {
 			this.finished = true;
 		}
 
@@ -23,32 +25,24 @@ class taskLoader {
 	}
 
 	loadTask() {
-		if (this.enable == false) {
-			this.finished = true;
-			return;
-		}
-
 		this.finished = false;
 		this.taskList = [];
 
-		vscode.workspace.findFiles(this.glob, this.excludesGlob).then((foundList) => {
-			this.parseTasksFromFile(foundList, (err) => {
-				if (err) {
-					vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
-					this.taskList = [];
-				}
+		if (this.enable == false) {
+			this.finished = true;
+			return this.onFinish();
+		}
 
-				this.finished = true;
-				this.onFinish();
-			});
+		vscode.workspace.findFiles(this.glob, this.excludesGlob).then((foundList) => {
+			this.parseTasksFromFile(foundList);
 		});
 	}
 
-	parseTasksFromFile(fileList, finishCallback) {
+	parseTasksFromFile(fileList) {
 		if (!Array.isArray(fileList)) return;
 
 		if (fileList.length == 0) {
-			return finishCallback();
+			return this.onFinish();
 		}
 
 		async.each(fileList, (item, callback) => {
@@ -56,15 +50,16 @@ class taskLoader {
 				this.handleFunc(file);
 				return callback();
 			});
-		}, finishCallback);
+		}, (err) => this.onFinish(err));
 	}
 
-	handleFunc(file) {
-		return;
-	}
+	onFinish(err) {
+		if (err) {
+			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
+			this.taskList = [];
+		}
 
-	onFinish() {
-		return;
+		this.finished = true;
 	}
 
 	setupWatcher() {

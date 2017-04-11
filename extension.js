@@ -19,26 +19,6 @@ const data = {
 	}
 }
 
-function unique(arr) {
-	return Array.from(new Set(arr));
-}
-
-function getCmd() {
-	var list = [];
-
-	for (let item of globalConfig.defaultTasks) {
-		list.push(generateItem(item, "user"));
-	}
-
-	for (let loader of data.loaderList) {
-		list = list.concat(loader.taskList);
-	}
-
-	return unique(list).sort(function (a, b) {
-		return a.label.localeCompare(b.label);
-	});
-}
-
 function generateItem(cmdLine, type) {
 	switch (type) {
 		case "npm":
@@ -95,6 +75,7 @@ class vsLoader extends taskLoader {
 	}
 
 	onFinish() {
+		super.onFinish();
 		finishScan();
 	}
 }
@@ -116,7 +97,8 @@ class gulpLoader extends taskLoader {
 		}
 	}
 
-	onFinish() {
+	onFinish(err) {
+		super.onFinish(err);
 		finishScan();
 	}
 }
@@ -142,7 +124,8 @@ class npmLoader extends taskLoader {
 		}
 	}
 
-	onFinish() {
+	onFinish(err) {
+		super.onFinish(err);
 		finishScan();
 	}
 }
@@ -186,9 +169,30 @@ class scriptLoader extends taskLoader {
 		}
 	}
 
-	onFinish() {
+	onFinish(err) {
+		super.onFinish(err);
 		finishScan();
 	}
+}
+
+function getCmd() {
+	var list = [];
+
+	for (let item of globalConfig.defaultTasks) {
+		list.push(generateItem(item, "user"));
+	}
+
+	for (let loader of data.loaderList) {
+		list = list.concat(loader.taskList);
+	}
+
+	function unique(arr) {
+		return Array.from(new Set(arr));
+	}
+
+	return unique(list).sort(function (a, b) {
+		return a.label.localeCompare(b.label);
+	});
 }
 
 function checkScanFinished() {
