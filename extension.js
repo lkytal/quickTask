@@ -2,17 +2,14 @@
 
 const path = require("path");
 const vscode = require('vscode');
-const async = require('async');
 
-var config;
+const taskLoader = require('./taskLoader.js');
+
+var globalConfig;
 
 const data = {
 	statusBarItem: null,
-	flags: {},
-	taskList: {},
-	enable: {},
-	glob: {},
-	handler: {},
+	loaderList: [],
 	prefix: {
 		vs: "$(code)  ",
 		gulp: "$(browser)  ",
@@ -29,12 +26,12 @@ function unique(arr) {
 function getCmd() {
 	var list = [];
 
-	for (let item of config.defaultTasks) {
+	for (let item of globalConfig.defaultTasks) {
 		list.push(generateItem(item, "user"));
 	}
 
-	for (let item of Object.keys(data.taskList)) {
-		list = list.concat(data.taskList[item]);
+	for (let loader of data.loaderList) {
+		list = list.concat(loader.taskList);
 	}
 
 	return unique(list).sort(function (a, b) {
@@ -71,98 +68,132 @@ function generateItem(cmdLine, type) {
 	}
 }
 
-data.handler["gulp"] = function buildGulpTasks(file) {
-	var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
-	var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
-
-	if (typeof file === 'object') {
-		data.taskList["gulp"] = [];
-
-		for (let item of file.getText().match(regexpMatcher)) {
-			let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
-			data.taskList["gulp"].push(generateItem(cmdLine, "gulp"));
-		}
+class vsLoader extends taskLoader {
+	constructor(config) {
+		super("vs", config, globalConfig.excludesGlob);
 	}
-}
 
-data.handler["npm"] = function buildNpmTasks(file) {
-	if (typeof file === 'object') {
-		var pattern = JSON.parse(file.getText());
+	handleFunc(file) {
+		if (typeof file === 'object') {
+			try {
+				let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
 
-		if (typeof pattern.scripts === 'object') {
-			data.taskList["npm"] = [];
-
-			for (let item in pattern.scripts) {
-				let cmdLine = 'npm run ' + item;
-				if (config.useYarn === true) {
-					cmdLine = 'yarn run ' + item;
+				if (Array.isArray(pattern.tasks)) {
+					for (let task of pattern.tasks) {
+						let cmdLine = task.taskName;
+						this.taskList.push(generateItem(cmdLine, "vs"));
+					}
 				}
-				data.taskList["npm"].push(generateItem(cmdLine, "npm"));
-			}
-		}
-	}
-}
-
-function generateTaskFromScript(file, exec) {
-	if (typeof file === 'object') {
-		var cmdLine = exec + file.uri._fsPath;
-		data.taskList["script"].push(generateItem(path.normalize(cmdLine), "script"));
-	}
-}
-
-data.handler["script"] = function buildScriptsDispatcher(file) {
-	if (file.languageId === 'shellscript' && config.enableShell) {
-		generateTaskFromScript(file, '');
-	}
-	else if (file.languageId === 'python' && config.enablePython) {
-		generateTaskFromScript(file, 'python ');
-	}
-	else if (file.languageId === 'ruby' && config.enableRuby) {
-		generateTaskFromScript(file, 'ruby ');
-	}
-	else if (file.languageId === 'powershell' && config.enablePowershell) {
-		generateTaskFromScript(file, 'powershell ');
-	}
-	else if (file.languageId === 'perl' && config.enablePerl) {
-		generateTaskFromScript(file, 'perl ');
-	}
-	else if (file.languageId === 'bat' && config.enableBatchFile) {
-		generateTaskFromScript(file, '');
-	}
-	else if (/.*\.ahk$/.test(file.fileName) === true) {
-		generateTaskFromScript(file, '');
-	}
-	else if (/.*\.vbs$/.test(file.fileName) === true) {
-		generateTaskFromScript(file, 'cscript ');
-	}
-}
-
-data.handler["vs"] = function buildVsTasks(file) {
-	if (typeof file === 'object') {
-		data.taskList["vs"] = [];
-
-		try {
-			let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
-
-			if (Array.isArray(pattern.tasks)) {
-				for (let task of pattern.tasks) {
-					let cmdLine = task.taskName;
-					data.taskList["vs"].push(generateItem(cmdLine, "vs"));
+				else if (pattern.command != null) {
+					this.taskList.push(generateItem(pattern.command, "vs"));
 				}
 			}
-			else if (pattern.command != null) {
-				data.taskList["vs"].push(generateItem(pattern.command, "vs"));
+			catch (e) {
+				console.log("Invalid tasks.json");
 			}
 		}
-		catch (e) {
-			console.log("Invalid tasks.json");
+	}
+
+	onFinish() {
+		finishScan();
+	}
+}
+
+class gulpLoader extends taskLoader {
+	constructor(config) {
+		super("gulp", config, globalConfig.excludesGlob);
+	}
+
+	handleFunc(file) {
+		var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
+		var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
+
+		if (typeof file === 'object') {
+			for (let item of file.getText().match(regexpMatcher)) {
+				let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
+				this.taskList.push(generateItem(cmdLine, "gulp"));
+			}
 		}
+	}
+
+	onFinish() {
+		finishScan();
+	}
+}
+
+class npmLoader extends taskLoader {
+	constructor(config) {
+		super("npm", config, globalConfig.excludesGlob);
+	}
+
+	handleFunc(file) {
+		if (typeof file === 'object') {
+			var pattern = JSON.parse(file.getText());
+
+			if (typeof pattern.scripts === 'object') {
+				for (let item in pattern.scripts) {
+					let cmdLine = 'npm run ' + item;
+					if (globalConfig.useYarn === true) {
+						cmdLine = 'yarn run ' + item;
+					}
+					this.taskList.push(generateItem(cmdLine, "npm"));
+				}
+			}
+		}
+	}
+
+	onFinish() {
+		finishScan();
+	}
+}
+
+class scriptLoader extends taskLoader {
+	constructor(config) {
+		super("script", config, globalConfig.excludesGlob);
+	}
+
+	generateTaskFromScript(file, exec) {
+		if (typeof file === 'object') {
+			var cmdLine = exec + file.uri._fsPath;
+			this.taskList.push(generateItem(path.normalize(cmdLine), "script"));
+		}
+	}
+
+	handleFunc(file) {
+		if (file.languageId === 'shellscript' && globalConfig.enableShell) {
+			this.generateTaskFromScript(file, '');
+		}
+		else if (file.languageId === 'python' && globalConfig.enablePython) {
+			this.generateTaskFromScript(file, 'python ');
+		}
+		else if (file.languageId === 'ruby' && globalConfig.enableRuby) {
+			this.generateTaskFromScript(file, 'ruby ');
+		}
+		else if (file.languageId === 'powershell' && globalConfig.enablePowershell) {
+			this.generateTaskFromScript(file, 'powershell ');
+		}
+		else if (file.languageId === 'perl' && globalConfig.enablePerl) {
+			this.generateTaskFromScript(file, 'perl ');
+		}
+		else if (file.languageId === 'bat' && globalConfig.enableBatchFile) {
+			this.generateTaskFromScript(file, '');
+		}
+		else if (/.*\.ahk$/.test(file.fileName) === true) {
+			this.generateTaskFromScript(file, '');
+		}
+		else if (/.*\.vbs$/.test(file.fileName) === true) {
+			this.generateTaskFromScript(file, 'cscript ');
+		}
+	}
+
+	onFinish() {
+		finishScan();
 	}
 }
 
 function checkScanFinished() {
-	for (let key of Object.keys(data.flags)) {
-		if (!data.flags[key] && data.enable[key]) {
+	for (let loader of data.loaderList) {
+		if (!loader.finished) {
 			return false;
 		}
 	}
@@ -207,11 +238,11 @@ function showCommand() {
 		}
 		else {
 			var terminal = vscode.window.createTerminal();
-			if (config.showTerminal) {
+			if (globalConfig.showTerminal) {
 				terminal.show();
 			}
 
-			if (config.closeTerminalafterExecution) {
+			if (globalConfig.closeTerminalafterExecution) {
 				terminal.sendText(result.cmdLine);
 				terminal.sendText("exit");
 			}
@@ -224,80 +255,29 @@ function showCommand() {
 	});
 }
 
-function parseTasksFromFile(fileList, handleFunc, onFinish) {
-	if (!Array.isArray(fileList)) return;
+function setupLoader() {
+	data.loaderList.push(new gulpLoader({
+		glob: globalConfig.gulpGlob,
+		enable: globalConfig.enableGulp
+	}));
 
-	if (fileList.length == 0) {
-		return onFinish();
-	}
+	data.loaderList.push(new npmLoader({
+		glob: globalConfig.npmGlob,
+		enable: globalConfig.enableNpm
+	}));
 
-	async.each(fileList, function (item, callback) {
-		vscode.workspace.openTextDocument(item.fsPath).then(function (file) {
-			handleFunc(file);
-			return callback();
-		});
-	}, onFinish);
-}
+	data.loaderList.push(new vsLoader({
+		glob: '.vscode/tasks.json',
+		enable: globalConfig.enableVsTasks
+	}));
 
-function loadTasks(findSyntax, handleFunc, key) {
-	if (data.enable[key] == false) {
-		data.flags[key] = true;
-		return;
-	}
-
-	data.flags[key] = false;
-	data.taskList[key] = [];
-
-	vscode.workspace.findFiles(findSyntax, config.excludesGlob).then(function (foundList) {
-		parseTasksFromFile(foundList, handleFunc, function (err) {
-			if (err) {
-				vscode.window.showInformationMessage("Error when scanning tasks of" + key);
-				data.taskList[key] = [];
-			}
-
-			data.flags[key] = true;
-			finishScan();
-		});
-	});
-}
-
-function loadTaskFromKey(key) {
-	loadTasks(data.glob[key], data.handler[key], key);
-}
-
-function setupWatcher(key, ignoreChange) {
-	let watchPath = data.glob[key];
-	if (watchPath.indexOf("**/") != 0) watchPath = "**/" + watchPath;
-
-	let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
-	let handler = function () {
-		loadTaskFromKey(key);
-	}
-
-	watcher.onDidCreate(handler);
-	watcher.onDidChange(handler);
-	watcher.onDidDelete(handler);
-
-	return watcher;
-}
-
-function loadConfig() {
-	config = vscode.workspace.getConfiguration('quicktask');
-
-	data.enable["gulp"] = config.enableGulp;
-	data.enable["npm"] = config.enableNpm;
-	data.enable["vs"] = config.enableVsTasks;
-	data.enable["script"] = 1;
-
-	data.glob["gulp"] = config.gulpGlob;
-	data.glob["npm"] = config.npmGlob;
-	data.glob["vs"] = '.vscode/tasks.json';
-	data.glob["script"] = '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}';
+	data.loaderList.push(new scriptLoader({
+		glob: '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
+		enable: 1
+	}));
 }
 
 function activate(context) {
-	loadConfig();
-
 	data.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 	data.statusBarItem.text = '$(search) Scanning Tasks...';
 	data.statusBarItem.tooltip = 'Scanning Tasks...';
@@ -307,9 +287,13 @@ function activate(context) {
 	let showTaskCommand = vscode.commands.registerCommand('quicktask.showTasks', showCommand);
 	context.subscriptions.push(showTaskCommand);
 
-	for (let item of Object.keys(data.glob)) {
-		loadTaskFromKey(item);
-		context.subscriptions.push(setupWatcher(item, false));
+	globalConfig = vscode.workspace.getConfiguration('quicktask');
+
+	setupLoader();
+
+	for (let loader of data.loaderList) {
+		loader.loadTask();
+		context.subscriptions.push(loader.setupWatcher());
 	}
 }
 
