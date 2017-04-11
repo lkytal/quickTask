@@ -105,7 +105,7 @@ data.handler["npm"] = function buildNpmTasks(file) {
 
 function generateTaskFromScript(file, exec) {
 	if (typeof file === 'object') {
-		var cmdLine = exec + file.uri._fsPath; //.replace(vscode.workspace.rootPath, '.');
+		var cmdLine = exec + file.uri._fsPath;
 		data.taskList["script"].push(generateItem(path.normalize(cmdLine), "script"));
 	}
 }
@@ -161,14 +161,13 @@ data.handler["vs"] = function buildVsTasks(file) {
 }
 
 function checkScanFinished() {
-	let finished = true;
-
 	for (let key of Object.keys(data.flags)) {
-		data.flags[key] |= !data.enable[key];
-		finished &= data.flags[key];
+		if (!data.flags[key] && data.enable[key]) {
+			return false;
+		}
 	}
 
-	return finished;
+	return true;
 }
 
 function finishScan() {
@@ -262,26 +261,22 @@ function loadTasks(findSyntax, handleFunc, key) {
 	});
 }
 
-function loadTaskFrom(key) {
+function loadTaskFromKey(key) {
 	loadTasks(data.glob[key], data.handler[key], key);
 }
 
-function loadAndWatch(context, key, ignoreChange) {
-	loadTaskFrom(key);
-
+function setupWatcher(key, ignoreChange) {
 	let watchPath = data.glob[key];
-	if(watchPath.indexOf("**/")!= 0) watchPath = "**/" + watchPath;
+	if (watchPath.indexOf("**/") != 0) watchPath = "**/" + watchPath;
 
 	let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
 	let handler = function () {
-		loadTaskFrom(key);
+		loadTaskFromKey(key);
 	}
 
 	watcher.onDidCreate(handler);
 	watcher.onDidChange(handler);
 	watcher.onDidDelete(handler);
-
-	context.subscriptions.push(watcher);
 
 	return watcher;
 }
@@ -313,7 +308,8 @@ function activate(context) {
 	context.subscriptions.push(showTaskCommand);
 
 	for (let item of Object.keys(data.glob)) {
-		loadAndWatch(context, item, false);
+		loadTaskFromKey(item);
+		context.subscriptions.push(setupWatcher(item, false));
 	}
 }
 

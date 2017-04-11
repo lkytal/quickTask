@@ -40,6 +40,11 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [2.5.1] - 2017-04-08
+#### Fixed
+- Read vscode task list.
+- Watch Task file change.
+
 ### [2.5.0] - 2017-04-04
 #### Fixed
 - Close terminal window automatically after execution correctly.

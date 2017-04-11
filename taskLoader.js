@@ -49,6 +49,22 @@ class taskLoader {
 	loadTask(key) {
 		this.loadTasks(this.data.glob[key], this.data.handler[key], key);
 	}
+
+	setupWatcher() {
+		let watchPath = this.glob;
+		if (watchPath.indexOf("**/") != 0) watchPath = "**/" + watchPath;
+
+		let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, this.ignoreChange, false);
+		let handler = function () {
+			this.loadTask(this.key);
+		}
+
+		watcher.onDidCreate(handler);
+		watcher.onDidChange(handler);
+		watcher.onDidDelete(handler);
+
+		return watcher;
+	}
 }
 
 module.exports = taskLoader;
