@@ -1,13 +1,12 @@
 'use strict';
 
-const path = require("path");
 const vscode = require('vscode');
 
-const taskLoader = require('./taskLoader.js');
+const loaders = require('./loaders.js');
 
-var globalConfig;
+let globalConfig;
 
-const data = {
+let data = {
 	statusBarItem: null,
 	loaderList: [],
 	prefix: {
@@ -19,167 +18,11 @@ const data = {
 	}
 }
 
-function generateItem(cmdLine, type) {
-	switch (type) {
-		case "npm":
-		case "gulp":
-		case "script":
-			return {
-				label: data.prefix[type] + cmdLine,
-				cmdLine: cmdLine,
-				isVS: false
-			};
-
-		case "vs":
-			return {
-				label: data.prefix.vs + cmdLine,
-				cmdLine: cmdLine,
-				description: "VS Code tasks",
-				isVS: true
-			};
-
-		case "user":
-			return {
-				label: data.prefix.user + cmdLine,
-				cmdLine: cmdLine,
-				description: "User defined tasks",
-				isVS: false
-			};
-	}
-}
-
-class vsLoader extends taskLoader {
-	constructor(config) {
-		super("vs", config, globalConfig.excludesGlob);
-	}
-
-	handleFunc(file) {
-		if (typeof file === 'object') {
-			try {
-				let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
-
-				if (Array.isArray(pattern.tasks)) {
-					for (let task of pattern.tasks) {
-						let cmdLine = task.taskName;
-						this.taskList.push(generateItem(cmdLine, "vs"));
-					}
-				}
-				else if (pattern.command != null) {
-					this.taskList.push(generateItem(pattern.command, "vs"));
-				}
-			}
-			catch (e) {
-				console.log("Invalid tasks.json");
-			}
-		}
-	}
-
-	onFinish() {
-		super.onFinish();
-		finishScan();
-	}
-}
-
-class gulpLoader extends taskLoader {
-	constructor(config) {
-		super("gulp", config, globalConfig.excludesGlob);
-	}
-
-	handleFunc(file) {
-		var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
-		var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
-
-		if (typeof file === 'object') {
-			for (let item of file.getText().match(regexpMatcher)) {
-				let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
-				this.taskList.push(generateItem(cmdLine, "gulp"));
-			}
-		}
-	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		finishScan();
-	}
-}
-
-class npmLoader extends taskLoader {
-	constructor(config) {
-		super("npm", config, globalConfig.excludesGlob);
-	}
-
-	handleFunc(file) {
-		if (typeof file === 'object') {
-			var pattern = JSON.parse(file.getText());
-
-			if (typeof pattern.scripts === 'object') {
-				for (let item in pattern.scripts) {
-					let cmdLine = 'npm run ' + item;
-					if (globalConfig.useYarn === true) {
-						cmdLine = 'yarn run ' + item;
-					}
-					this.taskList.push(generateItem(cmdLine, "npm"));
-				}
-			}
-		}
-	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		finishScan();
-	}
-}
-
-class scriptLoader extends taskLoader {
-	constructor(config) {
-		super("script", config, globalConfig.excludesGlob);
-	}
-
-	generateTaskFromScript(file, exec) {
-		if (typeof file === 'object') {
-			var cmdLine = exec + file.uri._fsPath;
-			this.taskList.push(generateItem(path.normalize(cmdLine), "script"));
-		}
-	}
-
-	handleFunc(file) {
-		if (file.languageId === 'shellscript' && globalConfig.enableShell) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (file.languageId === 'python' && globalConfig.enablePython) {
-			this.generateTaskFromScript(file, 'python ');
-		}
-		else if (file.languageId === 'ruby' && globalConfig.enableRuby) {
-			this.generateTaskFromScript(file, 'ruby ');
-		}
-		else if (file.languageId === 'powershell' && globalConfig.enablePowershell) {
-			this.generateTaskFromScript(file, 'powershell ');
-		}
-		else if (file.languageId === 'perl' && globalConfig.enablePerl) {
-			this.generateTaskFromScript(file, 'perl ');
-		}
-		else if (file.languageId === 'bat' && globalConfig.enableBatchFile) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (/.*\.ahk$/.test(file.fileName) === true) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (/.*\.vbs$/.test(file.fileName) === true) {
-			this.generateTaskFromScript(file, 'cscript ');
-		}
-	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		finishScan();
-	}
-}
-
 function getCmd() {
 	var list = [];
 
 	for (let item of globalConfig.defaultTasks) {
-		list.push(generateItem(item, "user"));
+		list.push(loaders.generateItem(item, "user"));
 	}
 
 	for (let loader of data.loaderList) {
@@ -259,26 +102,13 @@ function showCommand() {
 	});
 }
 
-function setupLoader() {
-	data.loaderList.push(new gulpLoader({
-		glob: globalConfig.gulpGlob,
-		enable: globalConfig.enableGulp
-	}));
+function setupLoader(globalConfig) {
+	loaders.setupPrefix(data.prefix);
 
-	data.loaderList.push(new npmLoader({
-		glob: globalConfig.npmGlob,
-		enable: globalConfig.enableNpm
-	}));
-
-	data.loaderList.push(new vsLoader({
-		glob: '.vscode/tasks.json',
-		enable: globalConfig.enableVsTasks
-	}));
-
-	data.loaderList.push(new scriptLoader({
-		glob: '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
-		enable: 1
-	}));
+	data.loaderList.push(new loaders.gulpLoader(globalConfig, finishScan));
+	data.loaderList.push(new loaders.npmLoader(globalConfig, finishScan));
+	data.loaderList.push(new loaders.vsLoader(globalConfig, finishScan));
+	data.loaderList.push(new loaders.scriptLoader(globalConfig, finishScan));
 }
 
 function activate(context) {
@@ -293,7 +123,7 @@ function activate(context) {
 
 	globalConfig = vscode.workspace.getConfiguration('quicktask');
 
-	setupLoader();
+	setupLoader(globalConfig);
 
 	for (let loader of data.loaderList) {
 		loader.loadTask();

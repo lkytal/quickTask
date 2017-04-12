@@ -1,13 +1,13 @@
 {
     "env": {
-        "browser": false,
+        "browser": true,
         "commonjs": true,
         "es6": true,
         "node": true
     },
     "parserOptions": {
         "ecmaFeatures": {
-            "jsx": true
+            "jsx": false
         },
         "sourceType": "module"
     },

@@ -39,9 +39,7 @@ class taskLoader {
 	}
 
 	parseTasksFromFile(fileList) {
-		if (!Array.isArray(fileList)) return;
-
-		if (fileList.length == 0) {
+		if (!Array.isArray(fileList) || fileList.length == 0) {
 			return this.onFinish();
 		}
 
