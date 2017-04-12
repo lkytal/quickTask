@@ -1,35 +1,21 @@
 'use strict';
 
 const vscode = require('vscode');
-
 const loaders = require('./loaders.js');
-
-let globalConfig;
 
 let data = {
 	statusBarItem: null,
-	loaderList: [],
-	prefix: {
-		vs: "$(code)  ",
-		gulp: "$(browser)  ",
-		npm: "$(package)  ",
-		script: "$(terminal)  ",
-		user: "$(tag)  "
-	}
+	loaderList: []
 }
 
 function getCmd() {
 	var list = [];
 
-	for (let item of globalConfig.defaultTasks) {
-		list.push(loaders.generateItem(item, "user"));
-	}
-
 	for (let loader of data.loaderList) {
 		list = list.concat(loader.taskList);
 	}
 
-	function unique(arr) {
+	let unique = function (arr) {
 		return Array.from(new Set(arr));
 	}
 
@@ -84,7 +70,8 @@ function showCommand() {
 			vscode.commands.executeCommand("workbench.action.tasks.runTask", result.cmdLine);
 		}
 		else {
-			var terminal = vscode.window.createTerminal();
+			let globalConfig = vscode.workspace.getConfiguration('quicktask');
+			let terminal = vscode.window.createTerminal();
 			if (globalConfig.showTerminal) {
 				terminal.show();
 			}
@@ -103,12 +90,11 @@ function showCommand() {
 }
 
 function setupLoader(globalConfig) {
-	loaders.setupPrefix(data.prefix);
-
 	data.loaderList.push(new loaders.gulpLoader(globalConfig, finishScan));
 	data.loaderList.push(new loaders.npmLoader(globalConfig, finishScan));
 	data.loaderList.push(new loaders.vsLoader(globalConfig, finishScan));
 	data.loaderList.push(new loaders.scriptLoader(globalConfig, finishScan));
+	data.loaderList.push(new loaders.defaultLoader(globalConfig, finishScan));
 }
 
 function activate(context) {
@@ -121,9 +107,7 @@ function activate(context) {
 	let showTaskCommand = vscode.commands.registerCommand('quicktask.showTasks', showCommand);
 	context.subscriptions.push(showTaskCommand);
 
-	globalConfig = vscode.workspace.getConfiguration('quicktask');
-
-	setupLoader(globalConfig);
+	setupLoader(vscode.workspace.getConfiguration('quicktask'));
 
 	for (let loader of data.loaderList) {
 		loader.loadTask();

@@ -1,10 +1,13 @@
 const path = require("path");
+const vscode = require('vscode');
 const taskLoader = require('./taskLoader.js');
 
-let prefix = {};
-
-function setupPrefix(pre) {
-	prefix = pre;
+let prefix = {
+	vs: "$(code)  ",
+	gulp: "$(browser)  ",
+	npm: "$(package)  ",
+	script: "$(terminal)  ",
+	user: "$(tag)  "
 }
 
 function generateItem(cmdLine, type) {
@@ -196,9 +199,56 @@ class scriptLoader extends taskLoader {
 	}
 }
 
+class defaultLoader extends taskLoader {
+	constructor(globalConfig, finishScan) {
+		super("user", {
+			glob: '',
+			enable: 1
+		}, globalConfig.excludesGlob);
+
+		this.finishScan = finishScan;
+	}
+
+	loadTask() {
+		this.finished = false;
+		this.taskList = [];
+
+		if (this.enable == false) {
+			this.finished = true;
+			return this.onFinish();
+		}
+
+		let defaultList = vscode.workspace.getConfiguration('quicktask').defaultTasks;
+
+		for (let item of defaultList) {
+			try {
+				this.taskList.push(generateItem(item, "user"));
+			}
+			catch (e) {
+				console.log("Invalid item: " + e.message);
+			}
+		}
+
+		this.finished = true;
+		return this.onFinish();
+	}
+
+	setupWatcher() {
+		let watcher = vscode.workspace.onDidChangeConfiguration((e) => {
+			this.loadTask();
+		});
+
+		return watcher;
+	}
+
+	onFinish(err) {
+		super.onFinish(err);
+		this.finishScan();
+	}
+}
+
 exports.vsLoader = vsLoader;
 exports.gulpLoader = gulpLoader;
 exports.npmLoader = npmLoader;
 exports.scriptLoader = scriptLoader;
-exports.setupPrefix = setupPrefix;
-exports.generateItem = generateItem;
+exports.defaultLoader = defaultLoader;

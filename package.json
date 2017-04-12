@@ -1,7 +1,7 @@
 {
 	"name": "quicktask",
 	"displayName": "QuickTask",
-	"description": "Automatic task execution for Gulp, NPM, Shell and more from the comfort of VS Code.",
+	"description": "Task manager and runner for Gulp, NPM, VS Code builtin task and shellscripts.",
 	"version": "2.5.1",
 	"publisher": "lkytal",
 	"license": "BY-NC-SA",
