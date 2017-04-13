@@ -1,19 +1,24 @@
+clone_depth: 5
+
 environment:
   ELECTRON_RUN_AS_NODE: 1
   VSCODE_BUILD_VERBOSE: true
 
+cache:
+  - node_modules
+
 install:
-  - ps: Install-Product node 7.4.0 x64
-  - npm install -g npm --silent
-  - npm install -g gulp mocha --silent
+  - ps: Install-Product node 7.8.0 x64
+  - npm install -g npm vsce > log.txt
+  - npm install >> log.txt
 
 build_script:
-  - .\scripts\npm.bat install
-  - gulp electron
   - npm run compile
+
+artifacts:
+  - path: '**\*.vsix'
 
 test_script:
   - node --version
   - npm --version
-  - .\scripts\test.bat
-  - .\scripts\test-integration.bat
+  - npm run test

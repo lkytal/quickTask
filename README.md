@@ -1,5 +1,7 @@
 # Quick Task for VS Code
 
+[![Build status](https://ci.appveyor.com/api/projects/status/f7isc8ye4c72m8u8?svg=true)](https://ci.appveyor.com/project/lkytal/quicktask)
+
 Quick Task will automatically trawl your project directory for task files like npm, gulp, scripts files and VS Code tasks, and allow you to execute each task with the click of a mouse!
 
 As shown bellow, all tasks will show up after click the task button on statusbar and you can execute any item simply by clicking it.
