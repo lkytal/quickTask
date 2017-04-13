@@ -36,6 +36,8 @@ function loaderTest(done, builder, type, rst) {
 }
 
 suite("Npm loader", function () {
+	this.timeout(5000);
+
 	test("Npm", function (done) {
 		let rst = [
 			"npm run postinstall",

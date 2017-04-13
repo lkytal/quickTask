@@ -1,7 +1,7 @@
 {
 	"name": "quicktask",
 	"displayName": "QuickTask",
-	"description": "Task manager and runner for Gulp, NPM, VS Code builtin task and shellscripts.",
+	"description": "Task manager and runner for Gulp, NPM, VS Code builtin task and shell scripts.",
 	"version": "2.5.1",
 	"publisher": "lkytal",
 	"license": "BY-NC-SA",
@@ -45,7 +45,7 @@
 				"quicktask.excludesGlob": {
 					"type": "array",
 					"default": [
-						"**/node_modules"
+						"**/{node_modules,vscode-test,.git}"
 					],
 					"description": "The glob which Quick Task will exclude from scans."
 				},
@@ -147,6 +147,7 @@
 		"vscode": "^1.1.0"
 	},
 	"dependencies": {
+		"@types/async": "^2.0.40",
 		"async": "^2.3.0"
 	}
 }
