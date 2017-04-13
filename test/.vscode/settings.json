@@ -1,0 +1,7 @@
+
+{
+	"quicktask.defaultTasks": [
+		"npm update",
+		"npm i --save-dev"
+	]
+}

@@ -76,7 +76,7 @@ function showCommand() {
 				terminal.show();
 			}
 
-			if (globalConfig.closeTerminalafterExecution) {
+			if (globalConfig.closeTerminalAfterExecution) {
 				terminal.sendText(result.cmdLine);
 				terminal.sendText("exit");
 			}

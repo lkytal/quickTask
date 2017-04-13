@@ -1,0 +1,20 @@
+{
+	"version": "0.1.0",
+    "command": "cmd.exe",
+    "isShellCommand": true,
+    "args": ["/c"],
+	"suppressTaskName": true,
+    "tasks": [
+        {
+            "taskName": "run",
+            "args": ["node main.js"],
+            "isBuildCommand": true
+        },
+        {
+            "taskName": "test",
+            "args": [
+                "node test.js"
+            ]
+        }
+    ]
+}

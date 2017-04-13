@@ -11,9 +11,17 @@ class taskLoader {
 		this.excludesGlob = excludesGlob;
 
 		this.finished = false;
-		this.taskList = [];
+		this._taskList = [];
 
 		this.ignoreChange = false; //temp
+	}
+
+	get taskList() {
+		return this._taskList;
+	}
+
+	set taskList(value) {
+		this._taskList = value;
 	}
 
 	isFinished() {

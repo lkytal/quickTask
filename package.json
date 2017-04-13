@@ -32,7 +32,7 @@
 					"default": true,
 					"description": "Show terminal when executing."
 				},
-				"quicktask.closeTerminalafterExecution": {
+				"quicktask.closeTerminalAfterExecution": {
 					"type": "boolean",
 					"default": false,
 					"description": "Close terminal after execution finished. (experimental)"

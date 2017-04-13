@@ -203,7 +203,7 @@ class defaultLoader extends taskLoader {
 	constructor(globalConfig, finishScan) {
 		super("user", {
 			glob: '',
-			enable: 1
+			enable: globalConfig.enableVsTasks
 		}, globalConfig.excludesGlob);
 
 		this.finishScan = finishScan;
@@ -218,7 +218,7 @@ class defaultLoader extends taskLoader {
 			return this.onFinish();
 		}
 
-		let defaultList = vscode.workspace.getConfiguration('quicktask').defaultTasks;
+		let defaultList = vscode.workspace.getConfiguration('quicktask').get('defaultTasks');
 
 		for (let item of defaultList) {
 			try {
@@ -252,3 +252,13 @@ exports.gulpLoader = gulpLoader;
 exports.npmLoader = npmLoader;
 exports.scriptLoader = scriptLoader;
 exports.defaultLoader = defaultLoader;
+
+exports.generateFromList = function(list, type) {
+	let rst = [];
+
+	for(let item of list) {
+		rst.push(generateItem(item, type));
+	}
+
+	return rst;
+}
