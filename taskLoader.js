@@ -12,8 +12,6 @@ class taskLoader {
 
 		this.finished = false;
 		this._taskList = [];
-
-		this.ignoreChange = false; //temp
 	}
 
 	get taskList() {
@@ -68,17 +66,21 @@ class taskLoader {
 		this.finished = true;
 	}
 
-	setupWatcher() {
+	setupWatcher(ignoreChange = false) {
 		let watchPath = this.glob;
 		if (watchPath.indexOf("**/") != 0) watchPath = "**/" + watchPath;
 
-		let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, this.ignoreChange, false);
+		let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
 
-		watcher.onDidCreate(this.loadTask);
-		watcher.onDidChange(this.loadTask);
-		watcher.onDidDelete(this.loadTask);
+		watcher.onDidCreate(this.onChanged);
+		watcher.onDidChange(this.onChanged);
+		watcher.onDidDelete(this.onChanged);
 
 		return watcher;
+	}
+
+	onChanged() {
+		this.loadTask();
 	}
 }
 

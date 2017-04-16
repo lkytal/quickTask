@@ -123,11 +123,11 @@ class npmLoader extends taskLoader {
 
 	handleFunc(file) {
 		if (typeof file === 'object') {
-			var pattern = JSON.parse(file.getText());
+			try {
+				let pattern = JSON.parse(file.getText());
 
-			if (typeof pattern.scripts === 'object') {
-				try {
-					for (let item in pattern.scripts) {
+				if (typeof pattern.scripts === 'object') {
+					for (let item of Object.keys(pattern.scripts)) {
 						let cmdLine = 'npm run ' + item;
 						if (this.useYarn === true) {
 							cmdLine = 'yarn run ' + item;
@@ -135,9 +135,9 @@ class npmLoader extends taskLoader {
 						this.taskList.push(generateItem(cmdLine, "npm"));
 					}
 				}
-				catch (e) {
-					console.log("Invalid package.json");
-				}
+			}
+			catch (e) {
+				console.log("Invalid package.json");
 			}
 		}
 	}
@@ -197,6 +197,10 @@ class scriptLoader extends taskLoader {
 		super.onFinish(err);
 		this.finishScan();
 	}
+
+	setupWatcher() {
+		return super.setupWatcher(true);
+	}
 }
 
 class defaultLoader extends taskLoader {
@@ -253,10 +257,10 @@ exports.npmLoader = npmLoader;
 exports.scriptLoader = scriptLoader;
 exports.defaultLoader = defaultLoader;
 
-exports.generateFromList = function(list, type) {
+exports.generateFromList = function (list, type) {
 	let rst = [];
 
-	for(let item of list) {
+	for (let item of list) {
 		rst.push(generateItem(item, type));
 	}
 

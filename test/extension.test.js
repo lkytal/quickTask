@@ -1,6 +1,7 @@
 let chai = require("chai");
 let vscode = require('vscode');
 let loaders = require('../loaders.js');
+let fs = require('fs');
 
 chai.should();
 
@@ -22,11 +23,6 @@ function loaderTest(done, builder, type, rst) {
 		let list = loaders.generateFromList(rst, type);
 		list.should.be.eql(test.taskList);
 
-		//let assert = require('assert');
-		// for (let i of list.keys()) {
-		// 	assert.deepEqual(list[i], test.taskList[i]);
-		// }
-
 		done();
 	}
 
@@ -35,10 +31,24 @@ function loaderTest(done, builder, type, rst) {
 	test.loadTask();
 }
 
-suite("Npm loader", function () {
+function watcherTest(done, builder, taskFile) {
+	let test = new builder(globalConfig, () => console.log("On finish"));
+
+	test.onChanged = function () {
+		watcher.dispose();
+		done();
+	}
+
+	let watcher = test.setupWatcher();
+
+	let content = fs.readFileSync(taskFile, "utf-8");
+	fs.writeFileSync(taskFile, content, "utf-8");
+}
+
+suite("Npm", function () {
 	this.timeout(5000);
 
-	test("Npm", function (done) {
+	test("Npm loader", function (done) {
 		let rst = [
 			"npm run postinstall",
 			"npm run test"
@@ -46,10 +56,14 @@ suite("Npm loader", function () {
 
 		loaderTest(done, loaders.npmLoader, "npm", rst);
 	});
+
+	test("Npm watcher", function (done) {
+		watcherTest(done, loaders.npmLoader, rootPath + "\\package.json");
+	});
 });
 
-suite("gulp loader", function () {
-	test("Gulp", function (done) {
+suite("gulp", function () {
+	test("gulp loader", function (done) {
 		let rst = [
 			"gulp watch",
 			"gulp default",
@@ -58,27 +72,54 @@ suite("gulp loader", function () {
 
 		loaderTest(done, loaders.gulpLoader, "gulp", rst);
 	});
+
+	test("gulp watcher", function (done) {
+		watcherTest(done, loaders.gulpLoader, rootPath + "\\gulpfile.js");
+	});
 });
 
 suite("vs loader", function () {
-	test("VS", function (done) {
+	test("VS first load", function (done) {
 		let rst = ["run", "test"];
 
 		loaderTest(done, loaders.vsLoader, "vs", rst);
 	});
+
+	test("VS watcher", function (done) {
+		watcherTest(done, loaders.vsLoader, rootPath + "\\.vscode\\tasks.json");
+	});
 });
 
-suite("script loader", function () {
-	test("Script", function (done) {
+suite("script", function () {
+	let testBat = rootPath + "\\a.bat";
+	try {
+		//fs.accessSync(testBat, fs.constants.F_OK);
+		fs.unlinkSync(testBat);
+	}
+	catch (e) {}
+
+	test("script loader", function (done) {
 		let rst = [rootPath + "\\test.bat"];
 
 		loaderTest(done, loaders.scriptLoader, "script", rst);
 	});
+
+	test("script watcher", function (done) {
+		let test = new loaders.scriptLoader(globalConfig, () => console.log("On finish"));
+
+		test.onChanged = function () {
+			fs.unlinkSync(testBat);
+			watcher.dispose();
+			done();
+		}
+
+		let watcher = test.setupWatcher(true);
+		fs.writeFileSync(testBat, "test", "utf-8");
+	});
 });
 
-suite("user loader", function () {
-	test("user", function () {
-		//let cfg = ["npm update", "npm i --save-dev"];
+suite("user", function () {
+	test("user loader", function () {
 		let check = function () {
 			let cfg = vscode.workspace.getConfiguration('quicktask').get("defaultTasks");
 			test.taskList.should.eql(loaders.generateFromList(cfg, "user"));
@@ -87,5 +128,19 @@ suite("user loader", function () {
 		let test = new loaders.defaultLoader(globalConfig, check);
 
 		test.loadTask();
+	});
+
+	test("user watcher", function (done) {
+		let test = new loaders.scriptLoader(globalConfig, () => console.log("On finish"));
+
+		test.onChanged = function () {
+			watcher.dispose();
+			done();
+		}
+
+		let watcher = test.setupWatcher(true);
+
+		let cfg = ["npm update", "npm i --save-dev"];
+		vscode.workspace.getConfiguration('quicktask').update("defaultTasks", cfg, false);
 	});
 });
