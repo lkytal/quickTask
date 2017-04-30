@@ -1,6 +1,7 @@
 # Quick Task for VS Code
 
 [![Build status](https://ci.appveyor.com/api/projects/status/f7isc8ye4c72m8u8?svg=true)](https://ci.appveyor.com/project/lkytal/quicktask)
+[![Dependency status](https://david-dm.org/lkytal/quicktask.svg)](https://david-dm.org/lkytal/quicktask.svg)
 
 ## A task manager and runner for Gulp, NPM, VS Code tasks and shell scripts
 
@@ -43,6 +44,13 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [2.6.1] - 2017-05-01
+
+#### Improve
+
+- Update Async lib.
+- ".vscode-test" excluded
 
 ### [2.6.0] - 2017-04-16
 

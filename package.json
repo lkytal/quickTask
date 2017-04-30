@@ -2,7 +2,7 @@
 	"name": "quicktask",
 	"displayName": "QuickTask",
 	"description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-	"version": "2.6.0",
+	"version": "2.6.1",
 	"publisher": "lkytal",
 	"license": "BY-NC-SA",
 	"engines": {
@@ -45,7 +45,7 @@
 				"quicktask.excludesGlob": {
 					"type": "array",
 					"default": [
-						"**/{node_modules,vscode-test,.git}"
+						"**/{node_modules,.vscode-test,.git}"
 					],
 					"description": "The glob which Quick Task will exclude from scans."
 				},
@@ -66,7 +66,7 @@
 				"quicktask.defaultTasks": {
 					"type": "array",
 					"default": [],
-					"description": "You can add default tasks that will show up in task list."
+					"description": "You can add default tasks like [\"npm update\"]."
 				},
 				"quicktask.enableGulp": {
 					"type": "boolean",
@@ -139,16 +139,16 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"@types/chai": "^3.5.0",
-		"@types/mocha": "^2.2.40",
-		"@types/node": "^7.0.12",
+		"@types/chai": "^3.5.2",
+		"@types/mocha": "^2.2.41",
+		"@types/node": "^7.0.14",
 		"eslint": "^3.19.0",
-		"mocha": "^3.2.0",
-		"typescript": "^2.3.0",
+		"mocha": "^3.3.0",
+		"typescript": "^2.3.2",
 		"vscode": "^1.1.0"
 	},
 	"dependencies": {
 		"@types/async": "^2.0.40",
-		"async": "^2.3.0"
+		"async": "^2.4.0"
 	}
 }
