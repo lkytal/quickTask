@@ -4,11 +4,12 @@ const vscode = require("vscode");
 const async = require('async');
 
 class taskLoader {
-	constructor(key, config, excludesGlob) {
+	constructor(key, config, excludesGlob, callBack) {
 		this.key = key;
 		this.glob = config.glob;
 		this.enable = config.enable;
 		this.excludesGlob = excludesGlob;
+		this.callBack = callBack;
 
 		this.finished = false;
 		this._taskList = [];
@@ -57,6 +58,8 @@ class taskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
+	handleFunc(file) {}
+
 	onFinish(err) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
@@ -64,6 +67,8 @@ class taskLoader {
 		}
 
 		this.finished = true;
+
+		this.callBack();
 	}
 
 	setupWatcher(ignoreChange = false) {

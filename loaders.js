@@ -44,9 +44,7 @@ class vsLoader extends taskLoader {
 		super("vs", {
 			glob: '.vscode/tasks.json',
 			enable: globalConfig.enableVsTasks
-		}, globalConfig.excludesGlob);
-
-		this.finishScan = finishScan;
+		}, globalConfig.excludesGlob, finishScan);
 	}
 
 	handleFunc(file) {
@@ -69,11 +67,6 @@ class vsLoader extends taskLoader {
 			}
 		}
 	}
-
-	onFinish() {
-		super.onFinish();
-		this.finishScan();
-	}
 }
 
 class gulpLoader extends taskLoader {
@@ -81,9 +74,7 @@ class gulpLoader extends taskLoader {
 		super("gulp", {
 			glob: globalConfig.gulpGlob,
 			enable: globalConfig.enableGulp
-		}, globalConfig.excludesGlob);
-
-		this.finishScan = finishScan;
+		}, globalConfig.excludesGlob, finishScan);
 	}
 
 	handleFunc(file) {
@@ -102,11 +93,6 @@ class gulpLoader extends taskLoader {
 			}
 		}
 	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		this.finishScan();
-	}
 }
 
 class npmLoader extends taskLoader {
@@ -114,11 +100,9 @@ class npmLoader extends taskLoader {
 		super("npm", {
 			glob: globalConfig.npmGlob,
 			enable: globalConfig.enableNpm
-		}, globalConfig.excludesGlob);
+		}, globalConfig.excludesGlob, finishScan);
 
 		this.useYarn = globalConfig.useYarn;
-
-		this.finishScan = finishScan;
 	}
 
 	handleFunc(file) {
@@ -141,11 +125,6 @@ class npmLoader extends taskLoader {
 			}
 		}
 	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		this.finishScan();
-	}
 }
 
 class scriptLoader extends taskLoader {
@@ -153,10 +132,8 @@ class scriptLoader extends taskLoader {
 		super("script", {
 			glob: '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
 			enable: 1
-		}, globalConfig.excludesGlob);
+		}, globalConfig.excludesGlob, finishScan);
 		this.globalConfig = globalConfig;
-
-		this.finishScan = finishScan;
 	}
 
 	generateTaskFromScript(file, exec) {
@@ -193,11 +170,6 @@ class scriptLoader extends taskLoader {
 		}
 	}
 
-	onFinish(err) {
-		super.onFinish(err);
-		this.finishScan();
-	}
-
 	setupWatcher() {
 		return super.setupWatcher(true);
 	}
@@ -208,9 +180,7 @@ class defaultLoader extends taskLoader {
 		super("user", {
 			glob: '',
 			enable: globalConfig.enableVsTasks
-		}, globalConfig.excludesGlob);
-
-		this.finishScan = finishScan;
+		}, globalConfig.excludesGlob, finishScan);
 	}
 
 	loadTask() {
@@ -243,11 +213,6 @@ class defaultLoader extends taskLoader {
 		});
 
 		return watcher;
-	}
-
-	onFinish(err) {
-		super.onFinish(err);
-		this.finishScan();
 	}
 }
 

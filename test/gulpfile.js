@@ -6,6 +6,6 @@ gulp.task('watch', function () {
 
 gulp.task('default', ['coffee', 'watch']);
 
-gulp.task('copy', ['meta'], function () {
+gulp.task('copy', ['watch'], function () {
 	return;
 });

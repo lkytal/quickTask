@@ -138,7 +138,7 @@ suite("user", function () {
 			done();
 		}
 
-		let watcher = test.setupWatcher(true);
+		let watcher = test.setupWatcher();
 
 		let cfg = ["npm update", "npm i --save-dev"];
 		vscode.workspace.getConfiguration('quicktask').update("defaultTasks", cfg, false);
