@@ -58,7 +58,9 @@ class taskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	handleFunc(file) {}
+	handleFunc(file) {
+		console.log(file);
+	}
 
 	onFinish(err) {
 		if (err) {

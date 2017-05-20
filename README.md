@@ -2,6 +2,9 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/f7isc8ye4c72m8u8?svg=true)](https://ci.appveyor.com/project/lkytal/quicktask)
 [![Dependency status](https://david-dm.org/lkytal/quicktask.svg)](https://david-dm.org/lkytal/quicktask.svg)
+<a href="https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask"><img src="http://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg" alt="Installs"></a>
+
+> Licensed by <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="Creative Commons BY-NC-SA 4.0" target="_blank">CC 4.0 BY-NC-SA</a>
 
 ## A task manager and runner for Gulp, NPM, VS Code tasks and shell scripts
 
@@ -45,12 +48,18 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [2.7.0] - 2017-05-20
+
+#### Improve
+
+- Show task started message within status icon.
+
 ### [2.6.1] - 2017-05-01
 
 #### Improve
 
 - Update Async lib.
-- ".vscode-test" excluded
+- ".vscode-test" excluded.
 
 ### [2.6.0] - 2017-04-16
 
@@ -188,5 +197,5 @@ Hint: Task button is usually here:
 
 ## Acknowledgment
 
-> Based on [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master)
+> Inspired by [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master), this extension started by fork it at first.
 > <div>Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

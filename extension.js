@@ -55,7 +55,8 @@ function showCommand() {
 			}
 		}
 
-		vscode.window.setStatusBarMessage(`Task ${result.cmdLine} started`, 3000);
+		//vscode.window.setStatusBarMessage(`Task ${result.cmdLine} started`, 3000);
+		statusBar.showMessage(result);
 	});
 }
 
@@ -68,7 +69,7 @@ function setupLoaders(globalConfig, finishScan) {
 		loaders.defaultLoader
 	];
 
-	for(let loaderEngine of usedLoaders) {
+	for (let loaderEngine of usedLoaders) {
 		loaderList.push(new loaderEngine(globalConfig, finishScan));
 	}
 }

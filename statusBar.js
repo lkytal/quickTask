@@ -31,6 +31,13 @@ class statusBarController {
 			this.statusBarItem.command = 'quicktask.showTasks';
 		}
 	}
+
+	showMessage(task) {
+		this.statusBarItem.text = "$(pulse) " + `Task ${task.cmdLine} started`;
+		setTimeout(() => {
+			this.showFinishState(false);
+		}, 2500);
+	}
 }
 
 module.exports = statusBarController;
