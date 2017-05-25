@@ -1,154 +1,156 @@
 {
-	"name": "quicktask",
-	"displayName": "QuickTask",
-	"description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-	"version": "2.7.0",
-	"publisher": "lkytal",
-	"license": "CC-BY-NC-SA-4.0",
-	"engines": {
-		"vscode": "^1.1.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./extension",
-	"icon": "icon.png",
-	"contributes": {
-		"commands": [
-			{
-				"command": "quicktask.showTasks",
-				"title": "Show Tasks"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "QuickTask Configuration",
-			"properties": {
-				"quicktask.showTerminal": {
-					"type": "boolean",
-					"default": true,
-					"description": "Show terminal when executing."
-				},
-				"quicktask.closeTerminalAfterExecution": {
-					"type": "boolean",
-					"default": false,
-					"description": "Close terminal after execution finished. (experimental)"
-				},
-				"quicktask.watchTaskChanges": {
-					"type": "boolean",
-					"default": true,
-					"description": "Watch for task changes and update task list automatically."
-				},
-				"quicktask.excludesGlob": {
-					"type": "array",
-					"default": [
-						"**/{node_modules,.vscode-test,.git}"
-					],
-					"description": "The glob which Quick Task will exclude from scans."
-				},
-				"quicktask.gulpGlob": {
-					"type": "array",
-					"default": [
-						"gulpfile.js"
-					],
-					"description": "The glob which Quick Task will scan for gulp tasks."
-				},
-				"quicktask.npmGlob": {
-					"type": "array",
-					"default": [
-						"package.json"
-					],
-					"description": "The glob which Quick Task will scan for npm tasks."
-				},
-				"quicktask.defaultTasks": {
-					"type": "array",
-					"default": [],
-					"description": "You can add default tasks like [\"npm update\"]."
-				},
-				"quicktask.enableGulp": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Gulp tasks."
-				},
-				"quicktask.enableNpm": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of NPM tasks."
-				},
-				"quicktask.enableVsTasks": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of vscode tasks (in tasks.json)."
-				},
-				"quicktask.enableShell": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Shell scripts."
-				},
-				"quicktask.useYarn": {
-					"type": "boolean",
-					"default": false,
-					"description": "Use yarn instead of npm."
-				},
-				"quicktask.enablePython": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Python scripts."
-				},
-				"quicktask.enableRuby": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Ruby scripts."
-				},
-				"quicktask.enablePerl": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Perl scripts."
-				},
-				"quicktask.enableBatchFile": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of batch file."
-				},
-				"quicktask.enablePowershell": {
-					"type": "boolean",
-					"default": true,
-					"description": "Enables the scanning of Powershell scripts."
-				}
-			}
-		}
-	},
-	"keywords": [
-		"Task",
-		"Node",
-		"NPM",
-		"Gulp",
-		"Script"
-	],
-	"homepage": "https://lkytal.github.io",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/lkytal/quickTask.git"
-	},
-	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"compile": "vsce package",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/chai": "^3.5.2",
-		"@types/mocha": "^2.2.41",
-		"@types/node": "^7.0.21",
-		"eslint": "^3.19.0",
-		"mocha": "^3.4.1",
-		"typescript": "^2.3.2",
-		"vscode": "^1.1.0"
-	},
-	"dependencies": {
-		"@types/async": "^2.0.40",
-		"async": "^2.4.0"
-	}
+  "name": "quicktask",
+  "displayName": "QuickTask",
+  "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
+  "version": "2.7.0",
+  "publisher": "lkytal",
+  "license": "CC-BY-NC-SA-4.0",
+  "engines": {
+    "vscode": "^1.1.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./extension",
+  "icon": "icon.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "quicktask.showTasks",
+        "title": "Show Tasks"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "QuickTask Configuration",
+      "properties": {
+        "quicktask.showTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show terminal when executing."
+        },
+        "quicktask.closeTerminalAfterExecution": {
+          "type": "boolean",
+          "default": false,
+          "description": "Close terminal after execution finished. (experimental)"
+        },
+        "quicktask.watchTaskChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Watch for task changes and update task list automatically."
+        },
+        "quicktask.excludesGlob": {
+          "type": "array",
+          "default": [
+            "**/{node_modules,.vscode-test,.git}"
+          ],
+          "description": "The glob which Quick Task will exclude from scans."
+        },
+        "quicktask.gulpGlob": {
+          "type": "array",
+          "default": [
+            "gulpfile.js"
+          ],
+          "description": "The glob which Quick Task will scan for gulp tasks."
+        },
+        "quicktask.npmGlob": {
+          "type": "array",
+          "default": [
+            "package.json"
+          ],
+          "description": "The glob which Quick Task will scan for npm tasks."
+        },
+        "quicktask.defaultTasks": {
+          "type": "array",
+          "default": [],
+          "description": "You can add default tasks like [\"npm update\"]."
+        },
+        "quicktask.enableGulp": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Gulp tasks."
+        },
+        "quicktask.enableNpm": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of NPM tasks."
+        },
+        "quicktask.enableVsTasks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of vscode tasks (in tasks.json)."
+        },
+        "quicktask.enableShell": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Shell scripts."
+        },
+        "quicktask.useYarn": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use yarn instead of npm."
+        },
+        "quicktask.enablePython": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Python scripts."
+        },
+        "quicktask.enableRuby": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Ruby scripts."
+        },
+        "quicktask.enablePerl": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Perl scripts."
+        },
+        "quicktask.enableBatchFile": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of batch file."
+        },
+        "quicktask.enablePowershell": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables the scanning of Powershell scripts."
+        }
+      }
+    }
+  },
+  "keywords": [
+    "Task",
+    "Node",
+    "NPM",
+    "Gulp",
+    "Script"
+  ],
+  "homepage": "https://lkytal.github.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lkytal/quickTask.git"
+  },
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "compile": "vsce package",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/async": "^2.0.40",
+    "@types/chai": "^3.5.2",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.22",
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "mocha": "^3.4.1",
+    "typescript": "^2.3.3",
+    "vscode": "^1.1.0"
+  },
+  "dependencies": {
+    "async": "^2.4.1",
+    "gulp-cli": "^1.3.0"
+  }
 }

@@ -1,8 +1,8 @@
 # Quick Task for VS Code
 
 [![Build status](https://ci.appveyor.com/api/projects/status/f7isc8ye4c72m8u8?svg=true)](https://ci.appveyor.com/project/lkytal/quicktask)
-[![Dependency status](https://david-dm.org/lkytal/quicktask.svg)](https://david-dm.org/lkytal/quicktask.svg)
-<a href="https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask"><img src="http://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg" alt="Installs"></a>
+[![Dependency status](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)
+<a href="https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask"><img src="http://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg?style=flat-square" alt="Installs"></a>
 
 > Licensed by <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="Creative Commons BY-NC-SA 4.0" target="_blank">CC 4.0 BY-NC-SA</a>
 

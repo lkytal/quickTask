@@ -1,6 +1,7 @@
 const path = require("path");
 const vscode = require('vscode');
 const taskLoader = require('./taskLoader.js');
+const child_process = require('child_process');
 
 let prefix = {
 	vs: "$(code)  ",
@@ -47,7 +48,7 @@ class vsLoader extends taskLoader {
 		}, globalConfig.excludesGlob, finishScan);
 	}
 
-	handleFunc(file) {
+	handleFunc(file, callback) {
 		if (typeof file === 'object') {
 			try {
 				let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
@@ -66,6 +67,8 @@ class vsLoader extends taskLoader {
 				console.log("Invalid tasks.json");
 			}
 		}
+
+		callback();
 	}
 }
 
@@ -77,7 +80,27 @@ class gulpLoader extends taskLoader {
 		}, globalConfig.excludesGlob, finishScan);
 	}
 
-	handleFunc(file) {
+	handleFunc(file, callback) {
+		child_process.exec('gulp --tasks-simple', {
+			cwd: vscode.workspace.rootPath,
+			timeout: 10000
+		}, (err, stdout, stderr) => {
+			if (err) {
+				return this.oldRegexHandler(file, callback);
+			}
+
+			let tasks = stdout.trim().split("\n");
+
+			for (let item of tasks) {
+				let cmdLine = 'gulp ' + item;
+				this.taskList.push(generateItem(cmdLine, "gulp"));
+			}
+
+			callback();
+		});
+	}
+
+	oldRegexHandler(file, callback) {
 		var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
@@ -92,6 +115,8 @@ class gulpLoader extends taskLoader {
 				console.log("Invalid gulp file");
 			}
 		}
+
+		callback();
 	}
 }
 
@@ -105,7 +130,7 @@ class npmLoader extends taskLoader {
 		this.useYarn = globalConfig.useYarn;
 	}
 
-	handleFunc(file) {
+	handleFunc(file, callback) {
 		if (typeof file === 'object') {
 			try {
 				let pattern = JSON.parse(file.getText());
@@ -124,6 +149,8 @@ class npmLoader extends taskLoader {
 				console.log("Invalid package.json");
 			}
 		}
+
+		callback();
 	}
 }
 
@@ -143,7 +170,7 @@ class scriptLoader extends taskLoader {
 		}
 	}
 
-	handleFunc(file) {
+	handleFunc(file, callback) {
 		if (file.languageId === 'shellscript' && this.globalConfig.enableShell) {
 			this.generateTaskFromScript(file, '');
 		}
@@ -168,6 +195,8 @@ class scriptLoader extends taskLoader {
 		else if (/.*\.vbs$/.test(file.fileName) === true) {
 			this.generateTaskFromScript(file, 'cscript ');
 		}
+
+		callback();
 	}
 
 	setupWatcher() {

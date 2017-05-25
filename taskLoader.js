@@ -52,14 +52,14 @@ class taskLoader {
 
 		async.each(fileList, (item, callback) => {
 			vscode.workspace.openTextDocument(item.fsPath).then((file) => {
-				this.handleFunc(file);
-				return callback();
+				this.handleFunc(file, callback);
 			});
 		}, (err) => this.onFinish(err));
 	}
 
-	handleFunc(file) {
+	handleFunc(file, callback) {
 		console.log(file);
+		callback();
 	}
 
 	onFinish(err) {

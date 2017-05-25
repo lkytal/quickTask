@@ -63,6 +63,8 @@ suite("Npm", function () {
 });
 
 suite("gulp", function () {
+	this.timeout(5000);
+
 	test("gulp loader", function (done) {
 		let rst = [
 			"gulp watch",
