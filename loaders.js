@@ -86,14 +86,17 @@ class gulpLoader extends taskLoader {
 			timeout: 10000
 		}, (err, stdout, stderr) => {
 			if (err) {
+				console.log(stderr);
 				return this.oldRegexHandler(file, callback);
 			}
 
 			let tasks = stdout.trim().split("\n");
 
 			for (let item of tasks) {
-				let cmdLine = 'gulp ' + item;
-				this.taskList.push(generateItem(cmdLine, "gulp"));
+				if (item.length != 0) {
+					let cmdLine = 'gulp ' + item;
+					this.taskList.push(generateItem(cmdLine, "gulp"));
+				}
 			}
 
 			callback();
