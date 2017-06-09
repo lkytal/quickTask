@@ -48,6 +48,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [2.8.0] - 2017-06-09
+
+#### Improve
+
+- Use gulp itself to parse gulp file.
+
 ### [2.7.0] - 2017-05-20
 
 #### Improve

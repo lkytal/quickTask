@@ -116,7 +116,7 @@ suite("script", function () {
 		}
 
 		let watcher = test.setupWatcher(true);
-		fs.writeFileSync(testBat, "test", "utf-8");
+		fs.writeFileSync(testBat, "test" + Date.now(), "utf-8");
 	});
 });
 
