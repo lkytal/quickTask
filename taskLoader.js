@@ -13,6 +13,12 @@ class taskLoader {
 
 		this.finished = false;
 		this._taskList = [];
+
+		if (vscode.workspace.getConfiguration('quicktask').searchTaskFileInSubdirectories) {
+			if (this.glob.indexOf("**/") != 0) {
+				this.glob = "**/" + this.glob;
+			}
+		}
 	}
 
 	get taskList() {
@@ -75,7 +81,9 @@ class taskLoader {
 
 	setupWatcher(ignoreChange = false) {
 		let watchPath = this.glob;
-		if (watchPath.indexOf("**/") != 0) watchPath = "**/" + watchPath;
+		if (watchPath.indexOf("**/") != 0) {
+			watchPath = "**/" + watchPath;
+		}
 
 		let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
 
