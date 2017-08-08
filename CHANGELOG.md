@@ -8,6 +8,37 @@ All notable changes to the "quicktask" extension will be documented in this file
 
 ## [History]
 
+### [2.9.1] - 2017-08-07
+
+#### Improve
+
+- Description for subdirectory tasks.
+
+### [2.9.0] - 2017-08-05
+
+#### Improve
+
+- Support Npm and Gulp task in subdirectories.
+
+### [2.8.1] - 2017-07-10
+
+#### Update
+
+- Update async lib to 2.5.0
+
+### [2.7.0] - 2017-05-20
+
+#### Improve
+
+- Show task started message within status icon.
+
+### [2.6.1] - 2017-05-01
+
+#### Improve
+
+- Update Async lib.
+- ".vscode-test" excluded.
+
 ### [2.6.0] - 2017-04-16
 
 #### Improve
