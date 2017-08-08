@@ -17,7 +17,6 @@
 		"url": "https://github.com/lkytal/quickTask.git"
 	},
 	"scripts": {
-		"Install": "node ./node_modules/vscode/bin/install",
-		"Whatever": "node ./node_modules/vscode/bin/test"
+		"Install": "node ./node_modules/vscode/bin/install"
 	}
 }

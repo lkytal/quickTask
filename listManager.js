@@ -29,23 +29,24 @@ class listManager {
 		return this.taskArray.length == 0
 	}
 
-	getLabels() {
+	getList() {
 		let labels = [];
 
 		for (let item of this.taskArray) {
-			labels.push(item.label);
+			labels.push({
+				label: item.label,
+				description: item.description
+			});
 		}
 
-		return labels.sort();
-
-		// .sort(function (a, b) {
-		// 	return a.localeCompare(b);
-		// });
+		return labels.sort(function (a, b) {
+			return a.label.localeCompare(b.label);
+		});
 	}
 
-	findTask(selection) {
+	findTask(selection, description) {
 		for (let item of this.taskArray) {
-			if (item.label == selection) {
+			if (item.label == selection && item.description == description) {
 				return item;
 			}
 		}

@@ -15,12 +15,13 @@ let globalConfig = {
 	gulpGlob: ["**/gulpfile.js"],
 	enableGulp: 1,
 	enableVsTasks: 1,
-	enableBatchFile: true
+	enableBatchFile: true,
+	enablePython: true
 };
 
 function loaderTest(done, builder, type, rst) {
 	let check = function () {
-		let list = loaders.generateFromList(rst, type);
+		let list = loaders.generateFromList(rst, type, "");
 		list.should.be.eql(test.taskList);
 
 		done();
@@ -46,12 +47,13 @@ function watcherTest(done, builder, taskFile) {
 }
 
 suite("Npm", function () {
-	this.timeout(5000);
+	this.timeout(8000);
 
 	test("Npm loader", function (done) {
 		let rst = [
 			"npm run postinstall",
-			"npm run test"
+			"npm run test",
+			"npm run Install"
 		];
 
 		loaderTest(done, loaders.npmLoader, "npm", rst);
@@ -93,6 +95,8 @@ suite("vs loader", function () {
 });
 
 suite("script", function () {
+	this.timeout(5000);
+
 	let testBat = rootPath + "\\a.bat";
 	try {
 		//fs.accessSync(testBat, fs.constants.F_OK);
@@ -101,7 +105,7 @@ suite("script", function () {
 	catch (e) {}
 
 	test("script loader", function (done) {
-		let rst = [rootPath + "\\test.bat"];
+		let rst = [rootPath + "\\test.bat", "python " + rootPath + "\\test.py"];
 
 		loaderTest(done, loaders.scriptLoader, "script", rst);
 	});

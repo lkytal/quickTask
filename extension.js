@@ -26,15 +26,16 @@ function showCommand() {
 	}
 
 	let options = {
-		placeHolder: 'Select a Task to Run...'
+		placeHolder: 'Select a Task to Run...',
+		matchOnDescription: true
 	};
 
-	vscode.window.showQuickPick(manager.getLabels(), options).then(function (selection) {
+	vscode.window.showQuickPick(manager.getList(), options).then(function (selection) {
 		if (typeof selection === 'undefined') {
 			return;
 		}
 
-		let result = manager.findTask(selection);
+		let result = manager.findTask(selection.label, selection.description);
 
 		if (result.isVS) {
 			vscode.commands.executeCommand("workbench.action.tasks.runTask", result.cmdLine);
@@ -46,12 +47,14 @@ function showCommand() {
 				terminal.show();
 			}
 
-			if (globalConfig.closeTerminalAfterExecution) {
-				terminal.sendText(result.cmdLine);
-				terminal.sendText("exit");
+			if (result.relativePath != null) {
+				terminal.sendText('cd ' + result.relativePath);
 			}
-			else {
-				terminal.sendText(result.cmdLine);
+
+			terminal.sendText(result.cmdLine);
+
+			if (globalConfig.closeTerminalAfterExecution) {
+				terminal.sendText("exit");
 			}
 		}
 

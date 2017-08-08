@@ -48,6 +48,18 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [2.9.1] - 2017-08-07
+
+#### Improve
+
+- Description for subdirectory tasks.
+
+### [2.9.0] - 2017-08-05
+
+#### Improve
+
+- Support Npm and Gulp task in subdirectories.
+
 ### [2.8.1] - 2017-07-10
 
 #### Update
@@ -204,4 +216,4 @@ Hint: Task button is usually here:
 ## Acknowledgment
 
 > Inspired by [Task Master](https://marketplace.visualstudio.com/items?itemName=ianhoney.task-master), this extension started by forking it at first.
-> <div>Icons made by <a href="http://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+> <div>Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="https://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

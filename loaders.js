@@ -11,7 +11,7 @@ let prefix = {
 	user: "$(tag)  "
 }
 
-function generateItem(cmdLine, type) {
+function generateItem(cmdLine, type, description) {
 	switch (type) {
 		case "npm":
 		case "gulp":
@@ -19,7 +19,9 @@ function generateItem(cmdLine, type) {
 			return {
 				label: prefix[type] + cmdLine,
 				cmdLine: cmdLine,
-				isVS: false
+				isVS: false,
+				description: description,
+				relativePath: description
 			};
 
 		case "vs":
@@ -81,6 +83,8 @@ class gulpLoader extends taskLoader {
 	}
 
 	handleFunc(file, callback) {
+		let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
+
 		child_process.exec('gulp --tasks-simple', {
 			cwd: vscode.workspace.rootPath,
 			timeout: 10000
@@ -95,7 +99,7 @@ class gulpLoader extends taskLoader {
 			for (let item of tasks) {
 				if (item.length != 0) {
 					let cmdLine = 'gulp ' + item;
-					this.taskList.push(generateItem(cmdLine, "gulp"));
+					this.taskList.push(generateItem(cmdLine, "gulp", relativePath));
 				}
 			}
 
@@ -138,13 +142,15 @@ class npmLoader extends taskLoader {
 			try {
 				let pattern = JSON.parse(file.getText());
 
+				let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
+
 				if (typeof pattern.scripts === 'object') {
 					for (let item of Object.keys(pattern.scripts)) {
 						let cmdLine = 'npm run ' + item;
 						if (this.useYarn === true) {
 							cmdLine = 'yarn run ' + item;
 						}
-						this.taskList.push(generateItem(cmdLine, "npm"));
+						this.taskList.push(generateItem(cmdLine, "npm", relativePath));
 					}
 				}
 			}
@@ -164,39 +170,46 @@ class scriptLoader extends taskLoader {
 			enable: 1
 		}, globalConfig.excludesGlob, finishScan);
 		this.globalConfig = globalConfig;
-	}
 
-	generateTaskFromScript(file, exec) {
-		if (typeof file === 'object') {
-			var cmdLine = exec + file.uri._fsPath;
-			this.taskList.push(generateItem(path.normalize(cmdLine), "script"));
+		this.scriptTable = {
+			shellscript: {
+				exec: "",
+				enabled: this.globalConfig.enableShell
+			},
+			python: {
+				exec: "python ",
+				enabled: this.globalConfig.enablePython
+			},
+			ruby: {
+				exec: "ruby ",
+				enabled: this.globalConfig.enableRuby
+			},
+			powershell: {
+				exec: "powershell ",
+				enabled: this.globalConfig.enablePowershell
+			},
+			perl: {
+				exec: "perl ",
+				enabled: this.globalConfig.enablePerl
+			},
+			bat: {
+				exec: "",
+				enabled: this.globalConfig.enableBatchFile
+			}
 		}
 	}
 
 	handleFunc(file, callback) {
-		if (file.languageId === 'shellscript' && this.globalConfig.enableShell) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (file.languageId === 'python' && this.globalConfig.enablePython) {
-			this.generateTaskFromScript(file, 'python ');
-		}
-		else if (file.languageId === 'ruby' && this.globalConfig.enableRuby) {
-			this.generateTaskFromScript(file, 'ruby ');
-		}
-		else if (file.languageId === 'powershell' && this.globalConfig.enablePowershell) {
-			this.generateTaskFromScript(file, 'powershell ');
-		}
-		else if (file.languageId === 'perl' && this.globalConfig.enablePerl) {
-			this.generateTaskFromScript(file, 'perl ');
-		}
-		else if (file.languageId === 'bat' && this.globalConfig.enableBatchFile) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (/.*\.ahk$/.test(file.fileName) === true) {
-			this.generateTaskFromScript(file, '');
-		}
-		else if (/.*\.vbs$/.test(file.fileName) === true) {
-			this.generateTaskFromScript(file, 'cscript ');
+		if (typeof file != 'object') return;
+
+		for (let type of Object.keys(this.scriptTable)) {
+			if (file.languageId === type) {
+				if (this.scriptTable[type].enabled) {
+					let cmdLine = this.scriptTable[type].exec + file.fileName;
+					this.taskList.push(generateItem(cmdLine, "script"));
+				}
+				break;
+			}
 		}
 
 		callback();
@@ -254,11 +267,11 @@ exports.npmLoader = npmLoader;
 exports.scriptLoader = scriptLoader;
 exports.defaultLoader = defaultLoader;
 
-exports.generateFromList = function (list, type) {
+exports.generateFromList = function (list, type, description) {
 	let rst = [];
 
 	for (let item of list) {
-		rst.push(generateItem(item, type));
+		rst.push(generateItem(item, type, description));
 	}
 
 	return rst;

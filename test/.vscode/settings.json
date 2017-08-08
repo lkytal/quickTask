@@ -1,7 +1,8 @@
-
 {
 	"quicktask.defaultTasks": [
 		"npm update",
 		"npm i --save-dev"
-	]
+	],
+	"quicktask.searchTaskFileInSubdirectories": true,
+	"quicktask.closeTerminalAfterExecution": false
 }
