@@ -57,6 +57,7 @@
         "quicktask.gulpGlob": {
           "type": "array",
           "default": [
+            "gulpfile.babel.js",
             "gulpfile.js"
           ],
           "description": "The glob which Quick Task will scan for gulp tasks."

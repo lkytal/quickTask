@@ -12,14 +12,13 @@ let globalConfig = {
 	npmGlob: ["**/package.json"],
 	enableNpm: 1,
 	useYarn: false,
-	gulpGlob: ["**/gulpfile.js"],
 	enableGulp: 1,
 	enableVsTasks: 1,
 	enableBatchFile: true,
 	enablePython: true
 };
 
-function loaderTest(done, builder, type, rst) {
+function loaderTest(done, builder, type, rst, cfg) {
 	let check = function () {
 		let list = loaders.generateFromList(rst, type, "");
 		list.should.be.eql(test.taskList);
@@ -27,13 +26,15 @@ function loaderTest(done, builder, type, rst) {
 		done();
 	}
 
-	let test = new builder(globalConfig, check);
+	const config = Object.assign({}, globalConfig, cfg);
+	let test = new builder(config, check);
 
 	test.loadTask();
 }
 
-function watcherTest(done, builder, taskFile) {
-	let test = new builder(globalConfig, () => console.log("On finish"));
+function watcherTest(done, builder, taskFile, cfg) {
+	const config = Object.assign({}, globalConfig, cfg);
+	let test = new builder(config, () => console.log("On finish"));
 
 	test.onChanged = function () {
 		watcher.dispose();
@@ -67,18 +68,31 @@ suite("Npm", function () {
 suite("gulp", function () {
 	this.timeout(5000);
 
-	test("gulp loader", function (done) {
-		let rst = [
+	const tasks = {
+		"gulpfile.js": [
+			"gulp coffee",
 			"gulp watch",
 			"gulp default",
 			"gulp copy"
-		];
+		],
+		"gulpfile.babel.js": [
+			"gulp babel",
+			"gulp watch",
+			"gulp copy",
+			"gulp default"
+		],
+	};
 
-		loaderTest(done, loaders.gulpLoader, "gulp", rst);
-	});
+	Object.keys(tasks).forEach(gulpfile => {
+		const cfg = {gulpGlob: ["**/" + gulpfile]};
 
-	test("gulp watcher", function (done) {
-		watcherTest(done, loaders.gulpLoader, rootPath + "\\gulpfile.js");
+		test("gulp loader " + gulpfile, function (done) {
+			loaderTest(done, loaders.gulpLoader, "gulp", tasks[gulpfile], cfg);
+		});
+
+		test("gulp watcher " + gulpfile, function (done) {
+			watcherTest(done, loaders.gulpLoader, rootPath + "/" + gulpfile, cfg);
+		});
 	});
 });
 
