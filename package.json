@@ -48,25 +48,18 @@
           "description": "Search task from subdirectories for npm and gulp etc. (experimental)"
         },
         "quicktask.excludesGlob": {
-          "type": "array",
-          "default": [
-            "**/{node_modules,.vscode-test,.git}"
-          ],
+          "type": "string",
+          "default": "**/{node_modules,.vscode-test,.git}",
           "description": "The glob which Quick Task will exclude from scans."
         },
         "quicktask.gulpGlob": {
-          "type": "array",
-          "default": [
-            "gulpfile.babel.js",
-            "gulpfile.js"
-          ],
+          "type": "string",
+          "default": "gulpfile{,.babel}.js",
           "description": "The glob which Quick Task will scan for gulp tasks."
         },
         "quicktask.npmGlob": {
-          "type": "array",
-          "default": [
-            "package.json"
-          ],
+          "type": "string",
+          "default": "package.json",
           "description": "The glob which Quick Task will scan for npm tasks."
         },
         "quicktask.defaultTasks": {
