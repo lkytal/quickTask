@@ -84,6 +84,7 @@ class gulpLoader extends taskLoader {
 
 	handleFunc(file, callback) {
 		let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
+		if (relativePath === "") relativePath = null;
 
 		child_process.exec('gulp --tasks-simple', {
 			cwd: vscode.workspace.rootPath,
