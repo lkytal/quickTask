@@ -7,16 +7,18 @@ chai.should();
 
 let rootPath = vscode.workspace.rootPath;
 
-const globalConfig = {
+let globalConfig = {
 	excludesGlob: "**/{node_modules,.vscode-test,.git}",
 	npmGlob: "package.json",
+	searchTaskFileInSubdirectories: false,
 	enableNpm: 1,
 	useYarn: false,
 	gulpGlob: "gulpfile{,.babel}.js",
 	enableGulp: 1,
 	enableVsTasks: 1,
 	enableBatchFile: true,
-	enablePython: true
+	enablePython: true,
+	defaultTasks: []
 };
 
 function loaderTest(done, builder, type, rst) {
@@ -125,9 +127,11 @@ suite("script", function () {
 
 suite("user", function () {
 	test("user loader", function () {
+		let realDefaultTasks = vscode.workspace.getConfiguration('quicktask').get("defaultTasks");
+		globalConfig.defaultTasks = realDefaultTasks;
+
 		let check = function () {
-			let cfg = vscode.workspace.getConfiguration('quicktask').get("defaultTasks");
-			test.taskList.should.eql(loaders.generateFromList(cfg, "user"));
+			test.taskList.should.eql(loaders.generateFromList(globalConfig.defaultTasks, "user"));
 		}
 
 		let test = new loaders.defaultLoader(globalConfig, check);

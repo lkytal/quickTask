@@ -2,11 +2,17 @@
 
 All notable changes to the "quicktask" extension will be documented in this file.
 
-## [Unreleased]
-
-### Performance enhance
-
 ## [History]
+
+### [3.0.0] - 2017-08-10
+
+#### Added
+
+- Support gulpfile.babel.js.
+
+#### Fixed
+
+- Incorrect "cd" command.
 
 ### [2.9.1] - 2017-08-07
 

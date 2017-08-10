@@ -48,6 +48,16 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.0.0] - 2017-08-10
+
+#### Added
+
+- Support gulpfile.babel.js.
+
+#### Fixed
+
+- Incorrect "cd" command.
+
 ### [2.9.1] - 2017-08-07
 
 #### Improve

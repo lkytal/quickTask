@@ -48,7 +48,7 @@ class vsLoader extends taskLoader {
 		super("vs", {
 			glob: '.vscode/tasks.json',
 			enable: globalConfig.enableVsTasks
-		}, globalConfig.excludesGlob, finishScan);
+		}, globalConfig, finishScan);
 	}
 
 	handleFunc(file, callback) {
@@ -80,11 +80,11 @@ class gulpLoader extends taskLoader {
 		super("gulp", {
 			glob: globalConfig.gulpGlob,
 			enable: globalConfig.enableGulp
-		}, globalConfig.excludesGlob, finishScan);
+		}, globalConfig, finishScan);
 	}
 
 	handleFunc(file, callback) {
-		if (path.basename(file.fileName) == "gulpfile.js") {
+		if (path.basename(file.fileName) === "gulpfile.js") {
 			let babelGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.babel.js";
 			if (fs.existsSync(babelGulpPath)) {
 				return callback();
@@ -127,7 +127,7 @@ class gulpLoader extends taskLoader {
 				}
 			}
 			catch (e) {
-				console.log("Invalid gulp file");
+				console.error("Invalid gulp file");
 			}
 		}
 
@@ -140,7 +140,7 @@ class npmLoader extends taskLoader {
 		super("npm", {
 			glob: globalConfig.npmGlob,
 			enable: globalConfig.enableNpm
-		}, globalConfig.excludesGlob, finishScan);
+		}, globalConfig, finishScan);
 
 		this.useYarn = globalConfig.useYarn;
 	}
@@ -176,8 +176,7 @@ class scriptLoader extends taskLoader {
 		super("script", {
 			glob: '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
 			enable: 1
-		}, globalConfig.excludesGlob, finishScan);
-		this.globalConfig = globalConfig;
+		}, globalConfig, finishScan);
 
 		this.scriptTable = {
 			shellscript: {
@@ -233,7 +232,7 @@ class defaultLoader extends taskLoader {
 		super("user", {
 			glob: '',
 			enable: globalConfig.enableVsTasks
-		}, globalConfig.excludesGlob, finishScan);
+		}, globalConfig, finishScan);
 	}
 
 	loadTask() {
@@ -245,7 +244,7 @@ class defaultLoader extends taskLoader {
 			return this.onFinish();
 		}
 
-		let defaultList = vscode.workspace.getConfiguration('quicktask').get('defaultTasks');
+		let defaultList = this.globalConfig['defaultTasks'];
 
 		for (let item of defaultList) {
 			try {
