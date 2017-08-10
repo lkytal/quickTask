@@ -8,11 +8,11 @@ chai.should();
 let rootPath = vscode.workspace.rootPath;
 
 const globalConfig = {
-	excludeGlob: "**/node_modules",
-	npmGlob: "**/package.json",
+	excludesGlob: "**/{node_modules,.vscode-test,.git}",
+	npmGlob: "package.json",
 	enableNpm: 1,
 	useYarn: false,
-	gulpGlob: "**/gulpfile{,.babel}.js",
+	gulpGlob: "gulpfile{,.babel}.js",
 	enableGulp: 1,
 	enableVsTasks: 1,
 	enableBatchFile: true,
@@ -22,7 +22,7 @@ const globalConfig = {
 function loaderTest(done, builder, type, rst) {
 	let check = function () {
 		let list = loaders.generateFromList(rst, type, "");
-		list.should.be.eql(test.taskList);
+		test.taskList.should.be.eql(list);
 
 		done();
 	}
@@ -52,8 +52,7 @@ suite("Npm", function () {
 	test("Npm loader", function (done) {
 		let rst = [
 			"npm run postinstall",
-			"npm run test",
-			"npm run Install"
+			"npm run test"
 		];
 
 		loaderTest(done, loaders.npmLoader, "npm", rst);
@@ -65,13 +64,13 @@ suite("Npm", function () {
 });
 
 suite("gulp", function () {
-	this.timeout(5000);
+	this.timeout(15000);
 
 	test("gulp loader", function (done) {
 		let rst = [
 			"gulp watch",
-			"gulp default",
-			"gulp copy"
+			"gulp copy",
+			"gulp default"
 		];
 
 		loaderTest(done, loaders.gulpLoader, "gulp", rst);

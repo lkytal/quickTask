@@ -30,6 +30,8 @@ class listManager {
 	}
 
 	getList() {
+		this.refresh();
+
 		let labels = [];
 
 		for (let item of this.taskArray) {

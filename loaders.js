@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const vscode = require('vscode');
 const taskLoader = require('./taskLoader.js');
 const child_process = require('child_process');
@@ -83,6 +84,13 @@ class gulpLoader extends taskLoader {
 	}
 
 	handleFunc(file, callback) {
+		if (path.basename(file.fileName) == "gulpfile.js") {
+			let babelGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.babel.js";
+			if (fs.existsSync(babelGulpPath)) {
+				return callback();
+			}
+		}
+
 		let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
 
 		child_process.exec('gulp --tasks-simple', {
@@ -206,7 +214,7 @@ class scriptLoader extends taskLoader {
 			if (file.languageId === type) {
 				if (this.scriptTable[type].enabled) {
 					let cmdLine = this.scriptTable[type].exec + file.fileName;
-					this.taskList.push(generateItem(cmdLine, "script"));
+					this.taskList.push(generateItem(cmdLine, "script", ""));
 				}
 				break;
 			}
