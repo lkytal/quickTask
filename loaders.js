@@ -90,7 +90,7 @@ class gulpLoader extends taskLoader {
 			timeout: 10000
 		}, (err, stdout, stderr) => {
 			if (err) {
-				console.log(stderr);
+				console.error(stderr);
 				return this.oldRegexHandler(file, callback);
 			}
 

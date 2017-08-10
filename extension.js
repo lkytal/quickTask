@@ -47,7 +47,7 @@ function showCommand() {
 				terminal.show();
 			}
 
-			if (result.relativePath != null) {
+			if (result.relativePath != null && result.relativePath != "") {
 				terminal.sendText('cd ' + result.relativePath);
 			}
 

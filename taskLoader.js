@@ -14,7 +14,7 @@ class taskLoader {
 		this.finished = false;
 		this._taskList = [];
 
-		if (vscode.workspace.getConfiguration('quicktask').searchTaskFileInSubdirectories) {
+		if (config.searchTaskFileInSubdirectories == true) {
 			if (this.glob.indexOf("**/") != 0) {
 				this.glob = "**/" + this.glob;
 			}

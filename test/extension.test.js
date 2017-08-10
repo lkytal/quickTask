@@ -7,12 +7,12 @@ chai.should();
 
 let rootPath = vscode.workspace.rootPath;
 
-let globalConfig = {
+const globalConfig = {
 	excludeGlob: "**/node_modules",
-	npmGlob: ["**/package.json"],
+	npmGlob: "**/package.json",
 	enableNpm: 1,
 	useYarn: false,
-	gulpGlob: ["**/gulpfile.js"],
+	gulpGlob: "**/gulpfile{,.babel}.js",
 	enableGulp: 1,
 	enableVsTasks: 1,
 	enableBatchFile: true,

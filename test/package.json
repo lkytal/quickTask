@@ -41,7 +41,11 @@
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"@types/node": "^7.0.12",
-		"vscode": "^1.1.0"
+		"@types/node": "^8.0.20",
+		"vscode": "^1.1.4"
+	},
+	"dependencies": {
+		"babel-core": "^6.25.0",
+		"gulp": "^3.9.1"
 	}
 }
