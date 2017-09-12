@@ -1,4 +1,4 @@
-const path = require("path");
+ const path = require("path");
 const fs = require("fs");
 const vscode = require('vscode');
 const taskLoader = require('./taskLoader.js');
@@ -174,7 +174,7 @@ class npmLoader extends taskLoader {
 class scriptLoader extends taskLoader {
 	constructor(globalConfig, finishScan) {
 		super("script", {
-			glob: '**/*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
+			glob: '*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
 			enable: 1
 		}, globalConfig, finishScan);
 
