@@ -1,8 +1,14 @@
 # Change Log
 
-All notable changes to the "quicktask" extension will be documented in this file.
+All notable changes to the "quickTask" extension will be documented in this file.
 
 ## [History]
+
+### [3.0.1] - 2017-10-06
+
+#### Improve
+
+- Fix typo
 
 ### [3.0.0] - 2017-08-10
 
@@ -36,7 +42,7 @@ All notable changes to the "quicktask" extension will be documented in this file
 
 #### Improve
 
-- Show task started message within status icon.
+- Show task started message within the status icon.
 
 ### [2.6.1] - 2017-05-01
 
@@ -55,14 +61,14 @@ All notable changes to the "quicktask" extension will be documented in this file
 
 #### Fixed
 
-- Read vscode task list.
+- Read VSCode task list.
 - Watch Task file change.
 
 ### [2.5.0] - 2017-04-04
 
 #### Fixed
 
-- Close terminal window automatically after execution correctly.
+- Close the terminal window automatically after execution correctly.
 
 ### [2.4.2] - 2017-03-26
 
@@ -86,7 +92,7 @@ All notable changes to the "quicktask" extension will be documented in this file
 
 #### Fixed
 
-- Script file can now execute correctly.
+- Script files can now execute correctly.
 
 ### [2.3.0] - 2017-03-17
 
@@ -147,7 +153,7 @@ All notable changes to the "quicktask" extension will be documented in this file
 
 #### Changed
 
-- Better performance during rescan.
+- Better performance during rescanning.
 
 #### Fixed
 

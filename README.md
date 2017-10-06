@@ -10,11 +10,11 @@
 
 Quick Task will automatically trawl your project directory for task files from npm, gulp, scripts files and VS Code tasks, and allow you to execute each task with the click of a mouse!
 
-As shown bellow, all tasks will show up after click the task button on statusbar and you can execute any item simply by clicking at it.
+As shown below, all tasks will show up after clicking the task button on the status bar and you can execute any item simply by clicking on it.
 
 ## Highlights
 
-- Auto rescan after task files changed / added / deleted.
+- Auto rescan after task files changed/added/deleted.
 - Support VS Code task.
 - Allow you to close terminal window automatically after execution. (experimental)
 
@@ -33,8 +33,8 @@ Hint: Task button is usually here:
 - Python Scripts.
 - Ruby Scripts.
 - Perl Scripts.
-- Vbs Scripts.
-- AutoHotKey Scripts.
+- VBS Scripts.
+- AutoHotkey Scripts.
 - batch file and Powershell Scripts.
 
 > Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
@@ -47,6 +47,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.0.1] - 2017-10-06
+
+#### Improve
+
+- Fix typo.
 
 ### [3.0.0] - 2017-08-10
 
@@ -80,7 +86,7 @@ Hint: Task button is usually here:
 
 #### Improve
 
-- Show task started message within status icon.
+- Show task started message within the status icon.
 
 ### [2.6.1] - 2017-05-01
 
@@ -99,14 +105,14 @@ Hint: Task button is usually here:
 
 #### Fixed
 
-- Read vscode task list.
+- Read VSCode task list.
 - Watch Task file change.
 
 ### [2.5.0] - 2017-04-04
 
 #### Fixed
 
-- Close terminal window automatically after execution correctly.
+- Close the terminal window automatically after execution correctly.
 
 ### [2.4.2] - 2017-03-26
 
@@ -130,7 +136,7 @@ Hint: Task button is usually here:
 
 #### Fixed
 
-- Script file can now execute correctly.
+- Script files can now execute correctly.
 
 ### [2.3.0] - 2017-03-17
 
