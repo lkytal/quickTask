@@ -120,7 +120,7 @@ suite("script", function () {
 			done();
 		}
 
-		let watcher = test.setupWatcher(true);
+		let watcher = test.setupWatcher();
 		fs.writeFileSync(testBat, "test" + Date.now(), "utf-8");
 	});
 });

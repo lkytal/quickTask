@@ -21,7 +21,16 @@ function finishScan() {
 
 function showCommand() {
 	if (manager.isEmpty()) {
-		vscode.window.showInformationMessage("No task found.");
+		vscode.window.showInformationMessage("No task found.", "Reload").then(function (text) {
+			if (text === 'Reload') {
+				for (let loader of loaderList) {
+					loader.reload();
+				}
+
+				statusBar.showScanning();
+			}
+		});
+
 		return;
 	}
 
@@ -42,7 +51,7 @@ function showCommand() {
 		}
 		else {
 			let globalConfig = vscode.workspace.getConfiguration('quicktask');
-			let terminal = vscode.window.createTerminal();
+			let terminal = vscode.window.createTerminal(result.cmdLine);
 			if (globalConfig.showTerminal) {
 				terminal.show();
 			}
@@ -58,7 +67,6 @@ function showCommand() {
 			}
 		}
 
-		//vscode.window.setStatusBarMessage(`Task ${result.cmdLine} started`, 3000);
 		statusBar.showMessage(result);
 	});
 }

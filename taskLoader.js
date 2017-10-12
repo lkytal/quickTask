@@ -70,6 +70,13 @@ class taskLoader {
 		callback();
 	}
 
+	reload() {
+		this.finished = false;
+		this.taskList = [];
+
+		setTimeout(this.loadTask, 10);
+	}
+
 	onFinish(err) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);

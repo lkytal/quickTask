@@ -7,9 +7,7 @@ class statusBarController {
 		this.context = context;
 
 		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-		this.statusBarItem.text = '$(search) Scanning Tasks...';
-		this.statusBarItem.tooltip = 'Scanning Tasks...';
-		this.statusBarItem.show();
+		this.showScanning();
 
 		context.subscriptions.push(this.statusBarItem);
 	}
@@ -17,6 +15,12 @@ class statusBarController {
 	registerCommand(command, callBack) {
 		let showTaskCommand = vscode.commands.registerCommand(command, callBack);
 		this.context.subscriptions.push(showTaskCommand);
+	}
+
+	showScanning() {
+		this.statusBarItem.text = '$(search) Scanning Tasks...';
+		this.statusBarItem.tooltip = 'Scanning Tasks...';
+		this.statusBarItem.show();
 	}
 
 	showFinishState(isEmpty) {

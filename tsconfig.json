@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es2015",
+		"module": "commonjs",
+		"allowJs": true,
+		"checkJs": true,
+		//"strict": true,
+		"outDir": "out",
+		"lib": [
+			"es5",
+			"es6",
+			"es7",
+			"es2015"
+		],
+		"sourceMap": true,
+		"rootDir": "."
+	},
+	"exclude": [
+		"node_modules",
+		".vscode-test"
+	]
+}
