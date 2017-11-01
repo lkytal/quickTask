@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.0.3] - 2017-10-31
+
+#### Added
+
+- Better message displaying when start a new task.
+
 ### [3.0.2] - 2017-10-11
 
 #### Added

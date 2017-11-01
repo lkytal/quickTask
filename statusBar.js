@@ -9,7 +9,11 @@ class statusBarController {
 		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 		this.showScanning();
 
+		this.msgBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+		this.msgBar.hide();
+
 		context.subscriptions.push(this.statusBarItem);
+		context.subscriptions.push(this.msgBar);
 	}
 
 	registerCommand(command, callBack) {
@@ -37,9 +41,11 @@ class statusBarController {
 	}
 
 	showMessage(task) {
-		this.statusBarItem.text = "$(pulse) " + `Task ${task.cmdLine} started`;
+		this.msgBar.text = `$(pulse) Task "${task.cmdLine}" started`;
+		this.msgBar.show();
+
 		setTimeout(() => {
-			this.showFinishState(false);
+			this.msgBar.hide();
 		}, 2500);
 	}
 }

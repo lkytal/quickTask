@@ -21,8 +21,9 @@ function finishScan() {
 
 function showCommand() {
 	if (manager.isEmpty()) {
-		vscode.window.showInformationMessage("No task found.", "Reload").then(function (text) {
-			if (text === 'Reload') {
+		const reScan = "Rescan Tasks";
+		vscode.window.showInformationMessage("No task found.", reScan).then(function (text) {
+			if (text === reScan) {
 				for (let loader of loaderList) {
 					loader.reload();
 				}
@@ -44,30 +45,30 @@ function showCommand() {
 			return;
 		}
 
-		let result = manager.findTask(selection.label, selection.description);
+		let targetTask = manager.findTask(selection.label, selection.description);
 
-		if (result.isVS) {
-			vscode.commands.executeCommand("workbench.action.tasks.runTask", result.cmdLine);
+		if (targetTask.isVS) {
+			vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
 		}
 		else {
 			let globalConfig = vscode.workspace.getConfiguration('quicktask');
-			let terminal = vscode.window.createTerminal(result.cmdLine);
+			let terminal = vscode.window.createTerminal(targetTask.cmdLine);
 			if (globalConfig.showTerminal) {
 				terminal.show();
 			}
 
-			if (result.relativePath != null && result.relativePath != "") {
-				terminal.sendText('cd ' + result.relativePath);
+			if (targetTask.relativePath != null && targetTask.relativePath != "") {
+				terminal.sendText('cd ' + targetTask.relativePath);
 			}
 
-			terminal.sendText(result.cmdLine);
+			terminal.sendText(targetTask.cmdLine);
 
 			if (globalConfig.closeTerminalAfterExecution) {
 				terminal.sendText("exit");
 			}
 		}
 
-		statusBar.showMessage(result);
+		statusBar.showMessage(targetTask);
 	});
 }
 
