@@ -91,28 +91,34 @@ class gulpLoader extends taskLoader {
 			}
 		}
 
-		let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
+		try {
+			let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
 
-		child_process.exec('gulp --tasks-simple', {
-			cwd: vscode.workspace.rootPath,
-			timeout: 10000
-		}, (err, stdout, stderr) => {
-			if (err) {
-				console.error(stderr);
-				return this.oldRegexHandler(file, callback);
-			}
-
-			let tasks = stdout.trim().split("\n");
-
-			for (let item of tasks) {
-				if (item.length != 0) {
-					let cmdLine = 'gulp ' + item;
-					this.taskList.push(generateItem(cmdLine, "gulp", relativePath));
+			child_process.exec('gulp --tasks-simple', {
+				cwd: vscode.workspace.rootPath,
+				timeout: 10000
+			}, (err, stdout, stderr) => {
+				if (err) {
+					console.error(stderr);
+					return this.oldRegexHandler(file, callback);
 				}
-			}
 
-			callback();
-		});
+				let tasks = stdout.trim().split("\n");
+
+				for (let item of tasks) {
+					if (item.length != 0) {
+						let cmdLine = 'gulp ' + item;
+						this.taskList.push(generateItem(cmdLine, "gulp", relativePath));
+					}
+				}
+
+				callback();
+			});
+		}
+		catch (err) {
+			console.error(err);
+			return this.oldRegexHandler(file, callback);
+		}
 	}
 
 	oldRegexHandler(file, callback) {
@@ -127,7 +133,7 @@ class gulpLoader extends taskLoader {
 				}
 			}
 			catch (e) {
-				console.error("Invalid gulp file");
+				console.error("Invalid gulp file :" + e.message);
 			}
 		}
 
@@ -244,15 +250,15 @@ class defaultLoader extends taskLoader {
 			return this.onFinish();
 		}
 
-		let defaultList = this.globalConfig['defaultTasks'];
+		try {
+			let defaultList = this.globalConfig['defaultTasks'];
 
-		for (let item of defaultList) {
-			try {
+			for (let item of defaultList) {
 				this.taskList.push(generateItem(item, "user"));
 			}
-			catch (e) {
-				console.log("Invalid item: " + e.message);
-			}
+		}
+		catch (e) {
+			console.log("Invalid VS Task Item: " + e.message);
 		}
 
 		this.finished = true;
