@@ -1,6 +1,9 @@
 "use strict";
 
 class listManager {
+	loaderList = [];
+	taskArray = [];
+
 	constructor(loaderList) {
 		this.loaderList = loaderList;
 
@@ -57,4 +60,4 @@ class listManager {
 	}
 }
 
-module.exports = listManager;
+export = listManager;

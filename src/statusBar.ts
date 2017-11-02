@@ -1,8 +1,12 @@
 "use strict";
 
-const vscode = require('vscode');
+import * as vscode from 'vscode';
 
 class statusBarController {
+	context;
+	statusBarItem;
+	msgBar;
+
 	constructor(context) {
 		this.context = context;
 
@@ -50,4 +54,4 @@ class statusBarController {
 	}
 }
 
-module.exports = statusBarController;
+export = statusBarController;

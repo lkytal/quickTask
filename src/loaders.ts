@@ -1,8 +1,8 @@
-const path = require("path");
-const fs = require("fs");
-const vscode = require('vscode');
-const taskLoader = require('./taskLoader.js');
-const child_process = require('child_process');
+import * as path from "path";
+import * as fs from "fs";
+import * as vscode from 'vscode';
+import * as taskLoader from './taskLoader.js';
+import * as child_process from 'child_process';
 
 let prefix = {
 	vs: "$(code)  ",
@@ -12,7 +12,7 @@ let prefix = {
 	user: "$(tag)  "
 }
 
-function generateItem(cmdLine, type, description) {
+function generateItem(cmdLine, type, description = '') {
 	switch (type) {
 		case "npm":
 		case "gulp":
@@ -142,6 +142,8 @@ class gulpLoader extends taskLoader {
 }
 
 class npmLoader extends taskLoader {
+	useYarn = false;
+
 	constructor(globalConfig, finishScan) {
 		super("npm", {
 			glob: globalConfig.npmGlob,
@@ -178,6 +180,8 @@ class npmLoader extends taskLoader {
 }
 
 class scriptLoader extends taskLoader {
+	scriptTable = {};
+
 	constructor(globalConfig, finishScan) {
 		super("script", {
 			glob: '*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
@@ -233,7 +237,11 @@ class scriptLoader extends taskLoader {
 	}
 }
 
-class defaultLoader extends taskLoader {
+interface IDisposable {
+	dispose();
+}
+
+class defaultLoader extends taskLoader implements IDisposable {
 	constructor(globalConfig, finishScan) {
 		super("user", {
 			glob: '',
@@ -265,22 +273,20 @@ class defaultLoader extends taskLoader {
 		return this.onFinish();
 	}
 
+	dispose() {
+
+	}
+
 	setupWatcher() {
 		let watcher = vscode.workspace.onDidChangeConfiguration((e) => {
 			this.loadTask();
 		});
 
-		return watcher;
+		return this;
 	}
 }
 
-exports.vsLoader = vsLoader;
-exports.gulpLoader = gulpLoader;
-exports.npmLoader = npmLoader;
-exports.scriptLoader = scriptLoader;
-exports.defaultLoader = defaultLoader;
-
-exports.generateFromList = function (list, type, description) {
+function generateFromList(list, type, description) {
 	let rst = [];
 
 	for (let item of list) {
@@ -289,3 +295,7 @@ exports.generateFromList = function (list, type, description) {
 
 	return rst;
 }
+
+export {
+	vsLoader, gulpLoader, npmLoader, scriptLoader, defaultLoader, generateFromList
+};

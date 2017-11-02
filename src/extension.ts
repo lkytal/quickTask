@@ -1,9 +1,9 @@
 'use strict';
 
-const vscode = require('vscode');
-const loaders = require('./loaders.js');
-const listManager = require('./listManager.js');
-const statusBarController = require('./statusBar.js');
+import * as vscode from 'vscode';
+import * as loaders from './loaders';
+import * as listManager from './listManager';
+import * as statusBarController from './statusBar';
 
 let loaderList = [];
 let manager = new listManager(loaderList);
@@ -86,7 +86,7 @@ function setupLoaders(globalConfig, finishScan) {
 	}
 }
 
-function activate(context) {
+export function activate(context) {
 	statusBar = new statusBarController(context);
 	statusBar.registerCommand('quicktask.showTasks', showCommand);
 
@@ -98,9 +98,6 @@ function activate(context) {
 	}
 }
 
-function deactivate() {
+export function deactivate() {
 	console.log('QuickTask disabled.');
 }
-
-exports.activate = activate;
-exports.deactivate = deactivate;

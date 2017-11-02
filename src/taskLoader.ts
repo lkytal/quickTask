@@ -1,9 +1,19 @@
 "use strict";
 
-const vscode = require("vscode");
-const async = require('async');
+import * as vscode from 'vscode';
+import * as async from 'async';
 
 class taskLoader {
+	key = null;
+	config = null;
+	globalConfig = null;
+	glob = null;
+	enable = null;
+	excludesGlob = null;
+	callBack;
+	finished = false;
+	_taskList = [];
+
 	constructor(key, config, globalConfig, callBack) {
 		this.key = key;
 		this.config = config;
@@ -77,7 +87,7 @@ class taskLoader {
 		setTimeout(this.loadTask, 10);
 	}
 
-	onFinish(err) {
+	onFinish(err = null) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
 			this.taskList = [];
@@ -108,4 +118,4 @@ class taskLoader {
 	}
 }
 
-module.exports = taskLoader;
+export = taskLoader;
