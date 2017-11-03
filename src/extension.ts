@@ -2,8 +2,8 @@
 
 import * as vscode from 'vscode';
 import * as loaders from './loaders';
-import * as listManager from './listManager';
-import * as statusBarController from './statusBar';
+import listManager = require('./listManager');
+import statusBarController = require('./statusBar');
 
 let loaderList = [];
 let manager = new listManager(loaderList);
@@ -40,7 +40,7 @@ function showCommand() {
 		matchOnDescription: true
 	};
 
-	vscode.window.showQuickPick(manager.getList(), options).then(function (selection) {
+	vscode.window.showQuickPick(manager.getList(), options).then(function (selection : any) {
 		if (typeof selection === 'undefined') {
 			return;
 		}
@@ -52,6 +52,8 @@ function showCommand() {
 		}
 		else {
 			let globalConfig = vscode.workspace.getConfiguration('quicktask');
+
+			// @ts-ignore
 			let terminal = vscode.window.createTerminal(targetTask.cmdLine);
 			if (globalConfig.showTerminal) {
 				terminal.show();

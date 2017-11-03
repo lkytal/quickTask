@@ -14,7 +14,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension",
+  "main": "./out/src/extension",
   "icon": "icon.png",
   "contributes": {
     "commands": [

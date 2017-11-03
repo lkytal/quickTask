@@ -4,15 +4,15 @@ import * as vscode from 'vscode';
 import * as async from 'async';
 
 class taskLoader {
-	key = null;
-	config = null;
-	globalConfig = null;
-	glob = null;
-	enable = null;
-	excludesGlob = null;
-	callBack;
-	finished = false;
-	_taskList = [];
+	protected key = null;
+	protected config = null;
+	protected globalConfig = null;
+	protected glob = null;
+	protected enable = null;
+	protected excludesGlob = null;
+	protected callBack;
+	protected finished = false;
+	protected _taskList = [];
 
 	constructor(key, config, globalConfig, callBack) {
 		this.key = key;
@@ -98,7 +98,7 @@ class taskLoader {
 		this.callBack();
 	}
 
-	setupWatcher(ignoreChange = false) {
+	setupWatcher(ignoreChange = false) : any {
 		let watchPath = this.glob;
 		if (watchPath.indexOf("**/") != 0) {
 			watchPath = "**/" + watchPath;

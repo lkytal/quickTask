@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as vscode from 'vscode';
-import * as taskLoader from './taskLoader.js';
+import taskLoader = require('./taskLoader');
 import * as child_process from 'child_process';
 
 let prefix = {
@@ -237,11 +237,7 @@ class scriptLoader extends taskLoader {
 	}
 }
 
-interface IDisposable {
-	dispose();
-}
-
-class defaultLoader extends taskLoader implements IDisposable {
+class defaultLoader extends taskLoader {
 	constructor(globalConfig, finishScan) {
 		super("user", {
 			glob: '',
@@ -273,16 +269,12 @@ class defaultLoader extends taskLoader implements IDisposable {
 		return this.onFinish();
 	}
 
-	dispose() {
-
-	}
-
 	setupWatcher() {
 		let watcher = vscode.workspace.onDidChangeConfiguration((e) => {
 			this.loadTask();
 		});
 
-		return this;
+		return watcher;
 	}
 }
 
