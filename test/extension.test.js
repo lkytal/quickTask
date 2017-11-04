@@ -1,6 +1,6 @@
 let chai = require("chai");
 let vscode = require('vscode');
-let loaders = require('../loaders.js');
+let loaders = require('../out/src/loaders.js');
 let fs = require('fs');
 
 chai.should();

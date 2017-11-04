@@ -278,7 +278,7 @@ class defaultLoader extends taskLoader {
 	}
 }
 
-function generateFromList(list, type, description) {
+function generateFromList(list, type, description = '') {
 	let rst = [];
 
 	for (let item of list) {
