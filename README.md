@@ -6,7 +6,7 @@
 
 > Licensed by <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="Creative Commons BY-NC-SA 4.0" target="_blank">CC 4.0 BY-NC-SA</a>
 
-## A task manager and runner for Gulp, NPM, VS Code tasks and shell scripts
+## All in one task manager and runner for Gulp, NPM, VS Code tasks and shell scripts
 
 Quick Task will automatically trawl your project directory for task files from npm, gulp, scripts files and VS Code tasks, and allow you to execute each task with the click of a mouse!
 

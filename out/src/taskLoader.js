@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 const vscode = require("vscode");
 const async = require("async");
 class taskLoader {
@@ -18,8 +26,6 @@ class taskLoader {
         this.enable = config.enable;
         this.excludesGlob = globalConfig.excludesGlob;
         this.callBack = callBack;
-        this.finished = false;
-        this._taskList = [];
         if (this.globalConfig.searchTaskFileInSubdirectories == true) {
             if (this.glob.indexOf("**/") != 0) {
                 this.glob = "**/" + this.glob;
@@ -39,13 +45,14 @@ class taskLoader {
         return this.finished;
     }
     loadTask() {
-        this.finished = false;
-        this.taskList = [];
-        if (this.enable == false) {
-            this.finished = true;
-            return this.onFinish();
-        }
-        vscode.workspace.findFiles(this.glob, this.excludesGlob).then((foundList) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.finished = false;
+            this.taskList = [];
+            if (this.enable == false) {
+                this.finished = true;
+                return this.onFinish();
+            }
+            let foundList = yield vscode.workspace.findFiles(this.glob, this.excludesGlob);
             this.parseTasksFromFile(foundList);
         });
     }

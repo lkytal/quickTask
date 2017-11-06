@@ -1,5 +1,6 @@
 'use strict';
 
+import promisify = require('util.promisify')
 import * as vscode from 'vscode';
 import * as loaders from './loaders';
 import listManager = require('./listManager');

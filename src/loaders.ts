@@ -245,7 +245,7 @@ class defaultLoader extends taskLoader {
 		}, globalConfig, finishScan);
 	}
 
-	loadTask() {
+	public async loadTask() {
 		this.finished = false;
 		this.taskList = [];
 
@@ -266,7 +266,7 @@ class defaultLoader extends taskLoader {
 		}
 
 		this.finished = true;
-		return this.onFinish();
+		this.onFinish();
 	}
 
 	setupWatcher() {

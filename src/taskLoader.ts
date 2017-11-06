@@ -2,6 +2,7 @@
 
 import * as vscode from 'vscode';
 import * as async from 'async';
+import promisify = require('util.promisify')
 
 class taskLoader {
 	protected key = null;
@@ -23,9 +24,6 @@ class taskLoader {
 		this.excludesGlob = globalConfig.excludesGlob;
 		this.callBack = callBack;
 
-		this.finished = false;
-		this._taskList = [];
-
 		if (this.globalConfig.searchTaskFileInSubdirectories == true) {
 			if (this.glob.indexOf("**/") != 0) {
 				this.glob = "**/" + this.glob;
@@ -41,7 +39,7 @@ class taskLoader {
 		this._taskList = value;
 	}
 
-	isFinished() {
+	public isFinished() {
 		if (!this.enable) {
 			this.finished = true;
 		}
@@ -49,7 +47,7 @@ class taskLoader {
 		return this.finished;
 	}
 
-	loadTask() {
+	public async loadTask() {
 		this.finished = false;
 		this.taskList = [];
 
@@ -58,12 +56,11 @@ class taskLoader {
 			return this.onFinish();
 		}
 
-		vscode.workspace.findFiles(this.glob, this.excludesGlob).then((foundList) => {
-			this.parseTasksFromFile(foundList);
-		});
+		let foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
+		this.parseTasksFromFile(foundList);
 	}
 
-	parseTasksFromFile(fileList) {
+	public parseTasksFromFile(fileList) {
 		if (!Array.isArray(fileList) || fileList.length == 0) {
 			return this.onFinish();
 		}
@@ -75,19 +72,19 @@ class taskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	handleFunc(file, callback) {
+	protected handleFunc(file, callback) {
 		console.log(file);
 		callback();
 	}
 
-	reload() {
+	public reload() {
 		this.finished = false;
 		this.taskList = [];
 
 		setTimeout(this.loadTask, 10);
 	}
 
-	onFinish(err = null) {
+	public onFinish(err = null) {
 		if (err) {
 			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
 			this.taskList = [];
@@ -98,7 +95,7 @@ class taskLoader {
 		this.callBack();
 	}
 
-	setupWatcher(ignoreChange = false) : any {
+	public setupWatcher(ignoreChange = false): any {
 		let watchPath = this.glob;
 		if (watchPath.indexOf("**/") != 0) {
 			watchPath = "**/" + watchPath;
@@ -113,7 +110,7 @@ class taskLoader {
 		return watcher;
 	}
 
-	onChanged() {
+	public onChanged() {
 		this.loadTask();
 	}
 }
