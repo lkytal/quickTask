@@ -2,7 +2,6 @@
 
 import * as vscode from 'vscode';
 import * as async from 'async';
-import promisify = require('util.promisify')
 
 class taskLoader {
 	protected key = null;
@@ -72,7 +71,7 @@ class taskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	protected handleFunc(file, callback) {
+	protected handleFunc(file: vscode.TextDocument, callback) {
 		console.log(file);
 		callback();
 	}

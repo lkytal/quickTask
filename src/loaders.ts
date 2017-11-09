@@ -12,13 +12,13 @@ let prefix = {
 	user: "$(tag)  "
 }
 
-function generateItem(cmdLine, type, description = '') {
+function generateItem(cmdLine, type, description = '', label = cmdLine) {
 	switch (type) {
 		case "npm":
 		case "gulp":
 		case "script":
 			return {
-				label: prefix[type] + cmdLine,
+				label: prefix[type] + label,
 				cmdLine: cmdLine,
 				isVS: false,
 				description: description,
@@ -27,7 +27,7 @@ function generateItem(cmdLine, type, description = '') {
 
 		case "vs":
 			return {
-				label: prefix.vs + cmdLine,
+				label: prefix.vs + label,
 				cmdLine: cmdLine,
 				description: "VS Code tasks",
 				isVS: true
@@ -35,7 +35,7 @@ function generateItem(cmdLine, type, description = '') {
 
 		case "user":
 			return {
-				label: prefix.user + cmdLine,
+				label: prefix.user + label,
 				cmdLine: cmdLine,
 				description: "User defined tasks",
 				isVS: false
@@ -92,10 +92,8 @@ class gulpLoader extends taskLoader {
 		}
 
 		try {
-			let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
-
 			child_process.exec('gulp --tasks-simple', {
-				cwd: vscode.workspace.rootPath,
+				cwd: file.uri.path,
 				timeout: 10000
 			}, (err, stdout, stderr) => {
 				if (err) {
@@ -108,6 +106,7 @@ class gulpLoader extends taskLoader {
 				for (let item of tasks) {
 					if (item.length != 0) {
 						let cmdLine = 'gulp ' + item;
+						let relativePath = vscode.workspace.asRelativePath(file.uri);
 						this.taskList.push(generateItem(cmdLine, "gulp", relativePath));
 					}
 				}
@@ -158,10 +157,10 @@ class npmLoader extends taskLoader {
 			try {
 				let pattern = JSON.parse(file.getText());
 
-				let relativePath = path.relative(vscode.workspace.rootPath, path.dirname(file.fileName));
-
 				if (typeof pattern.scripts === 'object') {
 					for (let item of Object.keys(pattern.scripts)) {
+						let relativePath = vscode.workspace.asRelativePath(file.uri);
+
 						let cmdLine = 'npm run ' + item;
 						if (this.useYarn === true) {
 							cmdLine = 'yarn run ' + item;
@@ -223,7 +222,7 @@ class scriptLoader extends taskLoader {
 			if (file.languageId === type) {
 				if (this.scriptTable[type].enabled) {
 					let cmdLine = this.scriptTable[type].exec + file.fileName;
-					this.taskList.push(generateItem(cmdLine, "script", ""));
+					this.taskList.push(generateItem(cmdLine, "script", "", file.fileName));
 				}
 				break;
 			}

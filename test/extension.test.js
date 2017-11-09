@@ -5,7 +5,7 @@ let fs = require('fs');
 
 chai.should();
 
-let rootPath = vscode.workspace.rootPath;
+let rootPath = vscode.workspace.workspaceFolders[0];
 
 let globalConfig = {
 	excludesGlob: "**/{node_modules,.vscode-test,.git}",

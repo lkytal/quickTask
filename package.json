@@ -50,7 +50,7 @@
         },
         "quicktask.excludesGlob": {
           "type": "string",
-          "default": "**/{node_modules,.vscode-test,.git}∕**",
+          "default": "**/{node_modules,.vscode-test,.git}",
           "description": "The glob which Quick Task will exclude from scans."
         },
         "quicktask.gulpGlob": {
@@ -144,7 +144,7 @@
     "@types/async": "^2.0.45",
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.44",
-    "@types/node": "^8.0.49",
+    "@types/node": "^8.0.50",
     "chai": "^4.1.2",
     "eslint": "^4.10.0",
     "mocha": "^4.0.1",
@@ -152,7 +152,7 @@
     "vscode": "^1.1.6"
   },
   "dependencies": {
-    "async": "^2.5.0",
+    "async": "^2.6.0",
     "util.promisify": "^1.0.0"
   }
 }
