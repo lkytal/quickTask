@@ -5,7 +5,7 @@ let fs = require('fs');
 
 chai.should();
 
-let rootPath = vscode.workspace.workspaceFolders[0];
+let rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
 let globalConfig = {
 	excludesGlob: "**/{node_modules,.vscode-test,.git}",
@@ -21,9 +21,9 @@ let globalConfig = {
 	defaultTasks: []
 };
 
-function loaderTest(done, builder, type, rst) {
+function loaderTest(done, builder, type, rst, description = "") {
 	let check = function () {
-		let list = loaders.generateFromList(rst, type, "");
+		let list = loaders.generateFromList(rst, type, description);
 		test.taskList.should.be.eql(list);
 
 		done();
@@ -49,7 +49,7 @@ function watcherTest(done, builder, taskFile) {
 }
 
 suite("Npm", function () {
-	this.timeout(8000);
+	this.timeout(10000);
 
 	test("Npm loader", function (done) {
 		let rst = [
@@ -57,7 +57,7 @@ suite("Npm", function () {
 			"npm run test"
 		];
 
-		loaderTest(done, loaders.npmLoader, "npm", rst);
+		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json");
 	});
 
 	test("Npm watcher", function (done) {
@@ -75,11 +75,12 @@ suite("gulp", function () {
 			"gulp default"
 		];
 
-		loaderTest(done, loaders.gulpLoader, "gulp", rst);
+		let relativePath = "gulpfile.babel.js";
+		loaderTest(done, loaders.gulpLoader, "gulp", rst, relativePath);
 	});
 
 	test("gulp watcher", function (done) {
-		watcherTest(done, loaders.gulpLoader, rootPath + "\\gulpfile.js");
+		watcherTest(done, loaders.gulpLoader, rootPath + "\\gulpfile.babel.js");
 	});
 });
 
@@ -96,7 +97,7 @@ suite("vs loader", function () {
 });
 
 suite("script", function () {
-	this.timeout(5000);
+	this.timeout(10000);
 
 	let testBat = rootPath + "\\a.bat";
 	try {

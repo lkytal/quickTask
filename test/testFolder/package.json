@@ -1,0 +1,25 @@
+{
+	"name": "quick_tester",
+	"displayName": "QuickTaskTest",
+	"description": "Quick Task Tester.",
+	"version": "1.0.0",
+	"publisher": "lkytal",
+	"license": "BY-NC-SA",
+	"homepage": "https://lkytal.github.io",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lkytal/quickTask.git"
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/node": "^8.0.50",
+		"vscode": "^1.1.6"
+	},
+	"dependencies": {
+		"babel-core": "^6.26.0",
+		"gulp": "^3.9.1"
+	}
+}

@@ -93,7 +93,7 @@ class gulpLoader extends taskLoader {
 
 		try {
 			child_process.exec('gulp --tasks-simple', {
-				cwd: file.uri.path,
+				cwd: path.dirname(file.fileName),
 				timeout: 10000
 			}, (err, stdout, stderr) => {
 				if (err) {
@@ -222,7 +222,7 @@ class scriptLoader extends taskLoader {
 			if (file.languageId === type) {
 				if (this.scriptTable[type].enabled) {
 					let cmdLine = this.scriptTable[type].exec + file.fileName;
-					this.taskList.push(generateItem(cmdLine, "script", "", file.fileName));
+					this.taskList.push(generateItem(cmdLine, "script"));
 				}
 				break;
 			}

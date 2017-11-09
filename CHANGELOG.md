@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.1.0] - 2017-11-09
+
+#### Fixed
+
+- Support Multi Root Workspace.
+
 ### [3.0.3] - 2017-10-31
 
 #### Added
