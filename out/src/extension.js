@@ -1,5 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
+const os = require("os");
 const vscode = require("vscode");
 const loaders = require("./loaders");
 const listManager = require("./listManager");
@@ -48,7 +49,11 @@ function showCommand() {
                 terminal.show();
             }
             if (targetTask.relativePath != null && targetTask.relativePath != "") {
-                terminal.sendText('cd ' + targetTask.relativePath);
+                let cd = 'cd "';
+                if (os.type() == "Windows_NT") {
+                    cd = 'cd /d "';
+                }
+                terminal.sendText(cd + targetTask.relativePath + '"');
             }
             terminal.sendText(targetTask.cmdLine);
             if (globalConfig.closeTerminalAfterExecution) {

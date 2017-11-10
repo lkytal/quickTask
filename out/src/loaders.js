@@ -61,10 +61,7 @@ class vsLoader extends taskLoader {
                 let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
                 if (Array.isArray(pattern.tasks)) {
                     for (let task of pattern.tasks) {
-                        let cmdLine = task.taskName;
-                        if (pattern.version == '2.0.0') {
-                            cmdLine = 'label' in task ? task.label : task.taskName;
-                        }
+                        let cmdLine = 'label' in task ? task.label : task.taskName;
                         this.taskList.push(generateItem(cmdLine, "vs"));
                     }
                 }
@@ -107,10 +104,7 @@ class gulpLoader extends taskLoader {
                 for (let item of tasks) {
                     if (item.length != 0) {
                         let description = vscode.workspace.asRelativePath(file.uri);
-                        let relativePath = path.dirname(description);
-                        if (relativePath == '.') {
-                            relativePath = '';
-                        }
+                        let relativePath = path.dirname(file.fileName);
                         let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
                         this.taskList.push(task);
                     }
@@ -157,10 +151,7 @@ class npmLoader extends taskLoader {
                 if (typeof pattern.scripts === 'object') {
                     for (let item of Object.keys(pattern.scripts)) {
                         let description = vscode.workspace.asRelativePath(file.uri);
-                        let relativePath = path.dirname(description);
-                        if (relativePath == '.') {
-                            relativePath = '';
-                        }
+                        let relativePath = path.dirname(file.fileName);
                         let cmdLine = 'npm run ' + item;
                         if (this.useYarn === true) {
                             cmdLine = 'yarn run ' + item;

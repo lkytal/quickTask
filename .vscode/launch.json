@@ -4,6 +4,7 @@
     "configurations": [
         {
             "name": "Launch Extension",
+            "preLaunchTask": "npm",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -12,6 +13,7 @@
         },
         {
             "name": "Launch Tests",
+            "preLaunchTask": "npm",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",

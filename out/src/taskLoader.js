@@ -11,21 +11,18 @@ const vscode = require("vscode");
 const async = require("async");
 class taskLoader {
     constructor(key, config, globalConfig, callBack) {
-        this.key = null;
-        this.config = null;
-        this.globalConfig = null;
+        this.key = key;
+        this.config = config;
+        this.globalConfig = globalConfig;
+        this.callBack = callBack;
         this.glob = null;
         this.enable = null;
         this.excludesGlob = null;
         this.finished = false;
         this._taskList = [];
-        this.key = key;
-        this.config = config;
-        this.globalConfig = globalConfig;
         this.glob = config.glob;
         this.enable = config.enable;
         this.excludesGlob = globalConfig.excludesGlob;
-        this.callBack = callBack;
         if (this.globalConfig.searchTaskFileInSubdirectories == true) {
             if (this.glob.indexOf("**/") != 0) {
                 this.glob = "**/" + this.glob;

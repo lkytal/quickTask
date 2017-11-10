@@ -3,25 +3,17 @@
 import * as vscode from 'vscode';
 import * as async from 'async';
 
-class taskLoader {
-	protected key = null;
-	protected config = null;
-	protected globalConfig = null;
+abstract class taskLoader {
 	protected glob = null;
 	protected enable = null;
 	protected excludesGlob = null;
-	protected callBack;
 	protected finished = false;
 	protected _taskList = [];
 
-	constructor(key, config, globalConfig, callBack) {
-		this.key = key;
-		this.config = config;
-		this.globalConfig = globalConfig;
+	constructor(protected key, protected config, protected globalConfig, protected callBack) {
 		this.glob = config.glob;
 		this.enable = config.enable;
 		this.excludesGlob = globalConfig.excludesGlob;
-		this.callBack = callBack;
 
 		if (this.globalConfig.searchTaskFileInSubdirectories == true) {
 			if (this.glob.indexOf("**/") != 0) {

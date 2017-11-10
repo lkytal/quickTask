@@ -1,5 +1,6 @@
 'use strict';
 
+import os = require('os');
 import * as vscode from 'vscode';
 import * as loaders from './loaders';
 import listManager = require('./listManager');
@@ -17,6 +18,39 @@ function finishScan() {
 	}
 
 	statusBar.showFinishState(manager.isEmpty());
+}
+
+function runTask(selection) {
+	let targetTask = manager.findTask(selection.label, selection.description);
+
+	if (targetTask.isVS) {
+		vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
+		return;
+	}
+
+	let globalConfig = vscode.workspace.getConfiguration('quicktask');
+
+	// @ts-ignore
+	let terminal = vscode.window.createTerminal(targetTask.cmdLine);
+	if (globalConfig.showTerminal) {
+		terminal.show();
+	}
+
+	if (targetTask.relativePath != null && targetTask.relativePath != "") {
+		let cd = 'cd "';
+		if (os.type() == "Windows_NT") {
+			cd = 'cd /d "'
+		}
+		terminal.sendText(cd + targetTask.relativePath + '"');
+	}
+
+	terminal.sendText(targetTask.cmdLine);
+
+	if (globalConfig.closeTerminalAfterExecution) {
+		terminal.sendText("exit");
+	}
+
+	statusBar.showMessage(targetTask);
 }
 
 function showCommand() {
@@ -40,37 +74,12 @@ function showCommand() {
 		matchOnDescription: true
 	};
 
-	vscode.window.showQuickPick(manager.getList(), options).then(function (selection : any) {
+	vscode.window.showQuickPick(manager.getList(), options).then(function (selection) {
 		if (typeof selection === 'undefined') {
 			return;
 		}
 
-		let targetTask = manager.findTask(selection.label, selection.description);
-
-		if (targetTask.isVS) {
-			vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
-		}
-		else {
-			let globalConfig = vscode.workspace.getConfiguration('quicktask');
-
-			// @ts-ignore
-			let terminal = vscode.window.createTerminal(targetTask.cmdLine);
-			if (globalConfig.showTerminal) {
-				terminal.show();
-			}
-
-			if (targetTask.relativePath != null && targetTask.relativePath != "") {
-				terminal.sendText('cd ' + targetTask.relativePath);
-			}
-
-			terminal.sendText(targetTask.cmdLine);
-
-			if (globalConfig.closeTerminalAfterExecution) {
-				terminal.sendText("exit");
-			}
-		}
-
-		statusBar.showMessage(targetTask);
+		runTask(selection);
 	});
 }
 
