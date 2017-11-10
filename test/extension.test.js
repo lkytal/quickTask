@@ -21,9 +21,9 @@ let globalConfig = {
 	defaultTasks: []
 };
 
-function loaderTest(done, builder, type, rst, description = "") {
+function loaderTest(done, builder, type, rst, description = "", relativePath = "") {
 	let check = function () {
-		let list = loaders.generateFromList(rst, type, description);
+		let list = loaders.generateFromList(rst, type, description, relativePath);
 		test.taskList.should.be.eql(list);
 
 		done();

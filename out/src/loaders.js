@@ -20,7 +20,7 @@ let prefix = {
     script: "$(terminal)  ",
     user: "$(tag)  "
 };
-function generateItem(cmdLine, type, description = '', label = cmdLine) {
+function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = description) {
     switch (type) {
         case "npm":
         case "gulp":
@@ -30,7 +30,7 @@ function generateItem(cmdLine, type, description = '', label = cmdLine) {
                 cmdLine: cmdLine,
                 isVS: false,
                 description: description,
-                relativePath: description
+                relativePath: relativePath
             };
         case "vs":
             return {
@@ -62,6 +62,9 @@ class vsLoader extends taskLoader {
                 if (Array.isArray(pattern.tasks)) {
                     for (let task of pattern.tasks) {
                         let cmdLine = task.taskName;
+                        if (pattern.version == '2.0.0') {
+                            cmdLine = 'label' in task ? task.label : task.taskName;
+                        }
                         this.taskList.push(generateItem(cmdLine, "vs"));
                     }
                 }
@@ -103,9 +106,13 @@ class gulpLoader extends taskLoader {
                 let tasks = stdout.trim().split("\n");
                 for (let item of tasks) {
                     if (item.length != 0) {
-                        let cmdLine = 'gulp ' + item;
-                        let relativePath = vscode.workspace.asRelativePath(file.uri);
-                        this.taskList.push(generateItem(cmdLine, "gulp", relativePath));
+                        let description = vscode.workspace.asRelativePath(file.uri);
+                        let relativePath = path.dirname(description);
+                        if (relativePath == '.') {
+                            relativePath = '';
+                        }
+                        let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
+                        this.taskList.push(task);
                     }
                 }
                 callback();
@@ -149,12 +156,17 @@ class npmLoader extends taskLoader {
                 let pattern = JSON.parse(file.getText());
                 if (typeof pattern.scripts === 'object') {
                     for (let item of Object.keys(pattern.scripts)) {
-                        let relativePath = vscode.workspace.asRelativePath(file.uri);
+                        let description = vscode.workspace.asRelativePath(file.uri);
+                        let relativePath = path.dirname(description);
+                        if (relativePath == '.') {
+                            relativePath = '';
+                        }
                         let cmdLine = 'npm run ' + item;
                         if (this.useYarn === true) {
                             cmdLine = 'yarn run ' + item;
                         }
-                        this.taskList.push(generateItem(cmdLine, "npm", relativePath));
+                        let task = generateItem(cmdLine, "npm", description, undefined, relativePath);
+                        this.taskList.push(task);
                     }
                 }
             }
@@ -255,10 +267,10 @@ class defaultLoader extends taskLoader {
     }
 }
 exports.defaultLoader = defaultLoader;
-function generateFromList(list, type, description = '') {
+function generateFromList(list, type, description = '', relativePath = '') {
     let rst = [];
     for (let item of list) {
-        rst.push(generateItem(item, type, description));
+        rst.push(generateItem(item, type, description, item, relativePath));
     }
     return rst;
 }

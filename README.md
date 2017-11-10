@@ -48,6 +48,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.1.1] - 2017-11-10
+
+#### Fixed
+
+- Incorrect relative path.
+
 ### [3.1.0] - 2017-11-09
 
 #### Fixed
