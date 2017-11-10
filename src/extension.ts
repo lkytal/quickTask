@@ -74,7 +74,7 @@ function showCommand() {
 		matchOnDescription: true
 	};
 
-	vscode.window.showQuickPick(manager.getList(), options).then(function (selection) {
+	vscode.window.showQuickPick(manager.getLabelList(), options).then(function (selection) {
 		if (typeof selection === 'undefined') {
 			return;
 		}

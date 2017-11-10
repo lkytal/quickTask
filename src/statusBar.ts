@@ -3,13 +3,10 @@
 import * as vscode from 'vscode';
 
 class statusBarController {
-	context;
-	statusBarItem;
-	msgBar;
+	protected statusBarItem;
+	protected msgBar;
 
-	constructor(context) {
-		this.context = context;
-
+	constructor(protected context) {
 		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 		this.showScanning();
 

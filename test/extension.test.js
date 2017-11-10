@@ -57,7 +57,7 @@ suite("Npm", function () {
 			"npm run test"
 		];
 
-		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json");
+		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json", rootPath);
 	});
 
 	test("Npm watcher", function (done) {
@@ -75,8 +75,7 @@ suite("gulp", function () {
 			"gulp default"
 		];
 
-		let relativePath = "gulpfile.babel.js";
-		loaderTest(done, loaders.gulpLoader, "gulp", rst, relativePath);
+		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.babel.js", rootPath);
 	});
 
 	test("gulp watcher", function (done) {
@@ -132,7 +131,7 @@ suite("user", function () {
 		globalConfig.defaultTasks = realDefaultTasks;
 
 		let check = function () {
-			test.taskList.should.eql(loaders.generateFromList(globalConfig.defaultTasks, "user"));
+			test.taskList.should.eql(loaders.generateFromList(globalConfig.defaultTasks, "user", "User Defined Tasks"));
 		}
 
 		let test = new loaders.defaultLoader(globalConfig, check);

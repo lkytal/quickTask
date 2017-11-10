@@ -12,11 +12,12 @@ let prefix = {
 	user: "$(tag)  "
 }
 
-function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = description) {
+function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {
 	switch (type) {
 		case "npm":
 		case "gulp":
 		case "script":
+		case "user":
 			return {
 				label: prefix[type] + label,
 				cmdLine: cmdLine,
@@ -31,14 +32,6 @@ function generateItem(cmdLine, type, description = '', label = cmdLine, relative
 				cmdLine: cmdLine,
 				description: "VS Code tasks",
 				isVS: true
-			};
-
-		case "user":
-			return {
-				label: prefix.user + label,
-				cmdLine: cmdLine,
-				description: "User defined tasks",
-				isVS: false
 			};
 	}
 }
@@ -94,34 +87,36 @@ class gulpLoader extends taskLoader {
 		}
 
 		try {
-			child_process.exec('gulp --tasks-simple', {
-				cwd: path.dirname(file.fileName),
-				timeout: 10000
-			}, (err, stdout, stderr) => {
-				if (err) {
-					console.error(stderr);
-					return this.oldRegexHandler(file, callback);
-				}
-
-				let tasks = stdout.trim().split("\n");
-
-				for (let item of tasks) {
-					if (item.length != 0) {
-						let description = vscode.workspace.asRelativePath(file.uri);
-						let relativePath = path.dirname(file.fileName);
-
-						let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
-						this.taskList.push(task);
-					}
-				}
-
-				callback();
-			});
+			this.extractTasks(file, callback);
 		}
 		catch (err) {
 			console.error(err);
 			return this.oldRegexHandler(file, callback);
 		}
+	}
+
+	extractTasks(file, callback) {
+		child_process.exec('gulp --tasks-simple', {
+			cwd: path.dirname(file.fileName),
+			timeout: 10000
+		}, (err, stdout, stderr) => {
+			if (err) {
+				throw err;
+			}
+
+			let description = vscode.workspace.asRelativePath(file.uri);
+			let relativePath = path.dirname(file.fileName);
+			let tasks = stdout.trim().split("\n");
+
+			for (let item of tasks) {
+				if (item.length != 0) {
+					let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
+					this.taskList.push(task);
+				}
+			}
+
+			callback();
+		});
 	}
 
 	oldRegexHandler(file, callback) {
@@ -145,7 +140,7 @@ class gulpLoader extends taskLoader {
 }
 
 class npmLoader extends taskLoader {
-	useYarn = false;
+	protected useYarn = false;
 
 	constructor(globalConfig, finishScan) {
 		super("npm", {
@@ -159,14 +154,12 @@ class npmLoader extends taskLoader {
 	handleFunc(file, callback) {
 		if (typeof file === 'object') {
 			try {
+				let description = vscode.workspace.asRelativePath(file.uri);
+				let relativePath = path.dirname(file.fileName);
 				let pattern = JSON.parse(file.getText());
 
 				if (typeof pattern.scripts === 'object') {
 					for (let item of Object.keys(pattern.scripts)) {
-
-						let description = vscode.workspace.asRelativePath(file.uri);
-						let relativePath = path.dirname(file.fileName);
-
 						let cmdLine = 'npm run ' + item;
 						if (this.useYarn === true) {
 							cmdLine = 'yarn run ' + item;
@@ -177,8 +170,8 @@ class npmLoader extends taskLoader {
 					}
 				}
 			}
-			catch (e) {
-				console.log("Invalid package.json");
+			catch (err) {
+				console.error(err);
 			}
 		}
 
@@ -265,7 +258,7 @@ class defaultLoader extends taskLoader {
 			let defaultList = this.globalConfig['defaultTasks'];
 
 			for (let item of defaultList) {
-				this.taskList.push(generateItem(item, "user"));
+				this.taskList.push(generateItem(item, "user", "User Defined Tasks"));
 			}
 		}
 		catch (e) {

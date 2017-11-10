@@ -16,6 +16,31 @@ function finishScan() {
     }
     statusBar.showFinishState(manager.isEmpty());
 }
+function runTask(selection) {
+    let targetTask = manager.findTask(selection.label, selection.description);
+    if (targetTask.isVS) {
+        vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
+        return;
+    }
+    let globalConfig = vscode.workspace.getConfiguration('quicktask');
+    // @ts-ignore
+    let terminal = vscode.window.createTerminal(targetTask.cmdLine);
+    if (globalConfig.showTerminal) {
+        terminal.show();
+    }
+    if (targetTask.relativePath != null && targetTask.relativePath != "") {
+        let cd = 'cd "';
+        if (os.type() == "Windows_NT") {
+            cd = 'cd /d "';
+        }
+        terminal.sendText(cd + targetTask.relativePath + '"');
+    }
+    terminal.sendText(targetTask.cmdLine);
+    if (globalConfig.closeTerminalAfterExecution) {
+        terminal.sendText("exit");
+    }
+    statusBar.showMessage(targetTask);
+}
 function showCommand() {
     if (manager.isEmpty()) {
         const reScan = "Rescan Tasks";
@@ -33,34 +58,11 @@ function showCommand() {
         placeHolder: 'Select a Task to Run...',
         matchOnDescription: true
     };
-    vscode.window.showQuickPick(manager.getList(), options).then(function (selection) {
+    vscode.window.showQuickPick(manager.getLabelList(), options).then(function (selection) {
         if (typeof selection === 'undefined') {
             return;
         }
-        let targetTask = manager.findTask(selection.label, selection.description);
-        if (targetTask.isVS) {
-            vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
-        }
-        else {
-            let globalConfig = vscode.workspace.getConfiguration('quicktask');
-            // @ts-ignore
-            let terminal = vscode.window.createTerminal(targetTask.cmdLine);
-            if (globalConfig.showTerminal) {
-                terminal.show();
-            }
-            if (targetTask.relativePath != null && targetTask.relativePath != "") {
-                let cd = 'cd "';
-                if (os.type() == "Windows_NT") {
-                    cd = 'cd /d "';
-                }
-                terminal.sendText(cd + targetTask.relativePath + '"');
-            }
-            terminal.sendText(targetTask.cmdLine);
-            if (globalConfig.closeTerminalAfterExecution) {
-                terminal.sendText("exit");
-            }
-        }
-        statusBar.showMessage(targetTask);
+        runTask(selection);
     });
 }
 function setupLoaders(globalConfig, finishScan) {

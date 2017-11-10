@@ -1,15 +1,9 @@
 "use strict";
 
 class listManager {
-	loaderList = [];
-	taskArray = [];
+	protected taskArray = [];
 
-	constructor(loaderList) {
-		this.loaderList = loaderList;
-
-		this.taskArray = [];
-
-		this.getTaskArray();
+	constructor(protected loaderList) {
 	}
 
 	getTaskArray() {
@@ -32,7 +26,7 @@ class listManager {
 		return this.taskArray.length == 0
 	}
 
-	getList() {
+	getLabelList() {
 		this.refresh();
 
 		let labels = [];

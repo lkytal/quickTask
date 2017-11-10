@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.1.2] - 2017-11-10
+
+#### Fixed
+
+- Absolute path.
+
 ### [3.1.1] - 2017-11-10
 
 #### Fixed
