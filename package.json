@@ -55,7 +55,7 @@
         },
         "quicktask.gulpGlob": {
           "type": "string",
-          "default": "gulpfile{,.babel}.js",
+          "default": "{gulpfile,gulpfile.babel}.js",
           "description": "The glob which Quick Task will scan for gulp tasks."
         },
         "quicktask.npmGlob": {
@@ -146,7 +146,7 @@
     "@types/mocha": "^2.2.44",
     "@types/node": "^8.0.51",
     "chai": "^4.1.2",
-    "eslint": "^4.10.0",
+    "eslint": "^4.11.0",
     "mocha": "^4.0.1",
     "typescript": "^2.6.1",
     "vscode": "^1.1.6"

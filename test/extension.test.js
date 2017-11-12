@@ -5,7 +5,7 @@ let fs = require('fs');
 
 chai.should();
 
-let rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+let rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath + "\\";
 
 let globalConfig = {
 	excludesGlob: "**/{node_modules,.vscode-test,.git}",
@@ -70,16 +70,19 @@ suite("gulp", function () {
 
 	test("gulp loader", function (done) {
 		let rst = [
+			"gulp legacy",
 			"gulp watch",
 			"gulp copy",
 			"gulp default"
 		];
 
-		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.babel.js", rootPath);
+		fs.renameSync(rootPath + "gulpfile.babel.js", rootPath + "gulp.bk");
+		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.js", rootPath);
+		fs.renameSync(rootPath + "gulp.bk", rootPath + "gulpfile.babel.js");
 	});
 
 	test("gulp watcher", function (done) {
-		watcherTest(done, loaders.gulpLoader, rootPath + "\\gulpfile.babel.js");
+		watcherTest(done, loaders.gulpLoader, rootPath + "gulpfile.js");
 	});
 });
 
@@ -91,14 +94,14 @@ suite("vs loader", function () {
 	});
 
 	test("VS watcher", function (done) {
-		watcherTest(done, loaders.vsLoader, rootPath + "\\.vscode\\tasks.json");
+		watcherTest(done, loaders.vsLoader, rootPath + ".vscode\\tasks.json");
 	});
 });
 
 suite("script", function () {
 	this.timeout(10000);
 
-	let testBat = rootPath + "\\a.bat";
+	let testBat = rootPath + "a.bat";
 	try {
 		//fs.accessSync(testBat, fs.constants.F_OK);
 		fs.unlinkSync(testBat);
@@ -106,7 +109,7 @@ suite("script", function () {
 	catch (e) {}
 
 	test("script loader", function (done) {
-		let rst = [rootPath + "\\test.bat", "python " + rootPath + "\\test.py"];
+		let rst = [rootPath + "test.bat", "python " + rootPath + "test.py"];
 
 		loaderTest(done, loaders.scriptLoader, "script", rst);
 	});

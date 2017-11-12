@@ -79,39 +79,35 @@ class gulpLoader extends taskLoader {
         }, globalConfig, finishScan);
     }
     handleFunc(file, callback) {
-        if (path.basename(file.fileName) === "gulpfile.js") {
-            let babelGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.babel.js";
-            if (fs.existsSync(babelGulpPath)) {
+        if (path.basename(file.fileName) === "gulpfile.babel.js") {
+            let legacyGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.js";
+            if (fs.existsSync(legacyGulpPath)) {
                 return callback();
             }
         }
-        try {
-            this.extractTasks(file, callback);
-        }
-        catch (err) {
-            console.error(err);
-            return this.oldRegexHandler(file, callback);
-        }
-    }
-    extractTasks(file, callback) {
         child_process.exec('gulp --tasks-simple', {
             cwd: path.dirname(file.fileName),
             timeout: 10000
         }, (err, stdout, stderr) => {
             if (err) {
-                throw err;
+                console.error(err);
+                this.oldRegexHandler(file, callback);
+                return;
             }
-            let description = vscode.workspace.asRelativePath(file.uri);
-            let relativePath = path.dirname(file.fileName);
-            let tasks = stdout.trim().split("\n");
-            for (let item of tasks) {
-                if (item.length != 0) {
-                    let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
-                    this.taskList.push(task);
-                }
-            }
-            callback();
+            this.extractTasks(file, stdout, callback);
         });
+    }
+    extractTasks(file, stdout, callback) {
+        let description = vscode.workspace.asRelativePath(file.uri);
+        let relativePath = path.dirname(file.fileName);
+        let tasks = stdout.trim().split("\n");
+        for (let item of tasks) {
+            if (item.length != 0) {
+                let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
+                this.taskList.push(task);
+            }
+        }
+        callback();
     }
     oldRegexHandler(file, callback) {
         var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
@@ -171,7 +167,6 @@ class scriptLoader extends taskLoader {
             glob: '*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
             enable: 1
         }, globalConfig, finishScan);
-        this.scriptTable = {};
         this.scriptTable = {
             shellscript: {
                 exec: "",
@@ -234,13 +229,13 @@ class defaultLoader extends taskLoader {
                 return this.onFinish();
             }
             try {
-                let defaultList = this.globalConfig['defaultTasks'];
+                let defaultList = vscode.workspace.getConfiguration('quicktask')['defaultTasks'];
                 for (let item of defaultList) {
                     this.taskList.push(generateItem(item, "user", "User Defined Tasks"));
                 }
             }
-            catch (e) {
-                console.log("Invalid VS Task Item: " + e.message);
+            catch (err) {
+                console.error(err);
             }
             this.finished = true;
             this.onFinish();
@@ -255,6 +250,9 @@ class defaultLoader extends taskLoader {
 }
 exports.defaultLoader = defaultLoader;
 function generateFromList(list, type, description = '', relativePath = '') {
+    if (relativePath != '' && relativePath[relativePath.length - 1] == "\\") {
+        relativePath = relativePath.slice(0, relativePath.length - 1);
+    }
     let rst = [];
     for (let item of list) {
         rst.push(generateItem(item, type, description, item, relativePath));

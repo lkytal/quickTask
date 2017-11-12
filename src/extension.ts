@@ -36,12 +36,12 @@ function runTask(selection) {
 		terminal.show();
 	}
 
-	if (targetTask.relativePath != null && targetTask.relativePath != "") {
-		let cd = 'cd "';
+	let relativePath: string = targetTask.relativePath;
+	if (relativePath != null && relativePath != "") {
 		if (os.type() == "Windows_NT") {
-			cd = 'cd /d "'
+			terminal.sendText(relativePath.slice(0, 2));
 		}
-		terminal.sendText(cd + targetTask.relativePath + '"');
+		terminal.sendText(`cd "${relativePath}"`);
 	}
 
 	terminal.sendText(targetTask.cmdLine);
@@ -84,7 +84,7 @@ function showCommand() {
 }
 
 function setupLoaders(globalConfig, finishScan) {
-	let usedLoaders = [
+	let engines = [
 		loaders.gulpLoader,
 		loaders.npmLoader,
 		loaders.vsLoader,
@@ -92,8 +92,8 @@ function setupLoaders(globalConfig, finishScan) {
 		loaders.defaultLoader
 	];
 
-	for (let loaderEngine of usedLoaders) {
-		loaderList.push(new loaderEngine(globalConfig, finishScan));
+	for (let engine of engines) {
+		loaderList.push(new engine(globalConfig, finishScan));
 	}
 }
 

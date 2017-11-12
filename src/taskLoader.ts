@@ -77,6 +77,7 @@ abstract class taskLoader {
 
 	public onFinish(err = null) {
 		if (err) {
+			console.error(err);
 			vscode.window.showInformationMessage("Error when scanning tasks of " + this.key);
 			this.taskList = [];
 		}

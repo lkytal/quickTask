@@ -8,7 +8,10 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["${workspaceRoot}/test/testFolder", "--extensionDevelopmentPath=${workspaceRoot}" ],
+            "args": [
+                "${workspaceFolder}/test/testFolder",
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
             "stopOnEntry": false
         },
         {
@@ -17,7 +20,11 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["${workspaceRoot}/test/testFolder", "--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/test" ],
+            "args": [
+                "${workspaceFolder}/test/testFolder",
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/test"
+            ],
             "stopOnEntry": false
         }
     ]
