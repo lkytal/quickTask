@@ -39,7 +39,8 @@ function runTask(selection) {
 	let relativePath: string = targetTask.relativePath;
 	if (relativePath != null && relativePath != "") {
 		if (os.type() == "Windows_NT") {
-			terminal.sendText(relativePath.slice(0, 2));
+			relativePath = relativePath.charAt(0).toUpperCase() + relativePath.slice(1);
+			terminal.sendText(relativePath.charAt(0) + ':');
 		}
 		terminal.sendText(`cd "${relativePath}"`);
 	}

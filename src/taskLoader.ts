@@ -8,7 +8,7 @@ abstract class taskLoader {
 	protected enable = null;
 	protected excludesGlob = null;
 	protected finished = false;
-	protected _taskList = [];
+	public taskList = [];
 
 	constructor(protected key, protected config, protected globalConfig, protected callBack) {
 		this.glob = config.glob;
@@ -20,14 +20,6 @@ abstract class taskLoader {
 				this.glob = "**/" + this.glob;
 			}
 		}
-	}
-
-	get taskList() {
-		return this._taskList;
-	}
-
-	set taskList(value) {
-		this._taskList = value;
 	}
 
 	public isFinished() {

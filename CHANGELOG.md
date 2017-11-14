@@ -4,6 +4,14 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.1.3] - 2017-11-13
+
+#### Fixed
+
+- Sometimes gulp file cannot be found.
+
+- Capitalized path on windows.
+
 ### [3.1.2] - 2017-11-10
 
 #### Fixed

@@ -107,7 +107,8 @@ class gulpLoader extends taskLoader {
 
 		for (let item of tasks) {
 			if (item.length != 0) {
-				let task = generateItem('gulp ' + item, "gulp", description, undefined, relativePath);
+				let cmdLine = 'gulp ' + item;
+				let task = generateItem(cmdLine, "gulp", description, cmdLine, relativePath);
 				this.taskList.push(task);
 			}
 		}
@@ -161,7 +162,7 @@ class npmLoader extends taskLoader {
 							cmdLine = 'yarn run ' + item;
 						}
 
-						let task = generateItem(cmdLine, "npm", description, undefined, relativePath);
+						let task = generateItem(cmdLine, "npm", description, cmdLine, relativePath);
 						this.taskList.push(task);
 					}
 				}

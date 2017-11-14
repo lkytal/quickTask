@@ -19,7 +19,7 @@ class taskLoader {
         this.enable = null;
         this.excludesGlob = null;
         this.finished = false;
-        this._taskList = [];
+        this.taskList = [];
         this.glob = config.glob;
         this.enable = config.enable;
         this.excludesGlob = globalConfig.excludesGlob;
@@ -28,12 +28,6 @@ class taskLoader {
                 this.glob = "**/" + this.glob;
             }
         }
-    }
-    get taskList() {
-        return this._taskList;
-    }
-    set taskList(value) {
-        this._taskList = value;
     }
     isFinished() {
         if (!this.enable) {

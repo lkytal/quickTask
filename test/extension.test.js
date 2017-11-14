@@ -66,7 +66,7 @@ suite("Npm", function () {
 });
 
 suite("gulp", function () {
-	this.timeout(15000);
+	this.timeout(10000);
 
 	test("gulp loader", function (done) {
 		let rst = [
@@ -76,9 +76,9 @@ suite("gulp", function () {
 			"gulp default"
 		];
 
-		fs.renameSync(rootPath + "gulpfile.babel.js", rootPath + "gulp.bk");
+		//fs.renameSync(rootPath + "gulpfile.babel.js", rootPath + "gulp.bk");
 		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.js", rootPath);
-		fs.renameSync(rootPath + "gulp.bk", rootPath + "gulpfile.babel.js");
+		//fs.renameSync(rootPath + "gulp.bk", rootPath + "gulpfile.babel.js");
 	});
 
 	test("gulp watcher", function (done) {

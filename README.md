@@ -48,6 +48,14 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.1.3] - 2017-11-13
+
+#### Fixed
+
+- Sometimes gulp file cannot be found.
+
+- Capitalized path on windows.
+
 ### [3.1.2] - 2017-11-10
 
 #### Fixed
