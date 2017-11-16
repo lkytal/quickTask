@@ -48,6 +48,14 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.2.0] - 2017-11-15
+
+#### Fixed
+
+- Indicate path for VSCode tasks.
+
+- React to workspace remove events.
+
 ### [3.1.3] - 2017-11-13
 
 #### Fixed

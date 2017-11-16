@@ -6,11 +6,11 @@ import * as child_process from 'child_process';
 import { isNull, isNullOrUndefined } from "util";
 
 let prefix = {
-	vs: "$(code)  VS Task: ",
-	gulp: "$(browser)  ",
-	npm: "$(package)  ",
-	script: "$(terminal)  ",
-	user: "$(tag)  "
+	vs: "$(code) \tVS Task: ",
+	gulp: "$(browser) \t",
+	npm: "$(package) \t",
+	script: "$(terminal) \t",
+	user: "$(tag) \t"
 }
 
 function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {

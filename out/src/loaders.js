@@ -15,11 +15,11 @@ const taskLoader = require("./taskLoader");
 const child_process = require("child_process");
 const util_1 = require("util");
 let prefix = {
-    vs: "$(code)  VS Task:  ",
-    gulp: "$(browser)  ",
-    npm: "$(package)  ",
-    script: "$(terminal)  ",
-    user: "$(tag)  "
+    vs: "$(code) \tVS Task: ",
+    gulp: "$(browser) \t",
+    npm: "$(package) \t",
+    script: "$(terminal) \t",
+    user: "$(tag) \t"
 };
 function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {
     switch (type) {
@@ -69,7 +69,7 @@ class vsLoader extends taskLoader {
                 }
             }
             catch (e) {
-                console.log("Invalid tasks.json");
+                console.error("Invalid tasks.json" + e.message);
             }
         }
         callback();

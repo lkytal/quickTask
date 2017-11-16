@@ -4,6 +4,14 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.2.0] - 2017-11-15
+
+#### Fixed
+
+- Indicate path for VSCode tasks.
+
+- React to workspace remove events.
+
 ### [3.1.3] - 2017-11-13
 
 #### Fixed

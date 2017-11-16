@@ -90,7 +90,7 @@ suite("vs loader", function () {
 	test("VS first load", function (done) {
 		let rst = ["run", "test"];
 
-		loaderTest(done, loaders.vsLoader, "vs", rst);
+		loaderTest(done, loaders.vsLoader, "vs", rst, "testFolder");
 	});
 
 	test("VS watcher", function (done) {
