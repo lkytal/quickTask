@@ -6,7 +6,7 @@
   "publisher": "lkytal",
   "license": "CC-BY-NC-SA-4.0",
   "engines": {
-    "vscode": "^1.1.0"
+    "vscode": "^1.15.0"
   },
   "categories": [
     "Other"
@@ -126,7 +126,8 @@
     "Node",
     "NPM",
     "Gulp",
-    "Script"
+    "Script",
+    "multi-root ready"
   ],
   "homepage": "https://lkytal.github.io",
   "repository": {
@@ -142,14 +143,14 @@
   },
   "devDependencies": {
     "@types/async": "^2.0.45",
-    "@types/chai": "^4.0.4",
+    "@types/chai": "^4.0.5",
     "@types/mocha": "^2.2.44",
-    "@types/node": "^8.0.51",
+    "@types/node": "^8.0.53",
     "chai": "^4.1.2",
     "eslint": "^4.11.0",
     "mocha": "^4.0.1",
     "typescript": "^2.6.1",
-    "vscode": "^1.1.6"
+    "vscode": "^1.1.7"
   },
   "dependencies": {
     "async": "^2.6.0",

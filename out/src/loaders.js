@@ -13,8 +13,9 @@ const fs = require("fs");
 const vscode = require("vscode");
 const taskLoader = require("./taskLoader");
 const child_process = require("child_process");
+const util_1 = require("util");
 let prefix = {
-    vs: "$(code)  ",
+    vs: "$(code)  VS Task:  ",
     gulp: "$(browser)  ",
     npm: "$(package)  ",
     script: "$(terminal)  ",
@@ -37,7 +38,7 @@ function generateItem(cmdLine, type, description = '', label = cmdLine, relative
             return {
                 label: prefix.vs + label,
                 cmdLine: cmdLine,
-                description: "VS Code tasks",
+                description: description,
                 isVS: true
             };
     }
@@ -51,16 +52,20 @@ class vsLoader extends taskLoader {
     }
     handleFunc(file, callback) {
         if (typeof file === 'object') {
+            let description = vscode.workspace.getWorkspaceFolder(file.uri).name;
             try {
                 let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
                 if (Array.isArray(pattern.tasks)) {
                     for (let task of pattern.tasks) {
                         let cmdLine = 'label' in task ? task.label : task.taskName;
-                        this.taskList.push(generateItem(cmdLine, "vs"));
+                        if (util_1.isNullOrUndefined(cmdLine)) {
+                            continue;
+                        }
+                        this.taskList.push(generateItem(cmdLine, "vs", description));
                     }
                 }
                 else if (pattern.command != null) {
-                    this.taskList.push(generateItem(pattern.command, "vs"));
+                    this.taskList.push(generateItem(pattern.command, "vs", description));
                 }
             }
             catch (e) {

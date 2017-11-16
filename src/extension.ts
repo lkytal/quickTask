@@ -98,7 +98,7 @@ function setupLoaders(globalConfig, finishScan) {
 	}
 }
 
-export function activate(context) {
+export function activate(context: vscode.ExtensionContext) {
 	statusBar = new statusBarController(context);
 	statusBar.registerCommand('quicktask.showTasks', showCommand);
 
@@ -108,6 +108,18 @@ export function activate(context) {
 		loader.loadTask();
 		context.subscriptions.push(loader.setupWatcher());
 	}
+
+	let workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(e => {
+		if (e.removed.length == 0) {
+			return;
+		}
+
+		for (let loader of loaderList) {
+			loader.loadTask();
+		}
+	});
+
+	context.subscriptions.push(workspaceWatcher);
 }
 
 export function deactivate() {

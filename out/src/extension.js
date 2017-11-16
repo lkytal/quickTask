@@ -86,6 +86,15 @@ function activate(context) {
         loader.loadTask();
         context.subscriptions.push(loader.setupWatcher());
     }
+    let workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(e => {
+        if (e.removed.length == 0) {
+            return;
+        }
+        for (let loader of loaderList) {
+            loader.loadTask();
+        }
+    });
+    context.subscriptions.push(workspaceWatcher);
 }
 exports.activate = activate;
 function deactivate() {

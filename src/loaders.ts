@@ -3,9 +3,10 @@ import * as fs from "fs";
 import * as vscode from 'vscode';
 import taskLoader = require('./taskLoader');
 import * as child_process from 'child_process';
+import { isNull, isNullOrUndefined } from "util";
 
 let prefix = {
-	vs: "$(code)  ",
+	vs: "$(code)  VS Task: ",
 	gulp: "$(browser)  ",
 	npm: "$(package)  ",
 	script: "$(terminal)  ",
@@ -30,7 +31,7 @@ function generateItem(cmdLine, type, description = '', label = cmdLine, relative
 			return {
 				label: prefix.vs + label,
 				cmdLine: cmdLine,
-				description: "VS Code tasks",
+				description: description,
 				isVS: true
 			};
 	}
@@ -46,23 +47,28 @@ class vsLoader extends taskLoader {
 
 	handleFunc(file, callback) {
 		if (typeof file === 'object') {
+			let description = vscode.workspace.getWorkspaceFolder(file.uri).name;
+
 			try {
 				let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
 
 				if (Array.isArray(pattern.tasks)) {
-
 					for (let task of pattern.tasks) {
 						let cmdLine = 'label' in task ? task.label : task.taskName;
 
-						this.taskList.push(generateItem(cmdLine, "vs"));
+						if (isNullOrUndefined(cmdLine)) {
+							continue;
+						}
+
+						this.taskList.push(generateItem(cmdLine, "vs", description));
 					}
 				}
 				else if (pattern.command != null) {
-					this.taskList.push(generateItem(pattern.command, "vs"));
+					this.taskList.push(generateItem(pattern.command, "vs", description));
 				}
 			}
 			catch (e) {
-				console.log("Invalid tasks.json");
+				console.error("Invalid tasks.json" + e.message);
 			}
 		}
 
