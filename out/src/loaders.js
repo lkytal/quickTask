@@ -22,26 +22,14 @@ let prefix = {
     user: "$(tag) \t"
 };
 function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {
-    switch (type) {
-        case "npm":
-        case "gulp":
-        case "script":
-        case "user":
-            return {
-                label: prefix[type] + label,
-                cmdLine: cmdLine,
-                isVS: false,
-                description: description,
-                relativePath: relativePath
-            };
-        case "vs":
-            return {
-                label: prefix.vs + label,
-                cmdLine: cmdLine,
-                description: description,
-                isVS: true
-            };
-    }
+    let item = {
+        label: prefix[type] + label,
+        cmdLine: cmdLine,
+        type: type,
+        description: description,
+        relativePath: relativePath
+    };
+    return item;
 }
 class vsLoader extends taskLoader {
     constructor(globalConfig, finishScan) {

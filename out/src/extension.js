@@ -16,14 +16,19 @@ function finishScan() {
     }
     statusBar.showFinishState(manager.isEmpty());
 }
+function requestRescan() {
+    statusBar.showScanning();
+    for (let loader of loaderList) {
+        loader.reload();
+    }
+}
 function runTask(selection) {
     let targetTask = manager.findTask(selection.label, selection.description);
-    if (targetTask.isVS) {
+    if (targetTask.type == "vs") {
         vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
         return;
     }
     let globalConfig = vscode.workspace.getConfiguration('quicktask');
-    // @ts-ignore
     let terminal = vscode.window.createTerminal(targetTask.cmdLine);
     if (globalConfig.showTerminal) {
         terminal.show();
@@ -47,10 +52,7 @@ function showCommand() {
         const reScan = "Rescan Tasks";
         vscode.window.showInformationMessage("No task found.", reScan).then(function (text) {
             if (text === reScan) {
-                for (let loader of loaderList) {
-                    loader.reload();
-                }
-                statusBar.showScanning();
+                requestRescan();
             }
         });
         return;
@@ -87,11 +89,8 @@ function activate(context) {
         context.subscriptions.push(loader.setupWatcher());
     }
     let workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(e => {
-        if (e.removed.length == 0) {
-            return;
-        }
-        for (let loader of loaderList) {
-            loader.loadTask();
+        if (e.removed.length != 0) {
+            requestRescan();
         }
     });
     context.subscriptions.push(workspaceWatcher);

@@ -4,7 +4,7 @@
   "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
   "version": "3.2.0",
   "publisher": "lkytal",
-  "license": "CC-BY-NC-SA-4.0",
+  "license": "AGPL-3.0+",
   "engines": {
     "vscode": "^1.15.0"
   },

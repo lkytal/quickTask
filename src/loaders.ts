@@ -14,27 +14,15 @@ let prefix = {
 }
 
 function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {
-	switch (type) {
-		case "npm":
-		case "gulp":
-		case "script":
-		case "user":
-			return {
-				label: prefix[type] + label,
-				cmdLine: cmdLine,
-				isVS: false,
-				description: description,
-				relativePath: relativePath
-			};
+	let item = {
+		label: prefix[type] + label,
+		cmdLine: cmdLine,
+		type: type,
+		description: description,
+		relativePath: relativePath
+	};
 
-		case "vs":
-			return {
-				label: prefix.vs + label,
-				cmdLine: cmdLine,
-				description: description,
-				isVS: true
-			};
-	}
+	return item;
 }
 
 class vsLoader extends taskLoader {
@@ -280,8 +268,7 @@ class defaultLoader extends taskLoader {
 }
 
 function generateFromList(list, type, description = '', relativePath = '') {
-	if (relativePath != '' && relativePath[relativePath.length - 1] == "\\")
-	{
+	if (relativePath != '' && relativePath[relativePath.length - 1] == "\\") {
 		relativePath = relativePath.slice(0, relativePath.length - 1);
 	}
 

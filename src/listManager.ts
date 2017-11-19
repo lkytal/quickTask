@@ -1,3 +1,5 @@
+import { retry } from "async";
+
 "use strict";
 
 class listManager {
@@ -29,6 +31,20 @@ class listManager {
 	getLabelList() {
 		this.refresh();
 
+		this.taskArray = this.taskArray.sort(function (a, b) {
+			let order = a.type.localeCompare(b.type);
+
+			if (order == 0) {
+				order = a.description.localeCompare(b.description);
+			}
+
+			if (order == 0) {
+				order = a.label.localeCompare(b.label);
+			}
+
+			return order;
+		});
+
 		let labels = [];
 
 		for (let item of this.taskArray) {
@@ -38,9 +54,7 @@ class listManager {
 			});
 		}
 
-		return labels.sort(function (a, b) {
-			return a.label.localeCompare(b.label);
-		});
+		return labels;
 	}
 
 	findTask(selection, description) {
