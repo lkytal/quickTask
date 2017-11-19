@@ -21,9 +21,9 @@ class listManager {
     getLabelList() {
         this.refresh();
         this.taskArray = this.taskArray.sort(function (a, b) {
-            let order = a.type.localeCompare(b.type);
+            let order = a.workspace.localeCompare(b.workspace);
             if (order == 0) {
-                order = a.description.localeCompare(b.description);
+                order = a.type.localeCompare(b.type);
             }
             if (order == 0) {
                 order = a.label.localeCompare(b.label);

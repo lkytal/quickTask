@@ -21,13 +21,18 @@ let prefix = {
     script: "$(terminal) \t",
     user: "$(tag) \t"
 };
-function generateItem(cmdLine, type, description = '', label = cmdLine, relativePath = '') {
+function generateItem(type, label, cmdLine, fileUri, description = null) {
+    let workspace = vscode.workspace.getWorkspaceFolder(fileUri).name;
+    if (util_1.isNullOrUndefined(description)) {
+        description = workspace; //vscode.workspace.asRelativePath(fileUri);
+    }
     let item = {
+        type: type,
         label: prefix[type] + label,
         cmdLine: cmdLine,
-        type: type,
         description: description,
-        relativePath: relativePath
+        filePath: fileUri.fsPath,
+        workspace: workspace
     };
     return item;
 }
@@ -40,7 +45,6 @@ class vsLoader extends taskLoader {
     }
     handleFunc(file, callback) {
         if (typeof file === 'object') {
-            let description = vscode.workspace.getWorkspaceFolder(file.uri).name;
             try {
                 let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
                 if (Array.isArray(pattern.tasks)) {
@@ -49,11 +53,11 @@ class vsLoader extends taskLoader {
                         if (util_1.isNullOrUndefined(cmdLine)) {
                             continue;
                         }
-                        this.taskList.push(generateItem(cmdLine, "vs", description));
+                        this.taskList.push(generateItem("vs", cmdLine, cmdLine, file.uri));
                     }
                 }
                 else if (pattern.command != null) {
-                    this.taskList.push(generateItem(pattern.command, "vs", description));
+                    this.taskList.push(generateItem("vs", pattern.command, pattern.command, file.uri));
                 }
             }
             catch (e) {
@@ -91,13 +95,11 @@ class gulpLoader extends taskLoader {
         });
     }
     extractTasks(file, stdout, callback) {
-        let description = vscode.workspace.asRelativePath(file.uri);
-        let relativePath = path.dirname(file.fileName);
         let tasks = stdout.trim().split("\n");
         for (let item of tasks) {
             if (item.length != 0) {
                 let cmdLine = 'gulp ' + item;
-                let task = generateItem(cmdLine, "gulp", description, cmdLine, relativePath);
+                let task = generateItem("gulp", cmdLine, cmdLine, file.uri);
                 this.taskList.push(task);
             }
         }
@@ -110,7 +112,7 @@ class gulpLoader extends taskLoader {
             try {
                 for (let item of file.getText().match(regexpMatcher)) {
                     let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
-                    this.taskList.push(generateItem(cmdLine, "gulp"));
+                    this.taskList.push(generateItem("gulp", cmdLine, cmdLine, file.uri));
                 }
             }
             catch (e) {
@@ -133,8 +135,6 @@ class npmLoader extends taskLoader {
     handleFunc(file, callback) {
         if (typeof file === 'object') {
             try {
-                let description = vscode.workspace.asRelativePath(file.uri);
-                let relativePath = path.dirname(file.fileName);
                 let pattern = JSON.parse(file.getText());
                 if (typeof pattern.scripts === 'object') {
                     for (let item of Object.keys(pattern.scripts)) {
@@ -142,7 +142,7 @@ class npmLoader extends taskLoader {
                         if (this.useYarn === true) {
                             cmdLine = 'yarn run ' + item;
                         }
-                        let task = generateItem(cmdLine, "npm", description, cmdLine, relativePath);
+                        let task = generateItem("npm", cmdLine, cmdLine, file.uri);
                         this.taskList.push(task);
                     }
                 }
@@ -195,7 +195,7 @@ class scriptLoader extends taskLoader {
             if (file.languageId === type) {
                 if (this.scriptTable[type].enabled) {
                     let cmdLine = this.scriptTable[type].exec + file.fileName;
-                    this.taskList.push(generateItem(cmdLine, "script"));
+                    this.taskList.push(generateItem("script", cmdLine, cmdLine, file.uri));
                 }
                 break;
             }
@@ -224,8 +224,9 @@ class defaultLoader extends taskLoader {
             }
             try {
                 let defaultList = vscode.workspace.getConfiguration('quicktask')['defaultTasks'];
+                let w = vscode.workspace.workspaceFolders[0];
                 for (let item of defaultList) {
-                    this.taskList.push(generateItem(item, "user", "User Defined Tasks"));
+                    this.taskList.push(generateItem("user", item, item, w, "User Defined Tasks"));
                 }
             }
             catch (err) {
@@ -249,7 +250,7 @@ function generateFromList(list, type, description = '', relativePath = '') {
     }
     let rst = [];
     for (let item of list) {
-        rst.push(generateItem(item, type, description, item, relativePath));
+        rst.push(generateItem(type, item, item, relativePath));
     }
     return rst;
 }

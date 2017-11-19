@@ -1,6 +1,7 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 const os = require("os");
+const path = require("path");
 const vscode = require("vscode");
 const loaders = require("./loaders");
 const listManager = require("./listManager");
@@ -33,13 +34,13 @@ function runTask(selection) {
     if (globalConfig.showTerminal) {
         terminal.show();
     }
-    let relativePath = targetTask.relativePath;
-    if (relativePath != null && relativePath != "") {
+    let dirPath = path.dirname(targetTask.filePath);
+    if (dirPath != null && dirPath != "") {
         if (os.type() == "Windows_NT") {
-            relativePath = relativePath.charAt(0).toUpperCase() + relativePath.slice(1);
-            terminal.sendText(relativePath.charAt(0) + ':');
+            dirPath = dirPath.charAt(0).toUpperCase() + dirPath.slice(1);
+            terminal.sendText(dirPath.charAt(0) + ':');
         }
-        terminal.sendText(`cd "${relativePath}"`);
+        terminal.sendText(`cd "${dirPath}"`);
     }
     terminal.sendText(targetTask.cmdLine);
     if (globalConfig.closeTerminalAfterExecution) {
@@ -59,7 +60,8 @@ function showCommand() {
     }
     let options = {
         placeHolder: 'Select a Task to Run...',
-        matchOnDescription: true
+        matchOnDescription: true,
+        matchOnDetail: true
     };
     vscode.window.showQuickPick(manager.getLabelList(), options).then(function (selection) {
         if (typeof selection === 'undefined') {

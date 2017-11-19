@@ -1,6 +1,7 @@
 'use strict';
 
 import os = require('os');
+import * as path from "path";
 import * as vscode from 'vscode';
 import * as loaders from './loaders';
 import listManager = require('./listManager');
@@ -44,13 +45,13 @@ function runTask(selection) {
 		terminal.show();
 	}
 
-	let relativePath: string = targetTask.relativePath;
-	if (relativePath != null && relativePath != "") {
+	let dirPath: string = path.dirname(targetTask.filePath);
+	if (dirPath != null && dirPath != "") {
 		if (os.type() == "Windows_NT") {
-			relativePath = relativePath.charAt(0).toUpperCase() + relativePath.slice(1);
-			terminal.sendText(relativePath.charAt(0) + ':');
+			dirPath = dirPath.charAt(0).toUpperCase() + dirPath.slice(1);
+			terminal.sendText(dirPath.charAt(0) + ':');
 		}
-		terminal.sendText(`cd "${relativePath}"`);
+		terminal.sendText(`cd "${dirPath}"`);
 	}
 
 	terminal.sendText(targetTask.cmdLine);
@@ -76,7 +77,8 @@ function showCommand() {
 
 	let options = {
 		placeHolder: 'Select a Task to Run...',
-		matchOnDescription: true
+		matchOnDescription: true,
+		matchOnDetail: true
 	};
 
 	vscode.window.showQuickPick(manager.getLabelList(), options).then(function (selection) {
