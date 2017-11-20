@@ -4,7 +4,7 @@
 [![Dependency status](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)
 <a href="https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask"><img src="https://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg?style=flat-square" alt="Installs"></a>
 
-> Licensed by <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" title="Creative Commons BY-NC-SA 4.0" target="_blank">CC 4.0 BY-NC-SA</a>
+> Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
 
 ## All in one task manager and runner for Gulp, NPM, VS Code tasks and shell scripts
 
@@ -37,8 +37,6 @@ Hint: Task button is usually here:
 - AutoHotkey Scripts.
 - batch file and Powershell Scripts.
 
-> Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
-
 ## My Other extensions
 
 - ### [FlatUI](https://marketplace.visualstudio.com/items?itemName=lkytal.FlatUI)
@@ -47,6 +45,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.3.0] - 2017-11-20
+
+#### Improve
+
+- Group tasks by workspace.
 
 ### [3.2.0] - 2017-11-15
 

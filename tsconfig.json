@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es6",
+		"target": "es2015",
 		"module": "commonjs",
 		//"allowJs": true,
 		//"checkJs": true,
@@ -9,8 +9,9 @@
 		"lib": [
 			"es5",
 			"es6",
-			"es7",
-			"es2015"
+			"es2015",
+			"es2016",
+			"es2017"
 		],
 		"sourceMap": true
 	},

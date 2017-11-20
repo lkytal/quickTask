@@ -51,11 +51,10 @@ class taskLoader {
         if (!Array.isArray(fileList) || fileList.length == 0) {
             return this.onFinish();
         }
-        async.each(fileList, (item, callback) => {
-            vscode.workspace.openTextDocument(item.fsPath).then((file) => {
-                this.handleFunc(file, callback);
-            });
-        }, (err) => this.onFinish(err));
+        async.each(fileList, (item, callback) => __awaiter(this, void 0, void 0, function* () {
+            let file = yield vscode.workspace.openTextDocument(item.fsPath);
+            this.handleFunc(file, callback);
+        }), (err) => this.onFinish(err));
     }
     handleFunc(file, callback) {
         console.log(file);

@@ -1,3 +1,4 @@
+let util = require('util');
 let chai = require("chai");
 let vscode = require('vscode');
 let loaders = require('../out/src/loaders.js');
@@ -21,10 +22,19 @@ let globalConfig = {
 	defaultTasks: []
 };
 
-function loaderTest(done, builder, type, rst, description = "", relativePath = "") {
+function loaderTest(done, builder, type, list, filePath = null, description = null) {
+	let fileUri;
+
+	if (util.isNullOrUndefined(filePath)) {
+		fileUri = vscode.workspace.workspaceFolders[0].uri;
+	}
+	else {
+		fileUri = vscode.Uri.file(rootPath + filePath);
+	}
+
 	let check = function () {
-		let list = loaders.generateFromList(rst, type, description, relativePath);
-		test.taskList.should.be.eql(list);
+		let rst = loaders.generateFromList(type, list, fileUri, description);
+		test.taskList.should.be.eql(rst);
 
 		done();
 	}
@@ -44,8 +54,8 @@ function watcherTest(done, builder, taskFile) {
 
 	let watcher = test.setupWatcher();
 
-	let content = fs.readFileSync(taskFile, "utf-8");
-	fs.writeFileSync(taskFile, content, "utf-8");
+	let content = fs.readFileSync(rootPath + taskFile, "utf-8");
+	fs.writeFileSync(rootPath + taskFile, content, "utf-8");
 }
 
 suite("Npm", function () {
@@ -57,11 +67,11 @@ suite("Npm", function () {
 			"npm run test"
 		];
 
-		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json", rootPath);
+		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json");
 	});
 
 	test("Npm watcher", function (done) {
-		watcherTest(done, loaders.npmLoader, rootPath + "\\package.json");
+		watcherTest(done, loaders.npmLoader, "package.json");
 	});
 });
 
@@ -77,12 +87,12 @@ suite("gulp", function () {
 		];
 
 		//fs.renameSync(rootPath + "gulpfile.babel.js", rootPath + "gulp.bk");
-		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.js", rootPath);
+		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.js");
 		//fs.renameSync(rootPath + "gulp.bk", rootPath + "gulpfile.babel.js");
 	});
 
 	test("gulp watcher", function (done) {
-		watcherTest(done, loaders.gulpLoader, rootPath + "gulpfile.js");
+		watcherTest(done, loaders.gulpLoader, "gulpfile.js");
 	});
 });
 
@@ -90,11 +100,11 @@ suite("vs loader", function () {
 	test("VS first load", function (done) {
 		let rst = ["run", "test"];
 
-		loaderTest(done, loaders.vsLoader, "vs", rst, "testFolder");
+		loaderTest(done, loaders.vsLoader, "vs", rst, ".vscode\\tasks.json");
 	});
 
 	test("VS watcher", function (done) {
-		watcherTest(done, loaders.vsLoader, rootPath + ".vscode\\tasks.json");
+		watcherTest(done, loaders.vsLoader, ".vscode\\tasks.json");
 	});
 });
 
@@ -134,7 +144,8 @@ suite("user", function () {
 		globalConfig.defaultTasks = realDefaultTasks;
 
 		let check = function () {
-			test.taskList.should.eql(loaders.generateFromList(globalConfig.defaultTasks, "user", "User Defined Tasks"));
+			let rst = loaders.generateFromList("user", globalConfig.defaultTasks, null, "User Defined Tasks");
+			test.taskList.should.eql(rst);
 		}
 
 		let test = new loaders.defaultLoader(globalConfig, check);

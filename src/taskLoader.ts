@@ -48,10 +48,9 @@ abstract class taskLoader {
 			return this.onFinish();
 		}
 
-		async.each(fileList, (item, callback) => {
-			vscode.workspace.openTextDocument(item.fsPath).then((file) => {
-				this.handleFunc(file, callback);
-			});
+		async.each(fileList, async (item, callback) => {
+			let file = await vscode.workspace.openTextDocument(item.fsPath);
+			this.handleFunc(file, callback);
 		}, (err) => this.onFinish(err));
 	}
 

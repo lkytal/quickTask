@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.3.0] - 2017-11-20
+
+#### Improve
+
+- Group tasks by workspace.
+
 ### [3.2.0] - 2017-11-15
 
 #### Fixed

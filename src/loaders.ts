@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as vscode from 'vscode';
 import taskLoader = require('./taskLoader');
 import * as child_process from 'child_process';
-import { isNull, isNullOrUndefined } from "util";
+import * as util from "util";
 
 let prefix = {
 	vs: "$(code) \tVS Task: ",
@@ -13,11 +13,21 @@ let prefix = {
 	user: "$(tag) \t"
 }
 
-function generateItem(type, label, cmdLine, fileUri, description = null) {
-	let workspace = vscode.workspace.getWorkspaceFolder(fileUri).name;
+function generateItem(type: string, label, cmdLine, fileUri = null, description = null) {
+	let workspace = null;
 
-	if (isNullOrUndefined(description)) {
-		description = workspace; //vscode.workspace.asRelativePath(fileUri);
+	if (!util.isNullOrUndefined(fileUri)) {
+		workspace = vscode.workspace.getWorkspaceFolder(fileUri);
+	}
+
+	if (util.isNullOrUndefined(workspace)) {
+		workspace = vscode.workspace.workspaceFolders[0];
+	}
+
+	let workspaceName = workspace ? workspace.name : "";
+
+	if (util.isNullOrUndefined(description)) {
+		description = workspaceName; //vscode.workspace.asRelativePath(fileUri);
 	}
 
 	let item = {
@@ -25,8 +35,8 @@ function generateItem(type, label, cmdLine, fileUri, description = null) {
 		label: prefix[type] + label,
 		cmdLine: cmdLine,
 		description: description,
-		filePath: fileUri.fsPath,
-		workspace: workspace
+		filePath: fileUri ? fileUri.fsPath : "",
+		workspace: workspaceName
 	};
 
 	return item;
@@ -49,7 +59,7 @@ class vsLoader extends taskLoader {
 					for (let task of pattern.tasks) {
 						let cmdLine = 'label' in task ? task.label : task.taskName;
 
-						if (isNullOrUndefined(cmdLine)) {
+						if (util.isNullOrUndefined(cmdLine)) {
 							continue;
 						}
 
@@ -246,10 +256,9 @@ class defaultLoader extends taskLoader {
 
 		try {
 			let defaultList = vscode.workspace.getConfiguration('quicktask')['defaultTasks'];
-			let w = vscode.workspace.workspaceFolders[0];
 
 			for (let item of defaultList) {
-				this.taskList.push(generateItem("user", item, item, w, "User Defined Tasks"));
+				this.taskList.push(generateItem("user", item, item, null, "User Defined Tasks"));
 			}
 		}
 		catch (err) {
@@ -269,15 +278,11 @@ class defaultLoader extends taskLoader {
 	}
 }
 
-function generateFromList(list, type, description = '', relativePath = '') {
-	if (relativePath != '' && relativePath[relativePath.length - 1] == "\\") {
-		relativePath = relativePath.slice(0, relativePath.length - 1);
-	}
-
+function generateFromList(type, list, filePath = null, description = null) {
 	let rst = [];
 
-	for (let item of list) {
-		rst.push(generateItem(type, item, item, relativePath));
+	for (let cmdLine of list) {
+		rst.push(generateItem(type, cmdLine, cmdLine, filePath, description));
 	}
 
 	return rst;

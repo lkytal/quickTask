@@ -2,12 +2,10 @@
 
 import gulp from 'gulp';
 
-export function babel() {
+export function test() {
 	return;
 }
 
-export function series() {
-	gulp.series(babel, function() {
-		return;
-	});
-}
+gulp.task('babel', () => {
+	return test();
+});

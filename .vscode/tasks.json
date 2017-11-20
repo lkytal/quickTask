@@ -10,7 +10,7 @@
                 "echo": true,
                 "reveal": "never",
                 "focus": false,
-                "panel": "shared"
+                "panel": "new"
             }
         }
     ]
