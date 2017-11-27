@@ -82,9 +82,14 @@ function setupLoaders(globalConfig, finishScan) {
         loaderList.push(new engine(globalConfig, finishScan));
     }
 }
+function registerCommand(context, command, callBack) {
+    let commandObject = vscode.commands.registerCommand(command, callBack);
+    context.subscriptions.push(commandObject);
+}
 function activate(context) {
     statusBar = new statusBarController(context);
-    statusBar.registerCommand('quicktask.showTasks', showCommand);
+    registerCommand(context, 'quicktask.showTasks', showCommand);
+    registerCommand(context, 'quicktask.rescanTasks', requestRescan);
     setupLoaders(vscode.workspace.getConfiguration('quicktask'), finishScan);
     for (let loader of loaderList) {
         loader.loadTask();

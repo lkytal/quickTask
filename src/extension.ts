@@ -104,9 +104,16 @@ function setupLoaders(globalConfig, finishScan) {
 	}
 }
 
+function registerCommand(context, command, callBack) {
+	let commandObject = vscode.commands.registerCommand(command, callBack);
+	context.subscriptions.push(commandObject);
+}
+
 export function activate(context: vscode.ExtensionContext) {
+	registerCommand(context, 'quicktask.showTasks', showCommand);
+	registerCommand(context, 'quicktask.rescanTasks', requestRescan);
+
 	statusBar = new statusBarController(context);
-	statusBar.registerCommand('quicktask.showTasks', showCommand);
 
 	setupLoaders(vscode.workspace.getConfiguration('quicktask'), finishScan);
 

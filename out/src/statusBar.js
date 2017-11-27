@@ -10,10 +10,6 @@ class statusBarController {
         context.subscriptions.push(this.statusBarItem);
         context.subscriptions.push(this.msgBar);
     }
-    registerCommand(command, callBack) {
-        let showTaskCommand = vscode.commands.registerCommand(command, callBack);
-        this.context.subscriptions.push(showTaskCommand);
-    }
     showScanning() {
         this.statusBarItem.text = '$(search) Scanning Tasks...';
         this.statusBarItem.tooltip = 'Scanning Tasks...';

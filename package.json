@@ -22,6 +22,11 @@
         "command": "quicktask.showTasks",
         "title": "Show Tasks",
         "category": "QuickTask"
+      },
+      {
+        "command": "quicktask.rescanTasks",
+        "title": "Rescan Tasks",
+        "category": "QuickTask"
       }
     ],
     "configuration": {
