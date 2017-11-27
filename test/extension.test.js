@@ -1,12 +1,17 @@
+let path = require('path');
+let fs = require('fs');
 let util = require('util');
 let chai = require("chai");
 let vscode = require('vscode');
 let loaders = require('../out/src/loaders.js');
-let fs = require('fs');
 
 chai.should();
 
-let rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath + "\\";
+let rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+
+function fullPath(p) {
+	return path.join(rootPath, p);
+}
 
 let globalConfig = {
 	excludesGlob: "**/{node_modules,.vscode-test,.git}",
@@ -29,7 +34,7 @@ function loaderTest(done, builder, type, list, filePath = null, description = nu
 		fileUri = vscode.workspace.workspaceFolders[0].uri;
 	}
 	else {
-		fileUri = vscode.Uri.file(rootPath + filePath);
+		fileUri = vscode.Uri.file(path.join(rootPath, filePath));
 	}
 
 	let check = function () {
@@ -54,8 +59,8 @@ function watcherTest(done, builder, taskFile) {
 
 	let watcher = test.setupWatcher();
 
-	let content = fs.readFileSync(rootPath + taskFile, "utf-8");
-	fs.writeFileSync(rootPath + taskFile, content, "utf-8");
+	let content = fs.readFileSync(path.join(rootPath, taskFile), "utf-8");
+	fs.writeFileSync(path.join(rootPath, taskFile), content, "utf-8");
 }
 
 suite("Npm", function () {
@@ -111,7 +116,8 @@ suite("vs loader", function () {
 suite("script", function () {
 	this.timeout(10000);
 
-	let testBat = rootPath + "a.bat";
+	let testBat = path.join(rootPath, "a.bat");
+
 	try {
 		//fs.accessSync(testBat, fs.constants.F_OK);
 		fs.unlinkSync(testBat);
@@ -119,7 +125,7 @@ suite("script", function () {
 	catch (e) {}
 
 	test("script loader", function (done) {
-		let rst = [rootPath + "test.bat", "python " + rootPath + "test.py"];
+		let rst = [path.join(rootPath, "test.bat"), "python " + path.join(rootPath, "test.py")];
 
 		loaderTest(done, loaders.scriptLoader, "script", rst);
 	});

@@ -11,9 +11,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fs = require("fs");
 const vscode = require("vscode");
-const taskLoader = require("./taskLoader");
 const child_process = require("child_process");
 const util = require("util");
+const taskLoader = require("./taskLoader");
 let prefix = {
     vs: "$(code) \tVS Task: ",
     gulp: "$(browser) \t",
@@ -31,7 +31,8 @@ function generateItem(type, label, cmdLine, fileUri = null, description = null) 
     }
     let workspaceName = workspace ? workspace.name : "";
     if (util.isNullOrUndefined(description)) {
-        description = workspaceName; //vscode.workspace.asRelativePath(fileUri);
+        let relative = vscode.workspace.asRelativePath(fileUri);
+        description = path.join(workspaceName, path.dirname(relative));
     }
     let item = {
         type: type,
@@ -84,7 +85,7 @@ class gulpLoader extends taskLoader {
     }
     handleFunc(file, callback) {
         if (path.basename(file.fileName) === "gulpfile.babel.js") {
-            let legacyGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.js";
+            let legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
             if (fs.existsSync(legacyGulpPath)) {
                 return callback();
             }

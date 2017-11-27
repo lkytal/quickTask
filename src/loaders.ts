@@ -1,9 +1,9 @@
 import * as path from "path";
 import * as fs from "fs";
 import * as vscode from 'vscode';
-import taskLoader = require('./taskLoader');
 import * as child_process from 'child_process';
 import * as util from "util";
+import taskLoader = require('./taskLoader');
 
 let prefix = {
 	vs: "$(code) \tVS Task: ",
@@ -27,7 +27,8 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 	let workspaceName = workspace ? workspace.name : "";
 
 	if (util.isNullOrUndefined(description)) {
-		description = workspaceName; //vscode.workspace.asRelativePath(fileUri);
+		let relative = vscode.workspace.asRelativePath(fileUri);
+		description = path.join(workspaceName, path.dirname(relative));
 	}
 
 	let item = {
@@ -89,7 +90,7 @@ class gulpLoader extends taskLoader {
 
 	handleFunc(file, callback) {
 		if (path.basename(file.fileName) === "gulpfile.babel.js") {
-			let legacyGulpPath = path.dirname(file.fileName) + path.sep + "gulpfile.js";
+			let legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
 			if (fs.existsSync(legacyGulpPath)) {
 				return callback();
 			}
