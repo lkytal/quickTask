@@ -6,10 +6,9 @@ import * as vscode from 'vscode';
 import * as loaders from './loaders';
 import listManager = require('./listManager');
 import statusBarController = require('./statusBar');
-import { request } from 'http';
 
 let loaderList = [];
-let manager = new listManager(loaderList);
+let manager;
 let statusBar;
 
 function finishScan() {
@@ -99,9 +98,13 @@ function setupLoaders(globalConfig, finishScan) {
 		loaders.defaultLoader
 	];
 
+	loaderList = [];
+
 	for (let engine of engines) {
 		loaderList.push(new engine(globalConfig, finishScan));
 	}
+
+	manager = new listManager(loaderList);
 }
 
 function registerCommand(context, command, callBack) {

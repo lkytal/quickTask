@@ -7,7 +7,7 @@ const loaders = require("./loaders");
 const listManager = require("./listManager");
 const statusBarController = require("./statusBar");
 let loaderList = [];
-let manager = new listManager(loaderList);
+let manager;
 let statusBar;
 function finishScan() {
     for (let loader of loaderList) {
@@ -78,18 +78,20 @@ function setupLoaders(globalConfig, finishScan) {
         loaders.scriptLoader,
         loaders.defaultLoader
     ];
+    loaderList = [];
     for (let engine of engines) {
         loaderList.push(new engine(globalConfig, finishScan));
     }
+    manager = new listManager(loaderList);
 }
 function registerCommand(context, command, callBack) {
     let commandObject = vscode.commands.registerCommand(command, callBack);
     context.subscriptions.push(commandObject);
 }
 function activate(context) {
-    statusBar = new statusBarController(context);
     registerCommand(context, 'quicktask.showTasks', showCommand);
     registerCommand(context, 'quicktask.rescanTasks', requestRescan);
+    statusBar = new statusBarController(context);
     setupLoaders(vscode.workspace.getConfiguration('quicktask'), finishScan);
     for (let loader of loaderList) {
         loader.loadTask();

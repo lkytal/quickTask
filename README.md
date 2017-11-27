@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.3.1] - 2017-11-27
+
+#### Improve
+
+- Combined information of workspace and path.
+
 ### [3.3.0] - 2017-11-20
 
 #### Improve
