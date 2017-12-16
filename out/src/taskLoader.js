@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const vscode = require("vscode");
-const async = require("async");
+const promisify = require('util.promisify');
 class taskLoader {
     constructor(key, config, globalConfig, callBack) {
         this.key = key;
@@ -48,13 +48,25 @@ class taskLoader {
         });
     }
     parseTasksFromFile(fileList) {
-        if (!Array.isArray(fileList) || fileList.length == 0) {
-            return this.onFinish();
-        }
-        async.each(fileList, (item, callback) => __awaiter(this, void 0, void 0, function* () {
-            let file = yield vscode.workspace.openTextDocument(item.fsPath);
-            this.handleFunc(file, callback);
-        }), (err) => this.onFinish(err));
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!Array.isArray(fileList) || fileList.length == 0) {
+                return this.onFinish();
+            }
+            try {
+                let rstList = fileList.map((item) => __awaiter(this, void 0, void 0, function* () {
+                    return yield vscode.workspace.openTextDocument(item.fsPath);
+                }));
+                for (let file of rstList) {
+                    // let handleFuncPromise = promisify(this.handleFunc);
+                    // await handleFuncPromise(await file);
+                    this.handleFunc(yield file, () => { });
+                }
+            }
+            catch (err) {
+                console.error('err: ', err);
+            }
+            this.onFinish();
+        });
     }
     handleFunc(file, callback) {
         console.log(file);
@@ -63,7 +75,7 @@ class taskLoader {
     reload() {
         this.finished = false;
         this.taskList = [];
-        setTimeout(this.loadTask, 10);
+        setTimeout(this.loadTask.bind(this), 10);
     }
     onFinish(err = null) {
         if (err) {

@@ -2,6 +2,8 @@
 
 import * as vscode from 'vscode';
 import * as async from 'async';
+import { TextDocument } from 'vscode';
+const promisify = require('util.promisify');
 
 abstract class taskLoader {
 	protected glob = null;
@@ -43,15 +45,27 @@ abstract class taskLoader {
 		this.parseTasksFromFile(foundList);
 	}
 
-	public parseTasksFromFile(fileList) {
+	public async parseTasksFromFile(fileList) {
 		if (!Array.isArray(fileList) || fileList.length == 0) {
 			return this.onFinish();
 		}
 
-		async.each(fileList, async (item, callback) => {
-			let file = await vscode.workspace.openTextDocument(item.fsPath);
-			this.handleFunc(file, callback);
-		}, (err) => this.onFinish(err));
+		try {
+			let rstList = fileList.map(async item => {
+				return await vscode.workspace.openTextDocument(item.fsPath);
+			});
+
+			for (let file of rstList) {
+				// let handleFuncPromise = promisify(this.handleFunc);
+				// await handleFuncPromise(await file);
+				this.handleFunc(await file, () => {})
+			}
+		}
+		catch (err) {
+			console.error('err: ', err);
+		}
+
+		this.onFinish();
 	}
 
 	protected handleFunc(file: vscode.TextDocument, callback) {
@@ -63,7 +77,7 @@ abstract class taskLoader {
 		this.finished = false;
 		this.taskList = [];
 
-		setTimeout(this.loadTask, 10);
+		setTimeout(this.loadTask.bind(this), 10);
 	}
 
 	public onFinish(err = null) {
