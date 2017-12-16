@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.3.2] - 2017-12-15
+
+#### Fixed
+
+- Fix rescan doesn't work.
+
 ### [3.3.1] - 2017-11-27
 
 #### Improve

@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.3.2] - 2017-12-15
+
+#### Fixed
+
+- Fix rescan doesn't work.
+
 ### [3.3.1] - 2017-11-27
 
 #### Improve
