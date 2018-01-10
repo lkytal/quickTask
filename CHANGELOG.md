@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.3.3] - 2018-01-10
+
+#### Fixed
+
+- Fix path error for user defined tasks.
+
 ### [3.3.2] - 2017-12-15
 
 #### Fixed

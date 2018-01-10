@@ -44,7 +44,7 @@ function runTask(selection) {
 		terminal.show();
 	}
 
-	let dirPath: string = path.dirname(targetTask.filePath);
+	let dirPath: string = targetTask.filePath ? path.dirname(targetTask.filePath) : null;
 	if (dirPath != null && dirPath != "") {
 		if (os.type() == "Windows_NT") {
 			dirPath = dirPath.charAt(0).toUpperCase() + dirPath.slice(1);
