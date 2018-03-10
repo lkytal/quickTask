@@ -1,6 +1,6 @@
 "use strict";
 const vscode = require("vscode");
-class statusBarController {
+class StatusBarController {
     constructor(context) {
         this.context = context;
         this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
@@ -11,20 +11,20 @@ class statusBarController {
         context.subscriptions.push(this.msgBar);
     }
     showScanning() {
-        this.statusBarItem.text = '$(search) Scanning Tasks...';
-        this.statusBarItem.tooltip = 'Scanning Tasks...';
+        this.statusBarItem.text = "$(search) Scanning Tasks...";
+        this.statusBarItem.tooltip = "Scanning Tasks...";
         this.statusBarItem.show();
     }
     showFinishState(isEmpty) {
         if (isEmpty) {
-            this.statusBarItem.text = '$(x) No Task Found';
-            this.statusBarItem.tooltip = 'No Task Found Yet.';
-            this.statusBarItem.command = 'quicktask.showTasks';
+            this.statusBarItem.text = "$(x) No Task Found";
+            this.statusBarItem.tooltip = "No Task Found Yet.";
+            this.statusBarItem.command = "quicktask.showTasks";
         }
         else {
-            this.statusBarItem.text = '$(list-unordered) Tasks';
-            this.statusBarItem.tooltip = 'Click to select a Task';
-            this.statusBarItem.command = 'quicktask.showTasks';
+            this.statusBarItem.text = "$(list-unordered) Tasks";
+            this.statusBarItem.tooltip = "Click to select a Task";
+            this.statusBarItem.command = "quicktask.showTasks";
         }
     }
     showMessage(task) {
@@ -35,5 +35,5 @@ class statusBarController {
         }, 2500);
     }
 }
-module.exports = statusBarController;
+module.exports = StatusBarController;
 //# sourceMappingURL=statusBar.js.map

@@ -1,8 +1,8 @@
 "use strict";
 
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-class statusBarController {
+class StatusBarController {
 	protected statusBarItem;
 	protected msgBar;
 
@@ -17,26 +17,26 @@ class statusBarController {
 		context.subscriptions.push(this.msgBar);
 	}
 
-	showScanning() {
-		this.statusBarItem.text = '$(search) Scanning Tasks...';
-		this.statusBarItem.tooltip = 'Scanning Tasks...';
+	public showScanning() {
+		this.statusBarItem.text = "$(search) Scanning Tasks...";
+		this.statusBarItem.tooltip = "Scanning Tasks...";
 		this.statusBarItem.show();
 	}
 
-	showFinishState(isEmpty) {
+	public showFinishState(isEmpty) {
 		if (isEmpty) {
-			this.statusBarItem.text = '$(x) No Task Found';
-			this.statusBarItem.tooltip = 'No Task Found Yet.';
-			this.statusBarItem.command = 'quicktask.showTasks';
+			this.statusBarItem.text = "$(x) No Task Found";
+			this.statusBarItem.tooltip = "No Task Found Yet.";
+			this.statusBarItem.command = "quicktask.showTasks";
 		}
 		else {
-			this.statusBarItem.text = '$(list-unordered) Tasks';
-			this.statusBarItem.tooltip = 'Click to select a Task';
-			this.statusBarItem.command = 'quicktask.showTasks';
+			this.statusBarItem.text = "$(list-unordered) Tasks";
+			this.statusBarItem.tooltip = "Click to select a Task";
+			this.statusBarItem.command = "quicktask.showTasks";
 		}
 	}
 
-	showMessage(task) {
+	public showMessage(task) {
 		this.msgBar.text = `$(pulse) Task "${task.cmdLine}" started`;
 		this.msgBar.show();
 
@@ -46,4 +46,4 @@ class statusBarController {
 	}
 }
 
-export = statusBarController;
+export = StatusBarController;

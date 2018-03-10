@@ -7,25 +7,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const vscode = require("vscode");
 const async = require("async");
-const promisify = require('util.promisify');
-class taskLoader {
+const vscode = require("vscode");
+class TaskLoader {
     constructor(key, config, globalConfig, callBack) {
         this.key = key;
         this.config = config;
         this.globalConfig = globalConfig;
         this.callBack = callBack;
+        this.taskList = [];
         this.glob = null;
         this.enable = null;
         this.excludesGlob = null;
         this.finished = false;
-        this.taskList = [];
         this.glob = config.glob;
         this.enable = config.enable;
         this.excludesGlob = globalConfig.excludesGlob;
-        if (this.globalConfig.searchTaskFileInSubdirectories == true) {
-            if (this.glob.indexOf("**/") != 0) {
+        if (this.globalConfig.searchTaskFileInSubdirectories === true) {
+            if (this.glob.indexOf("**/") !== 0) {
                 this.glob = "**/" + this.glob;
             }
         }
@@ -40,21 +39,21 @@ class taskLoader {
         return __awaiter(this, void 0, void 0, function* () {
             this.finished = false;
             this.taskList = [];
-            if (this.enable == false) {
+            if (this.enable === false) {
                 this.finished = true;
                 return this.onFinish();
             }
-            let foundList = yield vscode.workspace.findFiles(this.glob, this.excludesGlob);
+            const foundList = yield vscode.workspace.findFiles(this.glob, this.excludesGlob);
             this.parseTasksFromFile(foundList);
         });
     }
     parseTasksFromFile(fileList) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!Array.isArray(fileList) || fileList.length == 0) {
+            if (!Array.isArray(fileList) || fileList.length === 0) {
                 return this.onFinish();
             }
             async.each(fileList, (item, callback) => __awaiter(this, void 0, void 0, function* () {
-                let file = yield vscode.workspace.openTextDocument(item.fsPath);
+                const file = yield vscode.workspace.openTextDocument(item.fsPath);
                 this.handleFunc(file, callback);
             }), (err) => this.onFinish(err));
         });
@@ -79,10 +78,10 @@ class taskLoader {
     }
     setupWatcher(ignoreChange = false) {
         let watchPath = this.glob;
-        if (watchPath.indexOf("**/") != 0) {
+        if (watchPath.indexOf("**/") !== 0) {
             watchPath = "**/" + watchPath;
         }
-        let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
+        const watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
         watcher.onDidCreate(this.onChanged);
         watcher.onDidChange(this.onChanged);
         watcher.onDidDelete(this.onChanged);
@@ -92,5 +91,5 @@ class taskLoader {
         this.loadTask();
     }
 }
-module.exports = taskLoader;
+module.exports = TaskLoader;
 //# sourceMappingURL=taskLoader.js.map

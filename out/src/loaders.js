@@ -8,18 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
-const fs = require("fs");
-const vscode = require("vscode");
 const child_process = require("child_process");
+const fs = require("fs");
+const path = require("path");
 const util = require("util");
-const taskLoader = require("./taskLoader");
-let prefix = {
-    vs: "$(code) \tVS Task: ",
+const vscode = require("vscode");
+const TaskLoader = require("./taskLoader");
+const prefix = {
     gulp: "$(browser) \t",
     npm: "$(package) \t",
     script: "$(terminal) \t",
-    user: "$(tag) \t"
+    user: "$(tag) \t",
+    vs: "$(code) \tVS Task: "
 };
 function generateItem(type, label, cmdLine, fileUri = null, description = null) {
     let workspace = null;
@@ -29,68 +29,66 @@ function generateItem(type, label, cmdLine, fileUri = null, description = null) 
     if (util.isNullOrUndefined(workspace)) {
         workspace = vscode.workspace.workspaceFolders[0];
     }
-    let workspaceName = workspace ? workspace.name : "";
+    const workspaceName = workspace ? workspace.name : "";
     if (util.isNullOrUndefined(description)) {
-        let relative = vscode.workspace.asRelativePath(fileUri);
+        const relative = vscode.workspace.asRelativePath(fileUri);
         description = path.join(workspaceName, path.dirname(relative));
     }
-    let item = {
-        type: type,
-        label: prefix[type] + label,
+    const item = {
         cmdLine: cmdLine,
         description: description,
         filePath: fileUri ? fileUri.fsPath : "",
+        label: prefix[type] + label,
+        type: type,
         workspace: workspaceName
     };
     return item;
 }
-class vsLoader extends taskLoader {
+class VSLoader extends TaskLoader {
     constructor(globalConfig, finishScan) {
         super("vs", {
-            glob: '.vscode/tasks.json',
-            enable: globalConfig.enableVsTasks
+            enable: globalConfig.enableVsTasks,
+            glob: ".vscode/tasks.json"
         }, globalConfig, finishScan);
     }
     handleFunc(file, callback) {
-        if (typeof file === 'object') {
-            try {
-                let pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
-                if (Array.isArray(pattern.tasks)) {
-                    for (let task of pattern.tasks) {
-                        let cmdLine = 'label' in task ? task.label : task.taskName;
-                        if (util.isNullOrUndefined(cmdLine)) {
-                            continue;
-                        }
-                        this.taskList.push(generateItem("vs", cmdLine, cmdLine, file.uri));
+        try {
+            const pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+            if (Array.isArray(pattern.tasks)) {
+                for (const task of pattern.tasks) {
+                    const cmdLine = "label" in task ? task.label : task.taskName;
+                    if (util.isNullOrUndefined(cmdLine)) {
+                        continue;
                     }
-                }
-                else if (pattern.command != null) {
-                    this.taskList.push(generateItem("vs", pattern.command, pattern.command, file.uri));
+                    this.taskList.push(generateItem("vs", cmdLine, cmdLine, file.uri));
                 }
             }
-            catch (e) {
-                console.error("Invalid tasks.json" + e.message);
+            else if (pattern.command != null) {
+                this.taskList.push(generateItem("vs", pattern.command, pattern.command, file.uri));
             }
+        }
+        catch (e) {
+            console.error("Invalid tasks.json" + e.message);
         }
         callback();
     }
 }
-exports.vsLoader = vsLoader;
-class gulpLoader extends taskLoader {
+exports.VSLoader = VSLoader;
+class GulpLoader extends TaskLoader {
     constructor(globalConfig, finishScan) {
         super("gulp", {
-            glob: globalConfig.gulpGlob,
-            enable: globalConfig.enableGulp
+            enable: globalConfig.enableVsTasks,
+            glob: globalConfig.gulpGlob
         }, globalConfig, finishScan);
     }
     handleFunc(file, callback) {
         if (path.basename(file.fileName) === "gulpfile.babel.js") {
-            let legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
+            const legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
             if (fs.existsSync(legacyGulpPath)) {
                 return callback();
             }
         }
-        child_process.exec('gulp --tasks-simple', {
+        child_process.exec("gulp --tasks-simple", {
             cwd: path.dirname(file.fileName),
             timeout: 10000
         }, (err, stdout, stderr) => {
@@ -103,23 +101,23 @@ class gulpLoader extends taskLoader {
         });
     }
     extractTasks(file, stdout, callback) {
-        let tasks = stdout.trim().split("\n");
-        for (let item of tasks) {
-            if (item.length != 0) {
-                let cmdLine = 'gulp ' + item;
-                let task = generateItem("gulp", cmdLine, cmdLine, file.uri);
+        const tasks = stdout.trim().split("\n");
+        for (const item of tasks) {
+            if (item.length !== 0) {
+                const cmdLine = "gulp " + item;
+                const task = generateItem("gulp", cmdLine, cmdLine, file.uri);
                 this.taskList.push(task);
             }
         }
         callback();
     }
     oldRegexHandler(file, callback) {
-        var regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
-        var regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
-        if (typeof file === 'object') {
+        const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
+        const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
+        if (typeof file === "object") {
             try {
-                for (let item of file.getText().match(regexpMatcher)) {
-                    let cmdLine = 'gulp ' + item.replace(regexpReplacer, "$1");
+                for (const item of file.getText().match(regexpMatcher)) {
+                    const cmdLine = "gulp " + item.replace(regexpReplacer, "$1");
                     this.taskList.push(generateItem("gulp", cmdLine, cmdLine, file.uri));
                 }
             }
@@ -130,27 +128,27 @@ class gulpLoader extends taskLoader {
         callback();
     }
 }
-exports.gulpLoader = gulpLoader;
-class npmLoader extends taskLoader {
+exports.GulpLoader = GulpLoader;
+class NpmLoader extends TaskLoader {
     constructor(globalConfig, finishScan) {
         super("npm", {
-            glob: globalConfig.npmGlob,
-            enable: globalConfig.enableNpm
+            enable: globalConfig.enableVsTasks,
+            glob: globalConfig.npmGlob
         }, globalConfig, finishScan);
         this.useYarn = false;
         this.useYarn = globalConfig.useYarn;
     }
     handleFunc(file, callback) {
-        if (typeof file === 'object') {
+        if (typeof file === "object") {
             try {
-                let pattern = JSON.parse(file.getText());
-                if (typeof pattern.scripts === 'object') {
-                    for (let item of Object.keys(pattern.scripts)) {
-                        let cmdLine = 'npm run ' + item;
+                const pattern = JSON.parse(file.getText());
+                if (typeof pattern.scripts === "object") {
+                    for (const item of Object.keys(pattern.scripts)) {
+                        let cmdLine = "npm run " + item;
                         if (this.useYarn === true) {
-                            cmdLine = 'yarn run ' + item;
+                            cmdLine = "yarn run " + item;
                         }
-                        let task = generateItem("npm", cmdLine, cmdLine, file.uri);
+                        const task = generateItem("npm", cmdLine, cmdLine, file.uri);
                         this.taskList.push(task);
                     }
                 }
@@ -162,11 +160,11 @@ class npmLoader extends taskLoader {
         callback();
     }
 }
-exports.npmLoader = npmLoader;
-class scriptLoader extends taskLoader {
+exports.NpmLoader = NpmLoader;
+class ScriptLoader extends TaskLoader {
     constructor(globalConfig, finishScan) {
         super("script", {
-            glob: '*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}',
+            glob: "*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}",
             enable: 1
         }, globalConfig, finishScan);
         this.scriptTable = {
@@ -197,12 +195,13 @@ class scriptLoader extends taskLoader {
         };
     }
     handleFunc(file, callback) {
-        if (typeof file != 'object')
+        if (typeof file !== "object") {
             return;
-        for (let type of Object.keys(this.scriptTable)) {
+        }
+        for (const type of Object.keys(this.scriptTable)) {
             if (file.languageId === type) {
                 if (this.scriptTable[type].enabled) {
-                    let cmdLine = this.scriptTable[type].exec + file.fileName;
+                    const cmdLine = this.scriptTable[type].exec + file.fileName;
                     this.taskList.push(generateItem("script", cmdLine, cmdLine, file.uri));
                 }
                 break;
@@ -214,25 +213,25 @@ class scriptLoader extends taskLoader {
         return super.setupWatcher(true);
     }
 }
-exports.scriptLoader = scriptLoader;
-class defaultLoader extends taskLoader {
+exports.ScriptLoader = ScriptLoader;
+class DefaultLoader extends TaskLoader {
     constructor(globalConfig, finishScan) {
         super("user", {
-            glob: '',
-            enable: globalConfig.enableVsTasks
+            enable: globalConfig.enableVsTasks,
+            glob: ""
         }, globalConfig, finishScan);
     }
     loadTask() {
         return __awaiter(this, void 0, void 0, function* () {
             this.finished = false;
             this.taskList = [];
-            if (this.enable == false) {
+            if (this.enable === false) {
                 this.finished = true;
                 return this.onFinish();
             }
             try {
-                let defaultList = vscode.workspace.getConfiguration('quicktask')['defaultTasks'];
-                for (let item of defaultList) {
+                const defaultList = vscode.workspace.getConfiguration("quicktask").defaultTasks;
+                for (const item of defaultList) {
                     this.taskList.push(generateItem("user", item, item, null, "User Defined Tasks"));
                 }
             }
@@ -244,16 +243,16 @@ class defaultLoader extends taskLoader {
         });
     }
     setupWatcher() {
-        let watcher = vscode.workspace.onDidChangeConfiguration((e) => {
+        const watcher = vscode.workspace.onDidChangeConfiguration((e) => {
             this.loadTask();
         });
         return watcher;
     }
 }
-exports.defaultLoader = defaultLoader;
+exports.DefaultLoader = DefaultLoader;
 function generateFromList(type, list, filePath = null, description = null) {
-    let rst = [];
-    for (let cmdLine of list) {
+    const rst = [];
+    for (const cmdLine of list) {
         rst.push(generateItem(type, cmdLine, cmdLine, filePath, description));
     }
     return rst;

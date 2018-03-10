@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
-import os = require('os');
+import os = require("os");
 import * as path from "path";
-import * as vscode from 'vscode';
-import * as loaders from './loaders';
-import listManager = require('./listManager');
-import statusBarController = require('./statusBar');
+import * as vscode from "vscode";
+import ListManager = require("./listManager");
+import * as loaders from "./loaders";
+import StatusBarController = require("./statusBar");
 
 let loaderList = [];
 let manager;
 let statusBar;
 
 function finishScan() {
-	for (let loader of loaderList) {
+	for (const loader of loaderList) {
 		if (!loader.finished) {
 			return;
 		}
@@ -24,31 +24,31 @@ function finishScan() {
 function requestRescan() {
 	statusBar.showScanning();
 
-	for (let loader of loaderList) {
+	for (const loader of loaderList) {
 		loader.reload();
 	}
 }
 
 function runTask(selection) {
-	let targetTask = manager.findTask(selection.label, selection.description);
+	const targetTask = manager.findTask(selection.label, selection.description);
 
-	if (targetTask.type == "vs") {
+	if (targetTask.type === "vs") {
 		vscode.commands.executeCommand("workbench.action.tasks.runTask", targetTask.cmdLine);
 		return;
 	}
 
-	let globalConfig = vscode.workspace.getConfiguration('quicktask');
+	const globalConfig = vscode.workspace.getConfiguration("quicktask");
 
-	let terminal = vscode.window.createTerminal(targetTask.cmdLine);
+	const terminal = vscode.window.createTerminal(targetTask.cmdLine);
 	if (globalConfig.showTerminal) {
 		terminal.show();
 	}
 
 	let dirPath: string = targetTask.filePath ? path.dirname(targetTask.filePath) : null;
-	if (dirPath != null && dirPath != "") {
-		if (os.type() == "Windows_NT") {
+	if (dirPath != null && dirPath !== "") {
+		if (os.type() === "Windows_NT") {
 			dirPath = dirPath.charAt(0).toUpperCase() + dirPath.slice(1);
-			terminal.sendText(dirPath.charAt(0) + ':');
+			terminal.sendText(dirPath.charAt(0) + ":");
 		}
 		terminal.sendText(`cd "${dirPath}"`);
 	}
@@ -65,7 +65,7 @@ function runTask(selection) {
 function showCommand() {
 	if (manager.isEmpty()) {
 		const reScan = "Rescan Tasks";
-		vscode.window.showInformationMessage("No task found.", reScan).then(function (text) {
+		vscode.window.showInformationMessage("No task found.", reScan).then((text) => {
 			if (text === reScan) {
 				requestRescan();
 			}
@@ -74,14 +74,14 @@ function showCommand() {
 		return;
 	}
 
-	let options = {
-		placeHolder: 'Select a Task to Run...',
+	const options = {
 		matchOnDescription: true,
-		matchOnDetail: true
+		matchOnDetail: true,
+		placeHolder: "Select a Task to Run..."
 	};
 
-	vscode.window.showQuickPick(manager.getLabelList(), options).then(function (selection) {
-		if (typeof selection === 'undefined') {
+	vscode.window.showQuickPick(manager.getLabelList(), options).then((selection) => {
+		if (typeof selection === "undefined") {
 			return;
 		}
 
@@ -89,44 +89,44 @@ function showCommand() {
 	});
 }
 
-function setupLoaders(globalConfig, finishScan) {
-	let engines = [
-		loaders.gulpLoader,
-		loaders.npmLoader,
-		loaders.vsLoader,
-		loaders.scriptLoader,
-		loaders.defaultLoader
+function setupLoaders(globalConfig, finishCallback) {
+	const engines = [
+		loaders.GulpLoader,
+		loaders.NpmLoader,
+		loaders.VSLoader,
+		loaders.ScriptLoader,
+		loaders.DefaultLoader
 	];
 
 	loaderList = [];
 
-	for (let engine of engines) {
-		loaderList.push(new engine(globalConfig, finishScan));
+	for (const engine of engines) {
+		loaderList.push(new engine(globalConfig, finishCallback));
 	}
 
-	manager = new listManager(loaderList);
+	manager = new ListManager(loaderList);
 }
 
 function registerCommand(context, command, callBack) {
-	let commandObject = vscode.commands.registerCommand(command, callBack);
+	const commandObject = vscode.commands.registerCommand(command, callBack);
 	context.subscriptions.push(commandObject);
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	registerCommand(context, 'quicktask.showTasks', showCommand);
-	registerCommand(context, 'quicktask.rescanTasks', requestRescan);
+	registerCommand(context, "quicktask.showTasks", showCommand);
+	registerCommand(context, "quicktask.rescanTasks", requestRescan);
 
-	statusBar = new statusBarController(context);
+	statusBar = new StatusBarController(context);
 
-	setupLoaders(vscode.workspace.getConfiguration('quicktask'), finishScan);
+	setupLoaders(vscode.workspace.getConfiguration("quicktask"), finishScan);
 
-	for (let loader of loaderList) {
+	for (const loader of loaderList) {
 		loader.loadTask();
 		context.subscriptions.push(loader.setupWatcher());
 	}
 
-	let workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders(e => {
-		if (e.removed.length != 0) {
+	const workspaceWatcher = vscode.workspace.onDidChangeWorkspaceFolders((e) => {
+		if (e.removed.length !== 0) {
 			requestRescan();
 		}
 	});
@@ -135,5 +135,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-	console.log('QuickTask disabled.');
+	console.log("QuickTask disabled.");
 }

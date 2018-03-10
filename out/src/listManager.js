@@ -1,12 +1,12 @@
 "use strict";
-class listManager {
+class ListManager {
     constructor(loaderList) {
         this.loaderList = loaderList;
         this.taskArray = [];
     }
     getTaskArray() {
         let list = [];
-        for (let loader of this.loaderList) {
+        for (const loader of this.loaderList) {
             list = list.concat(loader.taskList);
         }
         return Array.from(new Set(list));
@@ -16,37 +16,38 @@ class listManager {
     }
     isEmpty() {
         this.refresh();
-        return this.taskArray.length == 0;
+        return this.taskArray.length === 0;
     }
     getLabelList() {
         this.refresh();
-        this.taskArray = this.taskArray.sort(function (a, b) {
-            let order = a.workspace.localeCompare(b.workspace);
-            if (order == 0) {
-                order = a.type.localeCompare(b.type);
-            }
-            if (order == 0) {
-                order = a.label.localeCompare(b.label);
-            }
-            return order;
-        });
-        let labels = [];
-        for (let item of this.taskArray) {
+        this.taskArray.sort(this.taskOrder);
+        const labels = [];
+        for (const item of this.taskArray) {
             labels.push({
-                label: item.label,
-                description: item.description
+                description: item.description,
+                label: item.label
             });
         }
         return labels;
     }
     findTask(selection, description) {
-        for (let item of this.taskArray) {
-            if (item.label == selection && item.description == description) {
+        for (const item of this.taskArray) {
+            if (item.label === selection && item.description === description) {
                 return item;
             }
         }
         return null;
     }
+    taskOrder(a, b) {
+        let order = a.workspace.localeCompare(b.workspace);
+        if (order === 0) {
+            order = a.type.localeCompare(b.type);
+        }
+        if (order === 0) {
+            order = a.label.localeCompare(b.label);
+        }
+        return order;
+    }
 }
-module.exports = listManager;
+module.exports = ListManager;
 //# sourceMappingURL=listManager.js.map

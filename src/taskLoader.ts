@@ -1,24 +1,24 @@
 "use strict";
 
-import * as vscode from 'vscode';
-import * as async from 'async';
-import { TextDocument } from 'vscode';
-const promisify = require('util.promisify');
+import * as async from "async";
+import promisify = require("util.promisify");
+import * as vscode from "vscode";
+import { TextDocument } from "vscode";
 
-abstract class taskLoader {
+abstract class TaskLoader {
+	public taskList = [];
 	protected glob = null;
 	protected enable = null;
 	protected excludesGlob = null;
 	protected finished = false;
-	public taskList = [];
 
 	constructor(protected key, protected config, protected globalConfig, protected callBack) {
 		this.glob = config.glob;
 		this.enable = config.enable;
 		this.excludesGlob = globalConfig.excludesGlob;
 
-		if (this.globalConfig.searchTaskFileInSubdirectories == true) {
-			if (this.glob.indexOf("**/") != 0) {
+		if (this.globalConfig.searchTaskFileInSubdirectories === true) {
+			if (this.glob.indexOf("**/") !== 0) {
 				this.glob = "**/" + this.glob;
 			}
 		}
@@ -36,27 +36,27 @@ abstract class taskLoader {
 		this.finished = false;
 		this.taskList = [];
 
-		if (this.enable == false) {
+		if (this.enable === false) {
 			this.finished = true;
 			return this.onFinish();
 		}
 
-		let foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
+		const foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
 		this.parseTasksFromFile(foundList);
 	}
 
 	public async parseTasksFromFile(fileList) {
-		if (!Array.isArray(fileList) || fileList.length == 0) {
+		if (!Array.isArray(fileList) || fileList.length === 0) {
 			return this.onFinish();
 		}
 
 		async.each(fileList, async (item, callback) => {
-			let file = await vscode.workspace.openTextDocument(item.fsPath);
+			const file = await vscode.workspace.openTextDocument(item.fsPath);
 			this.handleFunc(file, callback);
 		}, (err) => this.onFinish(err));
 	}
 
-	protected handleFunc(file: vscode.TextDocument, callback) {
+	public handleFunc(file: vscode.TextDocument, callback) {
 		console.log(file);
 		callback();
 	}
@@ -82,11 +82,11 @@ abstract class taskLoader {
 
 	public setupWatcher(ignoreChange = false): any {
 		let watchPath = this.glob;
-		if (watchPath.indexOf("**/") != 0) {
+		if (watchPath.indexOf("**/") !== 0) {
 			watchPath = "**/" + watchPath;
 		}
 
-		let watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
+		const watcher = vscode.workspace.createFileSystemWatcher(watchPath, false, ignoreChange, false);
 
 		watcher.onDidCreate(this.onChanged);
 		watcher.onDidChange(this.onChanged);
@@ -100,4 +100,4 @@ abstract class taskLoader {
 	}
 }
 
-export = taskLoader;
+export = TaskLoader;

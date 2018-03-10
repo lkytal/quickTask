@@ -72,11 +72,11 @@ suite("Npm", function () {
 			"npm run test"
 		];
 
-		loaderTest(done, loaders.npmLoader, "npm", rst, "package.json");
+		loaderTest(done, loaders.NpmLoader, "npm", rst, "package.json");
 	});
 
 	test("Npm watcher", function (done) {
-		watcherTest(done, loaders.npmLoader, "package.json");
+		watcherTest(done, loaders.NpmLoader, "package.json");
 	});
 });
 
@@ -92,12 +92,12 @@ suite("gulp", function () {
 		];
 
 		//fs.renameSync(rootPath + "gulpfile.babel.js", rootPath + "gulp.bk");
-		loaderTest(done, loaders.gulpLoader, "gulp", rst, "gulpfile.js");
+		loaderTest(done, loaders.GulpLoader, "gulp", rst, "gulpfile.js");
 		//fs.renameSync(rootPath + "gulp.bk", rootPath + "gulpfile.babel.js");
 	});
 
 	test("gulp watcher", function (done) {
-		watcherTest(done, loaders.gulpLoader, "gulpfile.js");
+		watcherTest(done, loaders.GulpLoader, "gulpfile.js");
 	});
 });
 
@@ -105,11 +105,11 @@ suite("vs loader", function () {
 	test("VS first load", function (done) {
 		let rst = ["run", "test"];
 
-		loaderTest(done, loaders.vsLoader, "vs", rst, ".vscode\\tasks.json");
+		loaderTest(done, loaders.VSLoader, "vs", rst, ".vscode\\tasks.json");
 	});
 
 	test("VS watcher", function (done) {
-		watcherTest(done, loaders.vsLoader, ".vscode\\tasks.json");
+		watcherTest(done, loaders.VSLoader, ".vscode\\tasks.json");
 	});
 });
 
@@ -127,11 +127,11 @@ suite("script", function () {
 	test("script loader", function (done) {
 		let rst = [path.join(rootPath, "test.bat"), "python " + path.join(rootPath, "test.py")];
 
-		loaderTest(done, loaders.scriptLoader, "script", rst);
+		loaderTest(done, loaders.ScriptLoader, "script", rst);
 	});
 
 	test("script watcher", function (done) {
-		let test = new loaders.scriptLoader(globalConfig, () => console.log("On finish"));
+		let test = new loaders.ScriptLoader(globalConfig, () => console.log("On finish"));
 
 		test.onChanged = function () {
 			fs.unlinkSync(testBat);
@@ -154,13 +154,13 @@ suite("user", function () {
 			test.taskList.should.eql(rst);
 		}
 
-		let test = new loaders.defaultLoader(globalConfig, check);
+		let test = new loaders.DefaultLoader(globalConfig, check);
 
 		test.loadTask();
 	});
 
 	test("user watcher", function (done) {
-		let test = new loaders.scriptLoader(globalConfig, () => console.log("On finish"));
+		let test = new loaders.DefaultLoader(globalConfig, () => console.log("On finish"));
 
 		test.onChanged = function () {
 			watcher.dispose();

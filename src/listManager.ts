@@ -1,71 +1,71 @@
 import { retry } from "async";
 
-"use strict";
-
-class listManager {
+class ListManager {
 	protected taskArray = [];
 
 	constructor(protected loaderList) {
 	}
 
-	getTaskArray() {
+	public getTaskArray() {
 		let list = [];
 
-		for (let loader of this.loaderList) {
+		for (const loader of this.loaderList) {
 			list = list.concat(loader.taskList);
 		}
 
 		return Array.from(new Set(list));
 	}
 
-	refresh() {
+	public refresh() {
 		this.taskArray = this.getTaskArray();
 	}
 
-	isEmpty() {
+	public isEmpty() {
 		this.refresh();
 
-		return this.taskArray.length == 0
+		return this.taskArray.length === 0;
 	}
 
-	getLabelList() {
+	public getLabelList() {
 		this.refresh();
 
-		this.taskArray = this.taskArray.sort(function (a, b) {
-			let order = a.workspace.localeCompare(b.workspace);
+		this.taskArray.sort(this.taskOrder);
 
-			if (order == 0) {
-				order = a.type.localeCompare(b.type);
-			}
+		const labels = [];
 
-			if (order == 0) {
-				order = a.label.localeCompare(b.label);
-			}
-
-			return order;
-		});
-
-		let labels = [];
-
-		for (let item of this.taskArray) {
+		for (const item of this.taskArray) {
 			labels.push({
-				label: item.label,
-				description: item.description
+				description: item.description,
+				label: item.label
 			});
 		}
 
 		return labels;
 	}
 
-	findTask(selection, description) {
-		for (let item of this.taskArray) {
-			if (item.label == selection && item.description == description) {
+	public findTask(selection, description) {
+		for (const item of this.taskArray) {
+			if (item.label === selection && item.description === description) {
 				return item;
 			}
 		}
 
 		return null;
 	}
+
+	protected taskOrder(a, b) {
+		let order = a.workspace.localeCompare(b.workspace);
+
+		if (order === 0) {
+			order = a.type.localeCompare(b.type);
+		}
+
+		if (order === 0) {
+			order = a.label.localeCompare(b.label);
+		}
+
+		return order;
+	}
 }
 
-export = listManager;
+export = ListManager;
