@@ -2,7 +2,7 @@
   "name": "quicktask",
   "displayName": "QuickTask",
   "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-  "version": "3.3.3",
+  "version": "3.4.0",
   "publisher": "lkytal",
   "license": "AGPL-3.0+",
   "engines": {

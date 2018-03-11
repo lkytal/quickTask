@@ -26,6 +26,9 @@ function generateItem(type, label, cmdLine, fileUri = null, description = null) 
     if (!util.isNullOrUndefined(fileUri)) {
         workspace = vscode.workspace.getWorkspaceFolder(fileUri);
     }
+    else if (vscode.workspace.workspaceFolders[0]) {
+        fileUri = vscode.workspace.workspaceFolders[0].uri;
+    }
     if (util.isNullOrUndefined(workspace)) {
         workspace = vscode.workspace.workspaceFolders[0];
     }

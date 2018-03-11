@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.4.0] - 2018-03-11
+
+#### Improve
+
+- Refact code.
+
 ### [3.3.3] - 2018-01-10
 
 #### Fixed

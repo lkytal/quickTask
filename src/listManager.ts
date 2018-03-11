@@ -1,5 +1,3 @@
-import { retry } from "async";
-
 class ListManager {
 	protected taskArray = [];
 
