@@ -46,7 +46,13 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
-### [3.4.0] - 2018-03-11
+### [3.4.1] - 2018-03-11
+
+#### Fixed
+
+- Fix incorrect path for user defined tasks.
+
+### [3.4.0] - 2018-03-10
 
 #### Improve
 

@@ -14,18 +14,13 @@ const prefix = {
 };
 
 function generateItem(type: string, label, cmdLine, fileUri = null, description = null) {
-	let workspace = null;
+	const workspace: vscode.WorkspaceFolder = util.isNullOrUndefined(fileUri) ?
+		vscode.workspace.workspaceFolders[0] :
+		vscode.workspace.getWorkspaceFolder(fileUri);
 
-	if (!util.isNullOrUndefined(fileUri)) {
-		workspace = vscode.workspace.getWorkspaceFolder(fileUri);
-	}
-	else if (vscode.workspace.workspaceFolders[0]) {
-		fileUri = vscode.workspace.workspaceFolders[0].uri;
-	}
-
-	if (util.isNullOrUndefined(workspace)) {
-		workspace = vscode.workspace.workspaceFolders[0];
-	}
+	// if (util.isNullOrUndefined(fileUri)) {
+	// 	fileUri = workspace ? workspace.uri : null;
+	// }
 
 	const workspaceName = workspace ? workspace.name : "";
 

@@ -22,16 +22,12 @@ const prefix = {
     vs: "$(code) \tVS Task: "
 };
 function generateItem(type, label, cmdLine, fileUri = null, description = null) {
-    let workspace = null;
-    if (!util.isNullOrUndefined(fileUri)) {
-        workspace = vscode.workspace.getWorkspaceFolder(fileUri);
-    }
-    else if (vscode.workspace.workspaceFolders[0]) {
-        fileUri = vscode.workspace.workspaceFolders[0].uri;
-    }
-    if (util.isNullOrUndefined(workspace)) {
-        workspace = vscode.workspace.workspaceFolders[0];
-    }
+    const workspace = util.isNullOrUndefined(fileUri) ?
+        vscode.workspace.workspaceFolders[0] :
+        vscode.workspace.getWorkspaceFolder(fileUri);
+    // if (util.isNullOrUndefined(fileUri)) {
+    // 	fileUri = workspace ? workspace.uri : null;
+    // }
     const workspaceName = workspace ? workspace.name : "";
     if (util.isNullOrUndefined(description)) {
         const relative = vscode.workspace.asRelativePath(fileUri);
