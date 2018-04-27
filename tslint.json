@@ -7,6 +7,7 @@
 		"object-literal-shorthand": [false],
 		"max-classes-per-file": [false],
 		"one-line": [false],
-		"object-literal-sort-keys": false
+		"object-literal-sort-keys": false,
+		"no-commented-code": false
 	}
 }

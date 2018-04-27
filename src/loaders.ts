@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as util from "util";
 import * as vscode from "vscode";
+import * as json5 from "json5"
 import TaskLoader = require("./taskLoader");
 
 const prefix = {
@@ -51,7 +52,7 @@ class VSLoader extends TaskLoader {
 
 	public handleFunc(file, callback) {
 		try {
-			const pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+			const pattern = json5.parse(file.getText());
 
 			if (Array.isArray(pattern.tasks)) {
 				for (const task of pattern.tasks) {

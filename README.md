@@ -1,8 +1,8 @@
 # Quick Task for VS Code
 
 [![AppVeyor](https://img.shields.io/appveyor/ci/lkytal/quicktask.svg?style=flat-square)](https://ci.appveyor.com/project/lkytal/quicktask)
-[![Dependency status](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)
-<a href="https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask"><img src="https://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg?style=flat-square" alt="Installs"></a>
+[![Dependency status](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)](https://lkytal.github.io/quickTask/)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
 
 > Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
 
@@ -45,6 +45,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.4.2] - 2018-04-26
+
+#### Improve
+
+- Use JSON5 to parse VSCode tasks.
 
 ### [3.4.1] - 2018-03-11
 

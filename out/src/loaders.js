@@ -13,6 +13,7 @@ const fs = require("fs");
 const path = require("path");
 const util = require("util");
 const vscode = require("vscode");
+const json5 = require("json5");
 const TaskLoader = require("./taskLoader");
 const prefix = {
     gulp: "$(browser) \t",
@@ -52,7 +53,7 @@ class VSLoader extends TaskLoader {
     }
     handleFunc(file, callback) {
         try {
-            const pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+            const pattern = json5.parse(file.getText());
             if (Array.isArray(pattern.tasks)) {
                 for (const task of pattern.tasks) {
                     const cmdLine = "label" in task ? task.label : task.taskName;
