@@ -52,7 +52,7 @@ class VSLoader extends TaskLoader {
     }
     handleFunc(file, callback) {
         try {
-            const pattern = JSON.parse(file.getText().replace(new RegExp("//.*", "gi"), ""));
+            const pattern = JSON.parse(file.getText().replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1'));
             if (Array.isArray(pattern.tasks)) {
                 for (const task of pattern.tasks) {
                     const cmdLine = "label" in task ? task.label : task.taskName;
