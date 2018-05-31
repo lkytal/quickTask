@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.4.3] - 2018-05-31
+
+#### Update
+
+- Update dependency
+
 ### [3.4.2] - 2018-04-26
 
 #### Improve

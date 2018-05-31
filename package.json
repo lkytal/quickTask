@@ -1,8 +1,8 @@
 {
   "name": "quicktask",
-  "displayName": "QuickTask",
+  "displayName": "Quick Task",
   "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "publisher": "lkytal",
   "license": "AGPL-3.0+",
   "engines": {
@@ -151,15 +151,15 @@
     "@types/chai": "^4.1.3",
     "@types/json5": "0.0.29",
     "@types/mocha": "^5.2.0",
-    "@types/node": "^10.0.0",
+    "@types/node": "^10.3.0",
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
-    "mocha": "^5.1.1",
-    "typescript": "^2.8.3",
-    "vscode": "^1.1.14"
+    "mocha": "^5.2.0",
+    "typescript": "^2.9.1",
+    "vscode": "^1.1.18"
   },
   "dependencies": {
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "json5": "^1.0.1",
     "util.promisify": "^1.0.0"
   }
