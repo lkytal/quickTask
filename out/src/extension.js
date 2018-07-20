@@ -9,6 +9,7 @@ const StatusBarController = require("./statusBar");
 let loaderList = [];
 let manager;
 let statusBar;
+let lastTask;
 function finishScan() {
     for (const loader of loaderList) {
         if (!loader.finished) {
@@ -67,8 +68,17 @@ function showCommand() {
         if (typeof selection === "undefined") {
             return;
         }
+        lastTask = selection;
         runTask(selection);
     });
+}
+function runLastTask() {
+    if (lastTask) {
+        runTask(lastTask);
+    }
+    else {
+        showCommand();
+    }
 }
 function setupLoaders(globalConfig, finishCallback) {
     const engines = [
@@ -90,6 +100,7 @@ function registerCommand(context, command, callBack) {
 }
 function activate(context) {
     registerCommand(context, "quicktask.showTasks", showCommand);
+    registerCommand(context, "quicktask.runLastTask", runLastTask);
     registerCommand(context, "quicktask.rescanTasks", requestRescan);
     statusBar = new StatusBarController(context);
     setupLoaders(vscode.workspace.getConfiguration("quicktask"), finishScan);

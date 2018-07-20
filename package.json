@@ -24,6 +24,11 @@
         "category": "QuickTask"
       },
       {
+        "command": "quicktask.runLastTask",
+        "title": "Rerun Last Task",
+        "category": "QuickTask"
+      },
+      {
         "command": "quicktask.rescanTasks",
         "title": "Rescan Tasks",
         "category": "QuickTask"

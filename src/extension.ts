@@ -10,6 +10,7 @@ import StatusBarController = require("./statusBar");
 let loaderList = [];
 let manager;
 let statusBar;
+let lastTask;
 
 function finishScan() {
 	for (const loader of loaderList) {
@@ -85,8 +86,18 @@ function showCommand() {
 			return;
 		}
 
+		lastTask = selection
 		runTask(selection);
 	});
+}
+
+function runLastTask() {
+	if (lastTask) {
+		runTask(lastTask);
+	}
+	else {
+		showCommand()
+	}
 }
 
 function setupLoaders(globalConfig, finishCallback) {
@@ -114,6 +125,7 @@ function registerCommand(context, command, callBack) {
 
 export function activate(context: vscode.ExtensionContext) {
 	registerCommand(context, "quicktask.showTasks", showCommand);
+	registerCommand(context, "quicktask.runLastTask", runLastTask);
 	registerCommand(context, "quicktask.rescanTasks", requestRescan);
 
 	statusBar = new StatusBarController(context);
