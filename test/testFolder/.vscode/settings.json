@@ -3,5 +3,13 @@
 		"npm update",
 		"npm i --save-dev"
 	],
-	"quicktask.closeTerminalAfterExecution": false
+	"quicktask.closeTerminalAfterExecution": false,
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/.vscode": true
+	}
 }
