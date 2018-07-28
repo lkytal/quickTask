@@ -3,14 +3,13 @@
 import * as async from "async";
 import promisify = require("util.promisify");
 import * as vscode from "vscode";
-import { TextDocument } from "vscode";
 
 abstract class TaskLoader {
-	public taskList = [];
-	protected glob = null;
-	protected enable = null;
-	protected excludesGlob = null;
-	protected finished = false;
+	public taskList: any[] = [];
+	protected enable: boolean = null;
+	protected glob: string = null;
+	protected excludesGlob: string = null;
+	protected finished: boolean = false;
 
 	constructor(protected key, protected config, protected globalConfig, protected callBack) {
 		this.glob = config.glob;

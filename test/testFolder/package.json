@@ -11,14 +11,14 @@
 		"url": "https://github.com/lkytal/quickTask.git"
 	},
 	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
+		"postinstall": "node echo post",
+		"test": "node echo test"
 	},
 	"devDependencies": {
-		"@types/node": "^9.4.7"
+		"@types/node": "^10.5.4"
 	},
 	"dependencies": {
-		"babel-core": "^6.26.0",
+		"babel-core": "^6.26.3",
 		"gulp": "^3.9.1"
 	}
 }

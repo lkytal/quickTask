@@ -5,7 +5,7 @@
 		"trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
 		"no-console": [false, "log", "error"],
 		"object-literal-shorthand": [false],
-		"max-classes-per-file": [false],
+		"max-classes-per-file": false,
 		"one-line": [false],
 		"object-literal-sort-keys": false,
 		"no-commented-code": false

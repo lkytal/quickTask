@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.4.4] - 2018-07-28
+
+#### Improve
+
+- New command 'Rerun last task'.
+
 ### [3.3.3] - 2018-01-10
 
 #### Fixed

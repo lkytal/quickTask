@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process = require("child_process");
 const fs = require("fs");
+const json5 = require("json5");
 const path = require("path");
 const util = require("util");
 const vscode = require("vscode");
-const json5 = require("json5");
 const TaskLoader = require("./taskLoader");
 const prefix = {
     gulp: "$(browser) \t",

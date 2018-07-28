@@ -7,9 +7,9 @@ import ListManager = require("./listManager");
 import * as loaders from "./loaders";
 import StatusBarController = require("./statusBar");
 
-let loaderList = [];
-let manager;
-let statusBar;
+let loaderList: any[] = [];
+let manager: ListManager;
+let statusBar: StatusBarController;
 let lastTask;
 
 function finishScan() {
@@ -86,7 +86,7 @@ function showCommand() {
 			return;
 		}
 
-		lastTask = selection
+		lastTask = selection;
 		runTask(selection);
 	});
 }
@@ -96,7 +96,7 @@ function runLastTask() {
 		runTask(lastTask);
 	}
 	else {
-		showCommand()
+		showCommand();
 	}
 }
 

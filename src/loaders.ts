@@ -1,9 +1,9 @@
 import * as child_process from "child_process";
 import * as fs from "fs";
+import * as json5 from "json5";
 import * as path from "path";
 import * as util from "util";
 import * as vscode from "vscode";
-import * as json5 from "json5"
 import TaskLoader = require("./taskLoader");
 
 const prefix = {

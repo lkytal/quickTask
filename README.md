@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.4.4] - 2018-07-28
+
+#### Improve
+
+- New command 'Rerun last task'.
+
 ### [3.4.3] - 2018-05-31
 
 #### Update

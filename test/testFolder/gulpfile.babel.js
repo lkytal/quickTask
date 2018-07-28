@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-import gulp from 'gulp';
+import gulp from "gulp";
 
 export function test() {
-	return;
+    return;
 }
 
-gulp.task('babel', () => {
-	return test();
+gulp.task("babel", () => {
+    return test();
 });
