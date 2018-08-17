@@ -37,7 +37,7 @@ Hint: Task button is usually here:
 - AutoHotkey Scripts.
 - batch file and Powershell Scripts.
 
-## My Other extensions
+## My Other Extensions
 
 - ### [FlatUI](https://marketplace.visualstudio.com/items?itemName=lkytal.FlatUI)
 - ### [Pomodoro](https://marketplace.visualstudio.com/items?itemName=lkytal.pomodoro)
@@ -45,6 +45,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.5.0] - 2018-08-17
+
+#### Fixed
+
+- Load VSCode tasks when '.vscode' folder is hidden.
 
 ### [3.4.4] - 2018-07-28
 

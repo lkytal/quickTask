@@ -50,6 +50,18 @@ class VSLoader extends TaskLoader {
 		}, globalConfig, finishScan);
 	}
 
+	public async getTaskFiles() {
+		const taskFiles = [];
+
+		for (const workspace of vscode.workspace.workspaceFolders) {
+			const taskJson = path.join(workspace.uri.fsPath, ".vscode", "tasks.json");
+
+			taskFiles.push({fsPath: taskJson});
+		}
+
+		return taskFiles;
+	}
+
 	public handleFunc(file, callback) {
 		try {
 			const pattern = json5.parse(file.getText());
@@ -236,6 +248,7 @@ class ScriptLoader extends TaskLoader {
 }
 
 class DefaultLoader extends TaskLoader {
+	// tslint:disable-next-line:no-identical-functions
 	constructor(globalConfig, finishScan) {
 		super("user", {
 			enable: globalConfig.enableVsTasks,

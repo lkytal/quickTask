@@ -40,8 +40,13 @@ abstract class TaskLoader {
 			return this.onFinish();
 		}
 
-		const foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
+		const foundList = await this.getTaskFiles();
 		this.parseTasksFromFile(foundList);
+	}
+
+	public async getTaskFiles() {
+		const foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
+		return foundList;
 	}
 
 	public async parseTasksFromFile(fileList) {

@@ -4,11 +4,41 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.5.0] - 2018-08-17
+
+#### Fixed
+
+- Load VSCode tasks when '.vscode' folder is hidden.
+
 ### [3.4.4] - 2018-07-28
 
 #### Improve
 
 - New command 'Rerun last task'.
+
+### [3.4.3] - 2018-05-31
+
+#### Update
+
+- Update dependency
+
+### [3.4.2] - 2018-04-26
+
+#### Improve
+
+- Use JSON5 to parse VSCode tasks.
+
+### [3.4.1] - 2018-03-11
+
+#### Fixed
+
+- Fix incorrect path for user defined tasks.
+
+### [3.4.0] - 2018-03-10
+
+#### Improve
+
+- Refact code.
 
 ### [3.3.3] - 2018-01-10
 
