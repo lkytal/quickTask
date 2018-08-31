@@ -30,9 +30,11 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 		description = path.join(workspaceName, path.dirname(relative));
 	}
 
+	// description = description.padStart(100 - label.length, " ");
+
 	const item = {
 		cmdLine: cmdLine,
-		description: description,
+		description: '    ---    ' + description,
 		filePath: fileUri ? fileUri.fsPath : "",
 		label: prefix[type] + label,
 		type: type,
@@ -55,8 +57,13 @@ class VSLoader extends TaskLoader {
 
 		for (const workspace of vscode.workspace.workspaceFolders) {
 			const taskJson = path.join(workspace.uri.fsPath, ".vscode", "tasks.json");
-
-			taskFiles.push({fsPath: taskJson});
+			try {
+				fs.statSync(taskJson);
+				taskFiles.push({ fsPath: taskJson });
+			}
+			catch (err) {
+				console.log('Task File Not found ' + taskJson);
+			}
 		}
 
 		return taskFiles;

@@ -4,6 +4,12 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.5.1] - 2018-08-31
+
+#### Fixed
+
+- Fixed problems when VSCode tasks file doesn't exist.
+
 ### [3.5.0] - 2018-08-17
 
 #### Fixed

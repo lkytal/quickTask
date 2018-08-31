@@ -18,11 +18,11 @@ As shown below, all tasks will show up after clicking the task button on the sta
 - Support VS Code task.
 - Allow you to close terminal window automatically after execution. (experimental)
 
-![Preview](screenshot.png)
+![Preview](assets/screenshot.png)
 
 Hint: Task button is usually here:
 
-![Preview](button.png)
+![Preview](assets/button.png)
 
 ## Support Tasks
 
@@ -45,6 +45,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.5.1] - 2018-08-31
+
+#### Fixed
+
+- Fixed problems when VSCode tasks file doesn't exist.
 
 ### [3.5.0] - 2018-08-17
 

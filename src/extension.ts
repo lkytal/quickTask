@@ -78,7 +78,7 @@ function showCommand() {
 	const options = {
 		matchOnDescription: true,
 		matchOnDetail: true,
-		placeHolder: "Select a Task to Run..."
+		placeHolder: "Select the Task to Run..."
 	};
 
 	vscode.window.showQuickPick(manager.getLabelList(), options).then((selection) => {
