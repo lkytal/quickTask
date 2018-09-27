@@ -18,7 +18,7 @@
 		"@types/node": "^10.5.4"
 	},
 	"dependencies": {
-		"babel-core": "^6.26.3",
+		"babel-core": "*",
 		"gulp": "^3.9.1"
 	}
 }
