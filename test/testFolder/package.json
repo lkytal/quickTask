@@ -19,6 +19,6 @@
 	},
 	"dependencies": {
 		"babel-core": "*",
-		"gulp": "^3.9.1"
+		"gulp": "*"
 	}
 }

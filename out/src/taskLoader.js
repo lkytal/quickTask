@@ -70,7 +70,6 @@ class TaskLoader {
         });
     }
     handleFunc(file, callback) {
-        console.log(file);
         callback();
     }
     reload() {

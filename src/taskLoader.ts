@@ -54,7 +54,7 @@ abstract class TaskLoader {
 		}
 	}
 
-	public async parseTasksFromFile(fileList) {
+	public async parseTasksFromFile(fileList: vscode.Uri[]) {
 		if (!Array.isArray(fileList) || fileList.length === 0) {
 			return this.onFinish();
 		}
@@ -65,8 +65,7 @@ abstract class TaskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
-		console.log(file);
+	public handleFunc(file: any, callback: Function) {
 		callback();
 	}
 

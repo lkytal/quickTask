@@ -102,13 +102,13 @@ class GulpLoader extends TaskLoader {
             if (!Array.isArray(fileList) || fileList.length === 0) {
                 return this.onFinish();
             }
-            async.each(fileList, (file, callback) => __awaiter(this, void 0, void 0, function* () {
-                this.handleFunc(file, callback);
+            async.each(fileList, (uri, callback) => __awaiter(this, void 0, void 0, function* () {
+                this.handleFunc(uri, callback);
             }), (err) => this.onFinish(err));
         });
     }
-    handleFunc(file, callback) {
-        const file_name = file.fsPath;
+    handleFunc(uri, callback) {
+        const file_name = uri.fsPath;
         if (path.basename(file_name) === "gulpfile.js") {
             const babelGulpPath = path.join(path.dirname(file_name), "gulpfile.babel.js");
             const tsGulpPath = path.join(path.dirname(file_name), "gulpfile.ts");
@@ -128,32 +128,32 @@ class GulpLoader extends TaskLoader {
         }, (err, stdout, stderr) => {
             if (err) {
                 console.error(err, stderr);
-                this.oldRegexHandler(file_name, callback);
+                this.oldRegexHandler(uri, callback);
                 return;
             }
-            this.extractTasks(file_name, stdout, callback);
+            this.extractTasks(uri, stdout, callback);
         });
     }
-    extractTasks(file_name, stdout, callback) {
+    extractTasks(uri, stdout, callback) {
         const tasks = stdout.trim().split("\n");
         for (const item of tasks) {
             if (item.length !== 0) {
                 const cmdLine = "gulp " + item;
-                const task = generateItem("gulp", cmdLine, cmdLine, file_name);
+                const task = generateItem("gulp", cmdLine, cmdLine, uri);
                 this.taskList.push(task);
             }
         }
         callback();
     }
-    oldRegexHandler(item, callback) {
+    oldRegexHandler(uri, callback) {
         return __awaiter(this, void 0, void 0, function* () {
             const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
             const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
             try {
-                const file = yield vscode.workspace.openTextDocument(item.fsPath);
+                const file = yield vscode.workspace.openTextDocument(uri.fsPath);
                 for (const item of file.getText().match(regexpMatcher)) {
                     const cmdLine = "gulp " + item.replace(regexpReplacer, "$1");
-                    this.taskList.push(generateItem("gulp", cmdLine, cmdLine, file.uri));
+                    this.taskList.push(generateItem("gulp", cmdLine, cmdLine, uri));
                 }
             }
             catch (e) {
