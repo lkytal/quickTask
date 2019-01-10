@@ -1,7 +1,7 @@
 class ListManager {
 	protected taskArray = [];
 
-	constructor(protected loaderList) {
+	constructor(protected loaderList: any[]) {
 	}
 
 	public getTaskArray() {

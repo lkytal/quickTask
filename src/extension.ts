@@ -10,7 +10,7 @@ import StatusBarController = require("./statusBar");
 let loaderList: any[] = [];
 let manager: ListManager;
 let statusBar: StatusBarController;
-let lastTask;
+let lastTask: string;
 
 function finishScan() {
 	for (const loader of loaderList) {
@@ -118,7 +118,7 @@ function setupLoaders(globalConfig, finishCallback) {
 	manager = new ListManager(loaderList);
 }
 
-function registerCommand(context, command, callBack) {
+function registerCommand(context: vscode.ExtensionContext, command: string, callBack) {
 	const commandObject = vscode.commands.registerCommand(command, callBack);
 	context.subscriptions.push(commandObject);
 }

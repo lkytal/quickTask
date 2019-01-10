@@ -34,10 +34,9 @@ function generateItem(type, label, cmdLine, fileUri = null, description = null) 
         const relative = vscode.workspace.asRelativePath(fileUri);
         description = path.join(workspaceName, path.dirname(relative));
     }
-    // description = description.padStart(100 - label.length, " ");
     const item = {
         cmdLine: cmdLine,
-        description: '    ---    ' + description,
+        description: "\t\t" + description,
         filePath: fileUri ? fileUri.fsPath : "",
         label: prefix[type] + label,
         type: type,
@@ -62,7 +61,7 @@ class VSLoader extends TaskLoader {
                     taskFiles.push({ fsPath: taskJson });
                 }
                 catch (err) {
-                    console.log('Task File Not found ' + taskJson);
+                    console.log("Task File Not found " + taskJson);
                 }
             }
             return taskFiles;

@@ -49,7 +49,7 @@ abstract class TaskLoader {
 		return foundList;
 	}
 
-	public async parseTasksFromFile(fileList) {
+	public async parseTasksFromFile(fileList: vscode.Uri[]) {
 		if (!Array.isArray(fileList) || fileList.length === 0) {
 			return this.onFinish();
 		}

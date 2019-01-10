@@ -6,7 +6,7 @@ class StatusBarController {
 	protected statusBarItem;
 	protected msgBar;
 
-	constructor(protected context) {
+	constructor(protected context: vscode.ExtensionContext) {
 		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
 		this.showScanning();
 
@@ -23,7 +23,7 @@ class StatusBarController {
 		this.statusBarItem.show();
 	}
 
-	public showFinishState(isEmpty) {
+	public showFinishState(isEmpty: boolean) {
 		if (isEmpty) {
 			this.statusBarItem.text = "$(x) No Task Found";
 			this.statusBarItem.tooltip = "No Task Found Yet.";

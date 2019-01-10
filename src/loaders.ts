@@ -30,11 +30,9 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 		description = path.join(workspaceName, path.dirname(relative));
 	}
 
-	// description = description.padStart(100 - label.length, " ");
-
 	const item = {
 		cmdLine: cmdLine,
-		description: '    ---    ' + description,
+		description: "         " + description,
 		filePath: fileUri ? fileUri.fsPath : "",
 		label: prefix[type] + label,
 		type: type,
@@ -62,14 +60,14 @@ class VSLoader extends TaskLoader {
 				taskFiles.push({ fsPath: taskJson });
 			}
 			catch (err) {
-				console.log('Task File Not found ' + taskJson);
+				console.log("Task File Not found " + taskJson);
 			}
 		}
 
 		return taskFiles;
 	}
 
-	public handleFunc(file, callback) {
+	public handleFunc(file: vscode.TextDocument, callback) {
 		try {
 			const pattern = json5.parse(file.getText());
 
@@ -104,7 +102,7 @@ class GulpLoader extends TaskLoader {
 		}, globalConfig, finishScan);
 	}
 
-	public handleFunc(file, callback) {
+	public handleFunc(file: vscode.TextDocument, callback) {
 		if (path.basename(file.fileName) === "gulpfile.babel.js") {
 			const legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
 			if (fs.existsSync(legacyGulpPath)) {
@@ -126,7 +124,7 @@ class GulpLoader extends TaskLoader {
 		});
 	}
 
-	protected extractTasks(file, stdout, callback) {
+	protected extractTasks(file: vscode.TextDocument, stdout: string, callback: () => void) {
 		const tasks = stdout.trim().split("\n");
 
 		for (const item of tasks) {
@@ -140,7 +138,7 @@ class GulpLoader extends TaskLoader {
 		callback();
 	}
 
-	protected oldRegexHandler(file, callback) {
+	protected oldRegexHandler(file: vscode.TextDocument, callback) {
 		const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
@@ -172,7 +170,7 @@ class NpmLoader extends TaskLoader {
 		this.useYarn = globalConfig.useYarn;
 	}
 
-	public handleFunc(file, callback) {
+	public handleFunc(file: vscode.TextDocument, callback) {
 		if (typeof file === "object") {
 			try {
 				const pattern = JSON.parse(file.getText());
@@ -233,7 +231,7 @@ class ScriptLoader extends TaskLoader {
 		}, globalConfig, finishScan);
 	}
 
-	public handleFunc(file, callback) {
+	public handleFunc(file: vscode.TextDocument, callback) {
 		if (typeof file !== "object") { return; }
 
 		for (const type of Object.keys(this.scriptTable)) {
