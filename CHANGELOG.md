@@ -4,6 +4,18 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.5.3] - 2018-09-28
+
+#### Fixed
+
+- Subdirectory gulp tasks.
+
+### [3.5.2] - 2018-09-26
+
+#### Feature
+
+- Tentative support towards 'gulpfile.ts'.
+
 ### [3.5.1] - 2018-08-31
 
 #### Fixed

@@ -2,7 +2,7 @@
   "name": "quicktask",
   "displayName": "Quick Task",
   "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-  "version": "3.5.1",
+  "version": "3.5.3",
   "publisher": "lkytal",
   "license": "AGPL-3.0+",
   "engines": {
@@ -65,7 +65,7 @@
         },
         "quicktask.gulpGlob": {
           "type": "string",
-          "default": "{gulpfile.js,gulpfile.babel.js}",
+          "default": "{gulpfile.js,gulpfile.ts,gulpfile.babel.js}",
           "description": "The glob which Quick Task will scan for gulp tasks."
         },
         "quicktask.npmGlob": {

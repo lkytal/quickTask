@@ -1,11 +1,13 @@
+import { Task } from './loaders';
+
 class ListManager {
-	protected taskArray = [];
+	protected taskArray: Task[] = [];
 
 	constructor(protected loaderList: any[]) {
 	}
 
 	public getTaskArray() {
-		let list = [];
+		let list: Task[] = [];
 
 		for (const loader of this.loaderList) {
 			list = list.concat(loader.taskList);
@@ -51,11 +53,15 @@ class ListManager {
 		return null;
 	}
 
-	protected taskOrder(a, b) {
+	protected taskOrder(a: Task, b: Task) {
 		let order = a.workspace.localeCompare(b.workspace);
 
 		if (order === 0) {
 			order = a.type.localeCompare(b.type);
+		}
+
+		if (order === 0) {
+			order = a.filePath.localeCompare(b.filePath);
 		}
 
 		if (order === 0) {

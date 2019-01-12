@@ -44,6 +44,9 @@ class ListManager {
             order = a.type.localeCompare(b.type);
         }
         if (order === 0) {
+            order = a.filePath.localeCompare(b.filePath);
+        }
+        if (order === 0) {
             order = a.label.localeCompare(b.label);
         }
         return order;

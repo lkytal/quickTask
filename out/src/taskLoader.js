@@ -49,8 +49,13 @@ class TaskLoader {
     }
     getTaskFiles() {
         return __awaiter(this, void 0, void 0, function* () {
-            const foundList = yield vscode.workspace.findFiles(this.glob, this.excludesGlob);
-            return foundList;
+            try {
+                const foundList = yield vscode.workspace.findFiles(this.glob, this.excludesGlob);
+                return foundList;
+            }
+            catch (_a) {
+                return [];
+            }
         });
     }
     parseTasksFromFile(fileList) {
@@ -65,7 +70,6 @@ class TaskLoader {
         });
     }
     handleFunc(file, callback) {
-        console.log(file);
         callback();
     }
     reload() {

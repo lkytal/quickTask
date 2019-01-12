@@ -45,8 +45,13 @@ abstract class TaskLoader {
 	}
 
 	public async getTaskFiles() {
-		const foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
-		return foundList;
+		try {
+			const foundList = await vscode.workspace.findFiles(this.glob, this.excludesGlob);
+			return foundList;
+		}
+		catch {
+			return [];
+		}
 	}
 
 	public async parseTasksFromFile(fileList: vscode.Uri[]) {
@@ -60,8 +65,7 @@ abstract class TaskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
-		console.log(file);
+	public handleFunc(file: any, callback: Function) {
 		callback();
 	}
 

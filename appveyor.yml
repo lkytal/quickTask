@@ -10,9 +10,11 @@ cache:
 
 install:
   - ps: Install-Product node 8 x64
-  - npm install -g npm vsce
+  - npm install -g npm vsce gulp
   - del package-lock.json /f
   - npm install >> log.txt
+  - cd test/testFolder
+  - npm install
 
 build_script:
   - npm run compile

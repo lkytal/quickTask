@@ -1,22 +1,24 @@
 {
-	"name": "quicktask",
-	"displayName": "QuickTask",
-	"description": "Task manager and runner for Gulp, NPM, VS Code builtin task and shell scripts.",
-	"version": "2.5.1",
+	"name": "quick_tester_sub",
+	"displayName": "Quick Task Test Subdir",
+	"description": "Quick Task Test Subdir.",
+	"version": "1.0.0",
 	"publisher": "lkytal",
 	"license": "BY-NC-SA",
-	"engines": {
-		"vscode": "^1.1.0"
-	},
-	"categories": [
-		"Other"
-	],
 	"homepage": "https://lkytal.github.io",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/lkytal/quickTask.git"
 	},
 	"scripts": {
-		"Install": "node ./node_modules/vscode/bin/install"
+		"postinstall": "node echo post-sub",
+		"test": "node echo test-sub"
+	},
+	"devDependencies": {
+		"@types/node": "*"
+	},
+	"dependencies": {
+		"babel-core": "*",
+		"gulp": "*"
 	}
 }

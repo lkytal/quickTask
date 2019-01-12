@@ -1,3 +1,5 @@
+
+import * as async from "async";
 import * as child_process from "child_process";
 import * as fs from "fs";
 import * as json5 from "json5";
@@ -14,6 +16,15 @@ const prefix = {
 	vs: "$(code) \tVS Task: "
 };
 
+interface Task {
+	cmdLine: string,
+	description: string,
+	filePath: string,
+	label: string,
+	type: string,
+	workspace: string
+}
+
 function generateItem(type: string, label, cmdLine, fileUri = null, description = null) {
 	const workspace: vscode.WorkspaceFolder = util.isNullOrUndefined(fileUri) ?
 		vscode.workspace.workspaceFolders[0] :
@@ -26,8 +37,7 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 	const workspaceName = workspace ? workspace.name : "";
 
 	if (util.isNullOrUndefined(description)) {
-		const relative = vscode.workspace.asRelativePath(fileUri);
-		description = path.join(workspaceName, path.dirname(relative));
+		description = vscode.workspace.asRelativePath(fileUri);
 	}
 
 	const item = {
@@ -102,35 +112,60 @@ class GulpLoader extends TaskLoader {
 		}, globalConfig, finishScan);
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
-		if (path.basename(file.fileName) === "gulpfile.babel.js") {
-			const legacyGulpPath = path.join(path.dirname(file.fileName), "gulpfile.js");
-			if (fs.existsSync(legacyGulpPath)) {
+	public async parseTasksFromFile(fileList: vscode.Uri[]) {
+		if (!Array.isArray(fileList) || fileList.length === 0) {
+			return this.onFinish();
+		}
+
+		async.each(fileList, async (uri, callback) => {
+			this.handleFunc(uri, callback);
+		}, (err) => this.onFinish(err));
+	}
+
+	public handleFunc(uri: vscode.Uri, callback) {
+		const file_name = uri.fsPath;
+
+		if (path.basename(file_name) === "gulpfile.js") {
+			const babelGulpPath = path.join(path.dirname(file_name), "gulpfile.babel.js");
+			const tsGulpPath = path.join(path.dirname(file_name), "gulpfile.ts");
+
+			if (fs.existsSync(babelGulpPath) || fs.existsSync(tsGulpPath)) {
+				return callback();
+			}
+		}
+
+		if (path.basename(file_name) === "gulpfile.babel.js") {
+			const tsGulpPath = path.join(path.dirname(file_name), "gulpfile.ts");
+			if (fs.existsSync(tsGulpPath)) {
 				return callback();
 			}
 		}
 
 		child_process.exec("gulp --tasks-simple", {
-			cwd: path.dirname(file.fileName),
+			cwd: path.dirname(file_name),
 			timeout: 10000
 		}, (err, stdout, stderr) => {
 			if (err) {
-				console.error(err);
-				this.oldRegexHandler(file, callback);
+				console.error(err, stderr);
+				this.oldRegexHandler(uri, callback);
 				return;
 			}
 
-			this.extractTasks(file, stdout, callback);
+			this.extractTasks(uri, stdout, callback);
 		});
 	}
 
+<<<<<<< HEAD
 	protected extractTasks(file: vscode.TextDocument, stdout: string, callback: () => void) {
+=======
+	protected extractTasks(uri: vscode.Uri, stdout, callback) {
+>>>>>>> 9d672c94a073e99d825efdf2d3fe3df35126e4b0
 		const tasks = stdout.trim().split("\n");
 
 		for (const item of tasks) {
 			if (item.length !== 0) {
 				const cmdLine = "gulp " + item;
-				const task = generateItem("gulp", cmdLine, cmdLine, file.uri);
+				const task = generateItem("gulp", cmdLine, cmdLine, uri);
 				this.taskList.push(task);
 			}
 		}
@@ -138,20 +173,24 @@ class GulpLoader extends TaskLoader {
 		callback();
 	}
 
+<<<<<<< HEAD
 	protected oldRegexHandler(file: vscode.TextDocument, callback) {
+=======
+	protected async oldRegexHandler(uri: vscode.Uri, callback) {
+>>>>>>> 9d672c94a073e99d825efdf2d3fe3df35126e4b0
 		const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
-		if (typeof file === "object") {
-			try {
-				for (const item of file.getText().match(regexpMatcher)) {
-					const cmdLine = "gulp " + item.replace(regexpReplacer, "$1");
-					this.taskList.push(generateItem("gulp", cmdLine, cmdLine, file.uri));
-				}
+		try {
+			const file = await vscode.workspace.openTextDocument(uri.fsPath);
+
+			for (const item of file.getText().match(regexpMatcher)) {
+				const cmdLine = "gulp " + item.replace(regexpReplacer, "$1");
+				this.taskList.push(generateItem("gulp", cmdLine, cmdLine, uri));
 			}
-			catch (e) {
-				console.error("Invalid gulp file :" + e.message);
-			}
+		}
+		catch (e) {
+			console.error("Invalid gulp file :" + e.message);
 		}
 
 		callback();
@@ -173,7 +212,7 @@ class NpmLoader extends TaskLoader {
 	public handleFunc(file: vscode.TextDocument, callback) {
 		if (typeof file === "object") {
 			try {
-				const pattern = JSON.parse(file.getText());
+				const pattern = json5.parse(file.getText());
 
 				if (typeof pattern.scripts === "object") {
 					for (const item of Object.keys(pattern.scripts)) {
@@ -305,5 +344,5 @@ function generateFromList(type, list, filePath = null, description = null) {
 }
 
 export {
-	VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
+	Task, VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
 };
