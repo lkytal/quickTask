@@ -16,13 +16,13 @@ const prefix = {
 	vs: "$(code) \tVS Task: "
 };
 
-interface Task {
-	cmdLine: string,
-	description: string,
-	filePath: string,
-	label: string,
-	type: string,
-	workspace: string
+interface ITask {
+	cmdLine: string;
+	description: string;
+	filePath: string;
+	label: string;
+	type: string;
+	workspace: string;
 }
 
 function generateItem(type: string, label, cmdLine, fileUri = null, description = null) {
@@ -40,7 +40,7 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 		description = vscode.workspace.asRelativePath(fileUri);
 	}
 
-	const item = {
+	const item: ITask = {
 		cmdLine: cmdLine,
 		description: "         " + description,
 		filePath: fileUri ? fileUri.fsPath : "",
@@ -123,26 +123,26 @@ class GulpLoader extends TaskLoader {
 	}
 
 	public handleFunc(uri: vscode.Uri, callback) {
-		const file_name = uri.fsPath;
+		const fileName = uri.fsPath;
 
-		if (path.basename(file_name) === "gulpfile.js") {
-			const babelGulpPath = path.join(path.dirname(file_name), "gulpfile.babel.js");
-			const tsGulpPath = path.join(path.dirname(file_name), "gulpfile.ts");
+		if (path.basename(fileName) === "gulpfile.js") {
+			const babelGulpPath = path.join(path.dirname(fileName), "gulpfile.babel.js");
+			const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
 
 			if (fs.existsSync(babelGulpPath) || fs.existsSync(tsGulpPath)) {
 				return callback();
 			}
 		}
 
-		if (path.basename(file_name) === "gulpfile.babel.js") {
-			const tsGulpPath = path.join(path.dirname(file_name), "gulpfile.ts");
+		if (path.basename(fileName) === "gulpfile.babel.js") {
+			const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
 			if (fs.existsSync(tsGulpPath)) {
 				return callback();
 			}
 		}
 
 		child_process.exec("gulp --tasks-simple", {
-			cwd: path.dirname(file_name),
+			cwd: path.dirname(fileName),
 			timeout: 10000
 		}, (err, stdout, stderr) => {
 			if (err) {
@@ -155,11 +155,7 @@ class GulpLoader extends TaskLoader {
 		});
 	}
 
-<<<<<<< HEAD
-	protected extractTasks(file: vscode.TextDocument, stdout: string, callback: () => void) {
-=======
 	protected extractTasks(uri: vscode.Uri, stdout, callback) {
->>>>>>> 9d672c94a073e99d825efdf2d3fe3df35126e4b0
 		const tasks = stdout.trim().split("\n");
 
 		for (const item of tasks) {
@@ -173,11 +169,7 @@ class GulpLoader extends TaskLoader {
 		callback();
 	}
 
-<<<<<<< HEAD
-	protected oldRegexHandler(file: vscode.TextDocument, callback) {
-=======
 	protected async oldRegexHandler(uri: vscode.Uri, callback) {
->>>>>>> 9d672c94a073e99d825efdf2d3fe3df35126e4b0
 		const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
@@ -258,7 +250,7 @@ class ScriptLoader extends TaskLoader {
 			enabled: this.globalConfig.enablePerl
 		},
 		bat: {
-			exec: "",
+			exec: "cmd.exe /c ",
 			enabled: this.globalConfig.enableBatchFile
 		}
 	};
@@ -276,7 +268,8 @@ class ScriptLoader extends TaskLoader {
 		for (const type of Object.keys(this.scriptTable)) {
 			if (file.languageId === type) {
 				if (this.scriptTable[type].enabled) {
-					const cmdLine = this.scriptTable[type].exec + file.fileName;
+					const quoteFile = file.fileName.indexOf(" ") !== -1 ? "\"" + file.fileName + "\"" : file.fileName;
+					const cmdLine = this.scriptTable[type].exec + quoteFile;
 					this.taskList.push(generateItem("script", cmdLine, cmdLine, file.uri));
 				}
 				break;
@@ -344,5 +337,5 @@ function generateFromList(type, list, filePath = null, description = null) {
 }
 
 export {
-	Task, VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
+	ITask as Task, VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
 };
