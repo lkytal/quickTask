@@ -46,6 +46,12 @@ Hint: Task button is usually here:
 
 ## Release Notes
 
+### [3.5.4] - 2019-01-13
+
+#### Fixed
+
+- Quote path of script tasks.
+
 ### [3.5.3] - 2018-09-28
 
 #### Fixed

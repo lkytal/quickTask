@@ -155,7 +155,7 @@ class GulpLoader extends TaskLoader {
 		});
 	}
 
-	protected extractTasks(uri: vscode.Uri, stdout, callback) {
+	protected extractTasks(uri: vscode.Uri, stdout: string, callback: () => void) {
 		const tasks = stdout.trim().split("\n");
 
 		for (const item of tasks) {
