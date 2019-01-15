@@ -251,7 +251,6 @@ class ScriptLoader extends TaskLoader {
 }
 exports.ScriptLoader = ScriptLoader;
 class DefaultLoader extends TaskLoader {
-    // tslint:disable-next-line:no-identical-functions
     constructor(globalConfig, finishScan) {
         super("user", {
             enable: globalConfig.enableVsTasks,

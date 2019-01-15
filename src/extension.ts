@@ -6,11 +6,12 @@ import * as vscode from "vscode";
 import ListManager = require("./listManager");
 import * as loaders from "./loaders";
 import StatusBarController = require("./statusBar");
+import TaskLoader = require("./taskLoader");
 
-let loaderList: any[] = [];
+let loaderList: TaskLoader[] = [];
 let manager: ListManager;
 let statusBar: StatusBarController;
-let lastTask: string;
+let lastTask: vscode.QuickPickItem;
 
 function finishScan() {
 	for (const loader of loaderList) {
@@ -30,7 +31,7 @@ function requestRescan() {
 	}
 }
 
-function runTask(selection) {
+function runTask(selection: vscode.QuickPickItem) {
 	const targetTask = manager.findTask(selection.label, selection.description);
 
 	if (targetTask.type === "vs") {
@@ -75,7 +76,7 @@ function showCommand() {
 		return;
 	}
 
-	const options = {
+	const options : vscode.QuickPickOptions = {
 		matchOnDescription: true,
 		matchOnDetail: true,
 		placeHolder: "Select the Task to Run..."
@@ -100,7 +101,7 @@ function runLastTask() {
 	}
 }
 
-function setupLoaders(globalConfig, finishCallback) {
+function setupLoaders(globalConfig: vscode.WorkspaceConfiguration, finishCallback: () => void) {
 	const engines = [
 		loaders.GulpLoader,
 		loaders.NpmLoader,

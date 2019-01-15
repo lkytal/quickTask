@@ -1,10 +1,11 @@
 "use strict";
 
+import { ITask } from "./ITask";
 import * as vscode from "vscode";
 
 class StatusBarController {
-	protected statusBarItem;
-	protected msgBar;
+	protected statusBarItem: vscode.StatusBarItem;
+	protected msgBar: vscode.StatusBarItem;
 
 	constructor(protected context: vscode.ExtensionContext) {
 		this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
@@ -36,7 +37,7 @@ class StatusBarController {
 		}
 	}
 
-	public showMessage(task) {
+	public showMessage(task: ITask) {
 		this.msgBar.text = `$(pulse) Task "${task.cmdLine}" started`;
 		this.msgBar.show();
 

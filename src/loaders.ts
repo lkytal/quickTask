@@ -7,6 +7,7 @@ import * as path from "path";
 import * as util from "util";
 import * as vscode from "vscode";
 import TaskLoader = require("./taskLoader");
+import { ITask } from "./ITask";
 
 const prefix = {
 	gulp: "$(browser) \t",
@@ -16,16 +17,7 @@ const prefix = {
 	vs: "$(code) \tVS Task: "
 };
 
-interface ITask {
-	cmdLine: string;
-	description: string;
-	filePath: string;
-	label: string;
-	type: string;
-	workspace: string;
-}
-
-function generateItem(type: string, label, cmdLine, fileUri = null, description = null) {
+function generateItem(type: string, label: string, cmdLine: string, fileUri: vscode.Uri = null, description: string = null) {
 	const workspace: vscode.WorkspaceFolder = util.isNullOrUndefined(fileUri) ?
 		vscode.workspace.workspaceFolders[0] :
 		vscode.workspace.getWorkspaceFolder(fileUri);
@@ -53,7 +45,7 @@ function generateItem(type: string, label, cmdLine, fileUri = null, description 
 }
 
 class VSLoader extends TaskLoader {
-	constructor(globalConfig, finishScan) {
+	constructor(globalConfig: vscode.WorkspaceConfiguration, finishScan: () => void) {
 		super("vs", {
 			enable: globalConfig.enableVsTasks,
 			glob: ".vscode/tasks.json"
@@ -105,7 +97,7 @@ class VSLoader extends TaskLoader {
 }
 
 class GulpLoader extends TaskLoader {
-	constructor(globalConfig, finishScan) {
+	constructor(globalConfig: vscode.WorkspaceConfiguration, finishScan: () => void) {
 		super("gulp", {
 			enable: globalConfig.enableVsTasks,
 			glob: globalConfig.gulpGlob
@@ -192,7 +184,7 @@ class GulpLoader extends TaskLoader {
 class NpmLoader extends TaskLoader {
 	protected useYarn = false;
 
-	constructor(globalConfig, finishScan) {
+	constructor(globalConfig: vscode.WorkspaceConfiguration, finishScan: () => void) {
 		super("npm", {
 			enable: globalConfig.enableVsTasks,
 			glob: globalConfig.npmGlob
@@ -255,7 +247,7 @@ class ScriptLoader extends TaskLoader {
 		}
 	};
 
-	constructor(globalConfig, finishScan) {
+	constructor(globalConfig: vscode.WorkspaceConfiguration, finishScan: () => void) {
 		super("script", {
 			glob: "*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}",
 			enable: 1
@@ -285,8 +277,7 @@ class ScriptLoader extends TaskLoader {
 }
 
 class DefaultLoader extends TaskLoader {
-	// tslint:disable-next-line:no-identical-functions
-	constructor(globalConfig, finishScan) {
+	constructor(globalConfig: vscode.WorkspaceConfiguration, finishScan: () => void) {
 		super("user", {
 			enable: globalConfig.enableVsTasks,
 			glob: ""
@@ -326,7 +317,7 @@ class DefaultLoader extends TaskLoader {
 	}
 }
 
-function generateFromList(type, list, filePath = null, description = null) {
+function generateFromList(type: string, list: any, filePath = null, description = null) {
 	const rst = [];
 
 	for (const cmdLine of list) {
@@ -337,5 +328,5 @@ function generateFromList(type, list, filePath = null, description = null) {
 }
 
 export {
-	ITask as Task, VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
+	VSLoader, GulpLoader, NpmLoader, ScriptLoader, DefaultLoader, generateFromList
 };

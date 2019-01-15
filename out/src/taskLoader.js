@@ -16,10 +16,10 @@ class TaskLoader {
         this.globalConfig = globalConfig;
         this.callBack = callBack;
         this.taskList = [];
-        this.enable = null;
-        this.glob = null;
-        this.excludesGlob = null;
+        this.enable = false;
         this.finished = false;
+        this.glob = "";
+        this.excludesGlob = "";
         this.glob = config.glob;
         this.enable = config.enable;
         this.excludesGlob = globalConfig.excludesGlob;

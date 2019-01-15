@@ -3,15 +3,17 @@
 import * as async from "async";
 import promisify = require("util.promisify");
 import * as vscode from "vscode";
+import { ITask } from "./ITask";
 
 abstract class TaskLoader {
-	public taskList: any[] = [];
-	protected enable: boolean = null;
-	protected glob: string = null;
-	protected excludesGlob: string = null;
-	protected finished: boolean = false;
+	public taskList: ITask[] = [];
+	public enable: boolean = false;
+	public finished: boolean = false;
 
-	constructor(protected key, protected config, protected globalConfig, protected callBack) {
+	protected glob: string = "";
+	protected excludesGlob: string = "";
+
+	constructor(protected key: string, protected config, protected globalConfig: vscode.WorkspaceConfiguration, protected callBack: () => void) {
 		this.glob = config.glob;
 		this.enable = config.enable;
 		this.excludesGlob = globalConfig.excludesGlob;

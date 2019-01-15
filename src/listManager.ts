@@ -1,13 +1,15 @@
-import { Task } from './loaders';
+import { ITask } from "./ITask";
+import * as vscode from "vscode";
+import TaskLoader = require("./taskLoader");
 
 class ListManager {
-	protected taskArray: Task[] = [];
+	protected taskArray: ITask[] = [];
 
-	constructor(protected loaderList: any[]) {
+	constructor(protected loaderList: TaskLoader[]) {
 	}
 
 	public getTaskArray() {
-		let list: Task[] = [];
+		let list: ITask[] = [];
 
 		for (const loader of this.loaderList) {
 			list = list.concat(loader.taskList);
@@ -31,7 +33,7 @@ class ListManager {
 
 		this.taskArray.sort(this.taskOrder);
 
-		const labels = [];
+		const labels : vscode.QuickPickItem[] = [];
 
 		for (const item of this.taskArray) {
 			labels.push({
@@ -43,7 +45,7 @@ class ListManager {
 		return labels;
 	}
 
-	public findTask(selection, description) {
+	public findTask(selection: string, description: string) {
 		for (const item of this.taskArray) {
 			if (item.label === selection && item.description === description) {
 				return item;
@@ -53,7 +55,7 @@ class ListManager {
 		return null;
 	}
 
-	protected taskOrder(a: Task, b: Task) {
+	protected taskOrder(a: ITask, b: ITask) {
 		let order = a.workspace.localeCompare(b.workspace);
 
 		if (order === 0) {
