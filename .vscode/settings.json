@@ -3,5 +3,8 @@
         "Rescan",
         "promisify",
         "quicktask"
-    ]
+    ],
+    "python.dataScience.jupyterServerURI": "http://localhost:7777",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

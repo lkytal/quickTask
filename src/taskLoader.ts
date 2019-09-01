@@ -1,7 +1,6 @@
 "use strict";
 
 import * as async from "async";
-import promisify = require("util.promisify");
 import * as vscode from "vscode";
 import { ITask } from "./ITask";
 
@@ -67,7 +66,7 @@ abstract class TaskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	public handleFunc(file: any, callback: Function) {
+	public handleFunc(file: any, callback) {
 		callback();
 	}
 

@@ -1,5 +1,5 @@
-import { ITask } from "./ITask";
 import * as vscode from "vscode";
+import { ITask } from "./ITask";
 import TaskLoader = require("./taskLoader");
 
 class ListManager {
@@ -33,7 +33,7 @@ class ListManager {
 
 		this.taskArray.sort(this.taskOrder);
 
-		const labels : vscode.QuickPickItem[] = [];
+		const labels: vscode.QuickPickItem[] = [];
 
 		for (const item of this.taskArray) {
 			labels.push({

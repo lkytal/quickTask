@@ -11,14 +11,14 @@
 		"url": "https://github.com/lkytal/quickTask.git"
 	},
 	"scripts": {
-		"postinstall": "node echo post",
-		"test": "node echo test"
+		"postinstall": "echo post",
+		"test": "echo test"
 	},
 	"devDependencies": {
-		"@types/node": "^10.5.4"
+		"@types/node": "^12.7.3"
 	},
 	"dependencies": {
 		"babel-core": "*",
-		"gulp": "*"
+		"gulp": "4.0.2"
 	}
 }

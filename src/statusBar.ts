@@ -1,7 +1,7 @@
 "use strict";
 
-import { ITask } from "./ITask";
 import * as vscode from "vscode";
+import { ITask } from "./ITask";
 
 class StatusBarController {
 	protected statusBarItem: vscode.StatusBarItem;

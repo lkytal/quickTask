@@ -6,8 +6,8 @@ import * as json5 from "json5";
 import * as path from "path";
 import * as util from "util";
 import * as vscode from "vscode";
-import TaskLoader = require("./taskLoader");
 import { ITask } from "./ITask";
+import TaskLoader = require("./taskLoader");
 
 const prefix = {
 	gulp: "$(browser) \t",
@@ -135,7 +135,7 @@ class GulpLoader extends TaskLoader {
 
 		child_process.exec("gulp --tasks-simple", {
 			cwd: path.dirname(fileName),
-			timeout: 10000
+			timeout: 5000
 		}, (err, stdout, stderr) => {
 			if (err) {
 				console.error(err, stderr);
