@@ -16,7 +16,7 @@ const json5 = require("json5");
 const path = require("path");
 const util = require("util");
 const vscode = require("vscode");
-const TaskLoader = require("./taskLoader");
+const taskLoader_1 = require("./taskLoader");
 const prefix = {
     gulp: "$(browser) \t",
     npm: "$(package) \t",
@@ -45,7 +45,7 @@ function generateItem(type, label, cmdLine, fileUri = null, description = null) 
     };
     return item;
 }
-class VSLoader extends TaskLoader {
+class VSLoader extends taskLoader_1.default {
     constructor(globalConfig, finishScan) {
         super("vs", {
             enable: globalConfig.enableVsTasks,
@@ -91,7 +91,7 @@ class VSLoader extends TaskLoader {
     }
 }
 exports.VSLoader = VSLoader;
-class GulpLoader extends TaskLoader {
+class GulpLoader extends taskLoader_1.default {
     constructor(globalConfig, finishScan) {
         super("gulp", {
             enable: globalConfig.enableVsTasks,
@@ -125,7 +125,7 @@ class GulpLoader extends TaskLoader {
         }
         child_process.exec("gulp --tasks-simple", {
             cwd: path.dirname(fileName),
-            timeout: 10000
+            timeout: 5000
         }, (err, stdout, stderr) => {
             if (err) {
                 console.error(err, stderr);
@@ -165,7 +165,7 @@ class GulpLoader extends TaskLoader {
     }
 }
 exports.GulpLoader = GulpLoader;
-class NpmLoader extends TaskLoader {
+class NpmLoader extends taskLoader_1.default {
     constructor(globalConfig, finishScan) {
         super("npm", {
             enable: globalConfig.enableVsTasks,
@@ -197,7 +197,7 @@ class NpmLoader extends TaskLoader {
     }
 }
 exports.NpmLoader = NpmLoader;
-class ScriptLoader extends TaskLoader {
+class ScriptLoader extends taskLoader_1.default {
     constructor(globalConfig, finishScan) {
         super("script", {
             glob: "*.{sh,py,rb,ps1,pl,bat,cmd,vbs,ahk}",
@@ -251,7 +251,7 @@ class ScriptLoader extends TaskLoader {
     }
 }
 exports.ScriptLoader = ScriptLoader;
-class DefaultLoader extends TaskLoader {
+class DefaultLoader extends taskLoader_1.default {
     constructor(globalConfig, finishScan) {
         super("user", {
             enable: globalConfig.enableVsTasks,

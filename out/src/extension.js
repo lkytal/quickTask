@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
-const ListManager = require("./listManager");
+const listManager_1 = require("./listManager");
 const loaders = require("./loaders");
-const StatusBarController = require("./statusBar");
+const statusBar_1 = require("./statusBar");
 let loaderList = [];
 let manager;
 let statusBar;
@@ -92,7 +92,7 @@ function setupLoaders(globalConfig, finishCallback) {
     for (const engine of engines) {
         loaderList.push(new engine(globalConfig, finishCallback));
     }
-    manager = new ListManager(loaderList);
+    manager = new listManager_1.default(loaderList);
 }
 function registerCommand(context, command, callBack) {
     const commandObject = vscode.commands.registerCommand(command, callBack);
@@ -102,7 +102,7 @@ function activate(context) {
     registerCommand(context, "quicktask.showTasks", showCommand);
     registerCommand(context, "quicktask.runLastTask", runLastTask);
     registerCommand(context, "quicktask.rescanTasks", requestRescan);
-    statusBar = new StatusBarController(context);
+    statusBar = new statusBar_1.default(context);
     setupLoaders(vscode.workspace.getConfiguration("quicktask"), finishScan);
     for (const loader of loaderList) {
         loader.loadTask();

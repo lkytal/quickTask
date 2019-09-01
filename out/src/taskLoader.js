@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const async = require("async");
 const vscode = require("vscode");
 class TaskLoader {
@@ -102,5 +103,5 @@ class TaskLoader {
         this.loadTask();
     }
 }
-module.exports = TaskLoader;
+exports.default = TaskLoader;
 //# sourceMappingURL=taskLoader.js.map

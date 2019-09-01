@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const vscode = require("vscode");
 class StatusBarController {
     constructor(context) {
@@ -35,5 +36,5 @@ class StatusBarController {
         }, 2500);
     }
 }
-module.exports = StatusBarController;
+exports.default = StatusBarController;
 //# sourceMappingURL=statusBar.js.map

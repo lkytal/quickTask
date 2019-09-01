@@ -1,12 +1,12 @@
 "use strict";
 
-import os = require("os");
+import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
-import ListManager = require("./listManager");
+import ListManager from "./listManager";
 import * as loaders from "./loaders";
-import StatusBarController = require("./statusBar");
-import TaskLoader = require("./taskLoader");
+import StatusBarController from "./statusBar";
+import TaskLoader from "./taskLoader";
 
 let loaderList: TaskLoader[] = [];
 let manager: ListManager;

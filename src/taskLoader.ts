@@ -109,4 +109,4 @@ abstract class TaskLoader {
 	}
 }
 
-export = TaskLoader;
+export default TaskLoader;

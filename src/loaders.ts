@@ -7,7 +7,7 @@ import * as path from "path";
 import * as util from "util";
 import * as vscode from "vscode";
 import { ITask } from "./ITask";
-import TaskLoader = require("./taskLoader");
+import TaskLoader from "./taskLoader";
 
 const prefix = {
 	gulp: "$(browser) \t",

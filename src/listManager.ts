@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { ITask } from "./ITask";
-import TaskLoader = require("./taskLoader");
+import TaskLoader from "./taskLoader";
 
 class ListManager {
 	protected taskArray: ITask[] = [];
@@ -74,4 +74,4 @@ class ListManager {
 	}
 }
 
-export = ListManager;
+export default ListManager;

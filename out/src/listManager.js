@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class ListManager {
     constructor(loaderList) {
         this.loaderList = loaderList;
@@ -52,5 +53,5 @@ class ListManager {
         return order;
     }
 }
-module.exports = ListManager;
+exports.default = ListManager;
 //# sourceMappingURL=listManager.js.map

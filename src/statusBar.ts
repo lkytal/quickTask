@@ -47,4 +47,4 @@ class StatusBarController {
 	}
 }
 
-export = StatusBarController;
+export default StatusBarController;
