@@ -53,6 +53,10 @@ class VSLoader extends TaskLoader {
 	}
 
 	public async getTaskFiles() {
+		if (!vscode.workspace.workspaceFolders) {
+			return [];
+		}
+
 		const taskFiles = [];
 
 		for (const workspace of vscode.workspace.workspaceFolders) {
