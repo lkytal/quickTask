@@ -54,6 +54,9 @@ class VSLoader extends taskLoader_1.default {
     }
     getTaskFiles() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!vscode.workspace.workspaceFolders) {
+                return [];
+            }
             const taskFiles = [];
             for (const workspace of vscode.workspace.workspaceFolders) {
                 const taskJson = path.join(workspace.uri.fsPath, ".vscode", "tasks.json");
