@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.deactivate = exports.activate = void 0;
 const os = require("os");
 const path = require("path");
 const vscode = require("vscode");

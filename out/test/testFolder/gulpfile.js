@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.test = void 0;
 const gulp_1 = require("gulp");
 function test() {
     return;

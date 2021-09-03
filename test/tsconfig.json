@@ -9,11 +9,9 @@
 		"lib": [
 			"es5",
 			"es6",
-			"ES7",
 			"es2015",
 			"es2016",
-			"es2017",
-			"DOM"
+			"es2017"
 		],
 		"sourceMap": true
 	},

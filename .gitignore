@@ -1,7 +1,7 @@
 node_modules/
-/.vscode-test
-/bower_components
-/typings
+.vscode-test
+bower_components
+typings
 
 /[Bb]in
 /[Oo]bj

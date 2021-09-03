@@ -73,7 +73,7 @@ class VSLoader extends TaskLoader {
 		return taskFiles;
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
+	public handleFunc(file: vscode.TextDocument, callback: async.ErrorCallback<Error>) {
 		try {
 			const pattern = json5.parse(file.getText());
 
@@ -118,7 +118,7 @@ class GulpLoader extends TaskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	public handleFunc(uri: vscode.Uri, callback) {
+	public async handleFunc(uri: vscode.Uri, callback: async.ErrorCallback<Error>) {
 		const fileName = uri.fsPath;
 
 		if (path.basename(fileName) === "gulpfile.js") {
@@ -137,18 +137,21 @@ class GulpLoader extends TaskLoader {
 			}
 		}
 
-		child_process.exec("gulp --tasks-simple", {
-			cwd: path.dirname(fileName),
-			timeout: 5000
-		}, (err, stdout, stderr) => {
-			if (err) {
-				console.error(err, stderr);
-				this.oldRegexHandler(uri, callback);
-				return;
-			}
+		const exec = util.promisify(child_process.exec);
+
+		try	{
+			const { stdout, stderr } = await exec("gulp --tasks-simple", {
+				cwd: path.dirname(fileName),
+				timeout: 5000
+			});
 
 			this.extractTasks(uri, stdout, callback);
-		});
+		}
+		catch (err) {
+			console.error(err);
+			this.oldRegexHandler(uri, callback);
+			return;
+		}
 	}
 
 	protected extractTasks(uri: vscode.Uri, stdout: string, callback: () => void) {
@@ -165,7 +168,7 @@ class GulpLoader extends TaskLoader {
 		callback();
 	}
 
-	protected async oldRegexHandler(uri: vscode.Uri, callback) {
+	protected async oldRegexHandler(uri: vscode.Uri, callback: async.ErrorCallback<Error>) {
 		const regexpMatcher = /gulp\.task\([\'\"][^\'\"]*[\'\"]/gi;
 		const regexpReplacer = /gulp\.task\([\'\"]([^\'\"]*)[\'\"]/;
 
@@ -197,7 +200,7 @@ class NpmLoader extends TaskLoader {
 		this.useYarn = globalConfig.useYarn;
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
+	public handleFunc(file: vscode.TextDocument, callback: async.ErrorCallback<Error>) {
 		if (typeof file === "object") {
 			try {
 				const pattern = json5.parse(file.getText());
@@ -224,7 +227,7 @@ class NpmLoader extends TaskLoader {
 }
 
 class ScriptLoader extends TaskLoader {
-	protected scriptTable = {
+	public scriptTable = {
 		shellscript: {
 			exec: "",
 			enabled: this.globalConfig.enableShell
@@ -258,7 +261,7 @@ class ScriptLoader extends TaskLoader {
 		}, globalConfig, finishScan);
 	}
 
-	public handleFunc(file: vscode.TextDocument, callback) {
+	public handleFunc(file: vscode.TextDocument, callback: async.ErrorCallback<Error>) {
 		if (typeof file !== "object") { return; }
 
 		for (const type of Object.keys(this.scriptTable)) {
@@ -314,7 +317,7 @@ class DefaultLoader extends TaskLoader {
 
 	public setupWatcher() {
 		const watcher = vscode.workspace.onDidChangeConfiguration((e) => {
-			this.loadTask();
+			this.onChanged();
 		});
 
 		return watcher;

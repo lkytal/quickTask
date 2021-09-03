@@ -1,7 +1,8 @@
 {
 	"quicktask.defaultTasks": [
 		"npm update",
-		"npm i --save-dev"
+		"npm i --save-dev",
+		"npm run test"
 	],
 	"quicktask.closeTerminalAfterExecution": false,
 	"files.exclude": {

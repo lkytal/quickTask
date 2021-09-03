@@ -15,17 +15,19 @@
             "stopOnEntry": false
         },
         {
-            "name": "Launch Tests",
-            "preLaunchTask": "npm",
+            "name": "Extension Tests",
             "type": "extensionHost",
             "request": "launch",
+            "preLaunchTask": "test",
             "runtimeExecutable": "${execPath}",
             "args": [
                 "${workspaceFolder}/test/testFolder",
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/test"
             ],
-            "stopOnEntry": false
+            "outFiles": [
+                "${workspaceFolder}/test/**/*.js"
+            ]
         }
     ]
 }

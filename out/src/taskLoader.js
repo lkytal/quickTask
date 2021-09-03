@@ -100,7 +100,7 @@ class TaskLoader {
         return watcher;
     }
     onChanged() {
-        this.loadTask();
+        this.reload();
     }
 }
 exports.default = TaskLoader;

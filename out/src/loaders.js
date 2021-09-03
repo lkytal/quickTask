@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateFromList = exports.DefaultLoader = exports.ScriptLoader = exports.NpmLoader = exports.GulpLoader = exports.VSLoader = void 0;
 const async = require("async");
 const child_process = require("child_process");
 const fs = require("fs");
@@ -112,30 +113,34 @@ class GulpLoader extends taskLoader_1.default {
         });
     }
     handleFunc(uri, callback) {
-        const fileName = uri.fsPath;
-        if (path.basename(fileName) === "gulpfile.js") {
-            const babelGulpPath = path.join(path.dirname(fileName), "gulpfile.babel.js");
-            const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
-            if (fs.existsSync(babelGulpPath) || fs.existsSync(tsGulpPath)) {
-                return callback();
+        return __awaiter(this, void 0, void 0, function* () {
+            const fileName = uri.fsPath;
+            if (path.basename(fileName) === "gulpfile.js") {
+                const babelGulpPath = path.join(path.dirname(fileName), "gulpfile.babel.js");
+                const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
+                if (fs.existsSync(babelGulpPath) || fs.existsSync(tsGulpPath)) {
+                    return callback();
+                }
             }
-        }
-        if (path.basename(fileName) === "gulpfile.babel.js") {
-            const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
-            if (fs.existsSync(tsGulpPath)) {
-                return callback();
+            if (path.basename(fileName) === "gulpfile.babel.js") {
+                const tsGulpPath = path.join(path.dirname(fileName), "gulpfile.ts");
+                if (fs.existsSync(tsGulpPath)) {
+                    return callback();
+                }
             }
-        }
-        child_process.exec("gulp --tasks-simple", {
-            cwd: path.dirname(fileName),
-            timeout: 5000
-        }, (err, stdout, stderr) => {
-            if (err) {
-                console.error(err, stderr);
+            const exec = util.promisify(child_process.exec);
+            try {
+                const { stdout, stderr } = yield exec("gulp --tasks-simple", {
+                    cwd: path.dirname(fileName),
+                    timeout: 5000
+                });
+                this.extractTasks(uri, stdout, callback);
+            }
+            catch (err) {
+                console.error(err);
                 this.oldRegexHandler(uri, callback);
                 return;
             }
-            this.extractTasks(uri, stdout, callback);
         });
     }
     extractTasks(uri, stdout, callback) {
@@ -284,7 +289,7 @@ class DefaultLoader extends taskLoader_1.default {
     }
     setupWatcher() {
         const watcher = vscode.workspace.onDidChangeConfiguration((e) => {
-            this.loadTask();
+            this.onChanged();
         });
         return watcher;
     }

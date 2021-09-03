@@ -1,21 +1,36 @@
 {
     //Test comment
-	"version": "0.1.0",
+	"version": "2.0.0",
     "command": "cmd.exe",
-    "isShellCommand": true,
-    "args": ["/c"],
-	"suppressTaskName": true,
+    "args": [
+        "/c"
+    ],
     "tasks": [
         {
-            "taskName": "run",
-            "args": ["node main.js"],
-            "isBuildCommand": true
+            "label": "run",
+            "type": "shell",
+            "args": [
+                "/c",
+                "node main.js"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "_id": "build",
+                "isDefault": false
+            }
         },
         {
-            "taskName": "test",
+            "label": "test",
+            "type": "shell",
             "args": [
+                "/c",
                 "node test.js"
-            ]
+            ],
+            "problemMatcher": [],
+            "group": {
+                "_id": "test",
+                "isDefault": false
+            }
         }
     ]
 }

@@ -5,7 +5,23 @@
             "label": "npm",
             "type": "npm",
             "script": "compile",
-            "problemMatcher": ["$tsc"],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "new"
+            }
+        },
+        {
+            "label": "test",
+            "type": "npm",
+            "script": "test",
+            "problemMatcher": [
+                "$tsc"
+            ],
             "presentation": {
                 "echo": true,
                 "reveal": "never",

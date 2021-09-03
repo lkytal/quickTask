@@ -1,15 +1,17 @@
 let gulp = require("gulp");
 
-gulp.task("legacy", function(done) {
+gulp.task("legacy", function (done) {
     return done();
 });
 
-gulp.task("watch", function(done) {
+gulp.task("watch", function (done) {
     return done();
 });
 
-gulp.task("copy", function(done) {
+gulp.task("copy", function (done) {
     return done();
 });
 
-gulp.task("default");
+gulp.task("default", function (done) {
+    return done();
+});

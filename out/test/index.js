@@ -1,29 +1,29 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
-var path = require("path");
-var Mocha = require("mocha");
-var glob = require("glob");
+const path = require("path");
+const Mocha = require("mocha");
+const glob = require("glob");
 function run() {
     // Create the mocha test
-    var mocha = new Mocha({
+    const mocha = new Mocha({
         ui: 'tdd'
     });
     // mocha.useColors(true);
-    var testsRoot = path.resolve(__dirname, '.');
-    return new Promise(function (c, e) {
-        glob('**/**.test.js', { cwd: testsRoot }, function (err, files) {
+    const testsRoot = path.resolve(__dirname, '.');
+    return new Promise((c, e) => {
+        glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
             if (err) {
                 console.log('glob err: ' + err);
                 return e(err);
             }
             // Add files to the test suite
-            files.forEach(function (f) { return mocha.addFile(path.resolve(testsRoot, f)); });
+            files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
             try {
                 // Run the mocha test
-                mocha.run(function (failures) {
+                mocha.run(failures => {
                     if (failures > 0) {
-                        e(new Error(failures + " tests failed."));
+                        e(new Error(`${failures} tests failed.`));
                     }
                     else {
                         c();
@@ -38,3 +38,4 @@ function run() {
     });
 }
 exports.run = run;
+//# sourceMappingURL=index.js.map

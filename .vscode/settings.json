@@ -4,7 +4,7 @@
         "promisify",
         "quicktask"
     ],
-    "python.dataScience.jupyterServerURI": "http://localhost:7777",
+    "python.dataScience.jupyterServerURI": "https://boltzmann.luddy.indiana.edu/notebooks/ml/denova.ipynb#",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
 }

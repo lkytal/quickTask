@@ -2,7 +2,7 @@ let path = require('path');
 let fs = require('fs');
 let util = require('util');
 let chai = require("chai");
-let vscode = require('vscode');
+let vscode = require("vscode");
 let loaders = require('../out/src/loaders.js');
 
 chai.should();
@@ -39,14 +39,19 @@ function loaderTest(done, builder, type, list, filePath = null, description = nu
 
 	let check = function () {
 		let rst = loaders.generateFromList(type, list, fileUri, description);
-		test.taskList.should.be.eql(rst);
+		try {
+			tester.taskList.should.be.eql(rst);
+		}
+		catch (e) {
+			throw 'expecting: ' + JSON.stringify(rst) + '\nbut get: ' + JSON.stringify(tester.taskList);
+		}
 
 		done();
 	}
 
-	let test = new builder(globalConfig, check);
+	let tester = new builder(globalConfig, check);
 
-	test.loadTask();
+	tester.loadTask();
 }
 
 function watcherTest(done, builder, taskFile) {
@@ -122,10 +127,11 @@ suite("script", function () {
 		//fs.accessSync(testBat, fs.constants.F_OK);
 		fs.unlinkSync(testBat);
 	}
-	catch (e) {}
+	catch (e) { }
 
 	test("script loader", function (done) {
-		let rst = [path.join(rootPath, "test.bat"), "python " + path.join(rootPath, "test.py")];
+		let rst = ["cmd.exe /c " + path.join(rootPath, "test.bat"),
+		"python " + path.join(rootPath, "test.py")];
 
 		loaderTest(done, loaders.ScriptLoader, "script", rst);
 	});
@@ -160,16 +166,15 @@ suite("user", function () {
 	});
 
 	test("user watcher", function (done) {
-		let test = new loaders.DefaultLoader(globalConfig, () => console.log("On finish"));
+		let test = new loaders.DefaultLoader(globalConfig, () => console.log('test user load'));
 
 		test.onChanged = function () {
-			watcher.dispose();
 			done();
 		}
 
 		let watcher = test.setupWatcher();
 
-		let cfg = ["npm update", "npm i --save-dev"];
+		let cfg = ["npm update", "npm i --save-dev", "npm run test"];
 		vscode.workspace.getConfiguration('quicktask').update("defaultTasks", cfg, false);
 	});
 });

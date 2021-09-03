@@ -105,7 +105,7 @@ abstract class TaskLoader {
 	}
 
 	public onChanged() {
-		this.loadTask();
+		this.reload();
 	}
 }
 
