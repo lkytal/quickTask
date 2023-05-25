@@ -66,7 +66,7 @@ abstract class TaskLoader {
 		}, (err) => this.onFinish(err));
 	}
 
-	public handleFunc(file: any, callback) {
+	public handleFunc(file: any, callback: Function) {
 		callback();
 	}
 

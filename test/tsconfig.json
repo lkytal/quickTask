@@ -6,6 +6,7 @@
 		//"checkJs": true,
 		"rootDir": ".",
 		"outDir": "out",
+		"strict": true,
 		"lib": [
 			"es5",
 			"es6",

@@ -31,6 +31,20 @@
                 "_id": "test",
                 "isDefault": false
             }
+        },
+        {
+            "label": "hide",
+            "type": "shell",
+            "args": [
+                "/c",
+                "node hide.js"
+            ],
+            "problemMatcher": [],
+            "hide": true,
+            "group": {
+                "_id": "test",
+                "isDefault": false
+            }
         }
     ]
 }

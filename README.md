@@ -1,8 +1,8 @@
 # Quick Task for VS Code
 
-[![AppVeyor](https://img.shields.io/appveyor/ci/lkytal/quicktask.svg?style=flat-square)](https://ci.appveyor.com/project/lkytal/quicktask)
-[![Dependency status](https://david-dm.org/lkytal/quicktask.svg?style=flat-square)](https://lkytal.github.io/quickTask/)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/lkytal.quicktask.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/lkytal.quicktask)](https://ci.appveyor.com/project/lkytal/quicktask)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/lkytal.quicktask)](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/lkytal.quicktask)](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask)
 
 > Install [Quick Task](https://marketplace.visualstudio.com/items?itemName=lkytal.quicktask) via vs market
 
@@ -45,6 +45,12 @@ Hint: Task button is usually here:
 - ### [Translator Plus](https://marketplace.visualstudio.com/items?itemName=lkytal.translatorplus)
 
 ## Release Notes
+
+### [3.5.8] - 2023-05-24
+
+#### Fixed
+
+- Respect `hide` property of task.json.
 
 ### [3.5.4] - 2019-01-13
 

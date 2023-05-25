@@ -77,6 +77,9 @@ class VSLoader extends taskLoader_1.default {
             const pattern = json5.parse(file.getText());
             if (Array.isArray(pattern.tasks)) {
                 for (const task of pattern.tasks) {
+                    if (task.hide === true) {
+                        continue;
+                    }
                     const cmdLine = "label" in task ? task.label : task.taskName;
                     if (util.isNullOrUndefined(cmdLine)) {
                         continue;

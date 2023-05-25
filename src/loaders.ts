@@ -79,6 +79,10 @@ class VSLoader extends TaskLoader {
 
 			if (Array.isArray(pattern.tasks)) {
 				for (const task of pattern.tasks) {
+					if (task.hide === true) {
+						continue;
+					}
+
 					const cmdLine = "label" in task ? task.label : task.taskName;
 
 					if (util.isNullOrUndefined(cmdLine)) {

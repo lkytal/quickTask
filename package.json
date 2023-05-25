@@ -2,17 +2,17 @@
   "name": "quicktask",
   "displayName": "Quick Task",
   "description": "Task manager and runner for Gulp, NPM, VS Code builtin tasks and shell scripts.",
-  "version": "3.5.7",
+  "version": "3.5.8",
   "publisher": "lkytal",
   "license": "AGPL-3.0+",
   "engines": {
-    "vscode": "^1.36.0"
+    "vscode": "^1.60.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/src/extension",
   "icon": "assets/icon.png",
@@ -151,21 +151,22 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
-    "@types/async": "^3.2.7",
-    "@types/chai": "^4.2.21",
+    "@types/async": "^3.2.20",
+    "@types/chai": "^4.3.5",
     "@types/json5": "2.2.0",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^16.7.10",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.3",
     "@types/vscode": "^1.60.0",
-    "chai": "^4.3.4",
-    "eslint": "^7.32.0",
-    "mocha": "^9.1.1",
-    "typescript": "^4.4.2",
+    "chai": "^4.3.7",
+    "esbuild": "^0.17.19",
+    "eslint": "^8.41.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4",
     "vscode-test": "1.6.1"
   },
   "dependencies": {
-    "async": "^3.2.1",
-    "json5": "^2.2.0",
-    "util.promisify": "^1.1.1"
+    "async": "^3.2.4",
+    "json5": "^2.2.3",
+    "util.promisify": "^1.1.2"
   }
 }

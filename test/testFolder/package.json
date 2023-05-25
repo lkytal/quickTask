@@ -15,10 +15,10 @@
 		"test": "echo test"
 	},
 	"devDependencies": {
-		"@types/node": "^12.7.3"
+		"@types/node": "^20.2.3"
 	},
 	"dependencies": {
-		"babel-core": "*",
+		"babel-core": "6.26.3",
 		"gulp": "4.0.2"
 	}
 }
