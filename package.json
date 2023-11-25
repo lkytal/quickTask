@@ -165,7 +165,7 @@
     "vscode-test": "1.6.1"
   },
   "dependencies": {
-    "async": "^3.2.4",
+    "async": "^3.2.5",
     "json5": "^2.2.3",
     "util.promisify": "^1.1.2"
   }
