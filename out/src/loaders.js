@@ -9,7 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateFromList = exports.DefaultLoader = exports.ScriptLoader = exports.NpmLoader = exports.GulpLoader = exports.VSLoader = void 0;
+exports.DefaultLoader = exports.ScriptLoader = exports.NpmLoader = exports.GulpLoader = exports.VSLoader = void 0;
+exports.generateFromList = generateFromList;
 const async = require("async");
 const child_process = require("child_process");
 const fs = require("fs");
@@ -305,5 +306,4 @@ function generateFromList(type, list, filePath = null, description = null) {
     }
     return rst;
 }
-exports.generateFromList = generateFromList;
 //# sourceMappingURL=loaders.js.map

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deactivate = exports.activate = void 0;
+exports.activate = activate;
+exports.deactivate = deactivate;
 const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
@@ -116,9 +117,7 @@ function activate(context) {
     });
     context.subscriptions.push(workspaceWatcher);
 }
-exports.activate = activate;
 function deactivate() {
     console.log("QuickTask disabled.");
 }
-exports.deactivate = deactivate;
 //# sourceMappingURL=extension.js.map
