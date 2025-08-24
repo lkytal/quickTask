@@ -272,8 +272,9 @@ class ScriptLoader extends TaskLoader {
 			if (file.languageId === type) {
 				if (this.scriptTable[type].enabled) {
 					const quoteFile = file.fileName.indexOf(" ") !== -1 ? "\"" + file.fileName + "\"" : file.fileName;
-					const cmdLine = this.scriptTable[type].exec + quoteFile;
-					this.taskList.push(generateItem("script", cmdLine, cmdLine, file.uri));
+					const label = this.scriptTable[type].exec + "<workspace>/" + vscode.workspace.asRelativePath(file.uri);
+                    const cmdLine = this.scriptTable[type].exec + quoteFile;
+					this.taskList.push(generateItem("script", label, cmdLine, file.uri));
 				}
 				break;
 			}
