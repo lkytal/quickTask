@@ -4,6 +4,16 @@ All notable changes to the "quickTask" extension will be documented in this file
 
 ## [History]
 
+### [3.6.1] - 2025-09-07
+
+#### Improvement
+
+- Show relative path of command
+
+### [3.6.0] - 2025-05-18
+
+- Update dependency
+
 ### [3.5.4] - 2019-01-13
 
 #### Fixed

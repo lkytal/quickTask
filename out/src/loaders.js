@@ -27,14 +27,14 @@ const prefix = {
     vs: "$(code) \tVS Task: "
 };
 function generateItem(type, label, cmdLine, fileUri = null, description = null) {
-    const workspace = util.isNullOrUndefined(fileUri) ?
+    const workspace = fileUri == null ?
         vscode.workspace.workspaceFolders[0] :
         vscode.workspace.getWorkspaceFolder(fileUri);
     // if (util.isNullOrUndefined(fileUri)) {
     // 	fileUri = workspace ? workspace.uri : null;
     // }
     const workspaceName = workspace ? workspace.name : "";
-    if (util.isNullOrUndefined(description)) {
+    if (description == null) {
         description = vscode.workspace.asRelativePath(fileUri);
     }
     const item = {
@@ -82,7 +82,7 @@ class VSLoader extends taskLoader_1.default {
                         continue;
                     }
                     const cmdLine = "label" in task ? task.label : task.taskName;
-                    if (util.isNullOrUndefined(cmdLine)) {
+                    if (cmdLine === null || cmdLine === undefined) {
                         continue;
                     }
                     this.taskList.push(generateItem("vs", cmdLine, cmdLine, file.uri));
@@ -250,8 +250,9 @@ class ScriptLoader extends taskLoader_1.default {
             if (file.languageId === type) {
                 if (this.scriptTable[type].enabled) {
                     const quoteFile = file.fileName.indexOf(" ") !== -1 ? "\"" + file.fileName + "\"" : file.fileName;
+                    const label = this.scriptTable[type].exec + "<workspace>/" + vscode.workspace.asRelativePath(file.uri);
                     const cmdLine = this.scriptTable[type].exec + quoteFile;
-                    this.taskList.push(generateItem("script", cmdLine, cmdLine, file.uri));
+                    this.taskList.push(generateItem("script", label, cmdLine, file.uri));
                 }
                 break;
             }

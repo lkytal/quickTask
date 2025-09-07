@@ -18,7 +18,7 @@ const prefix = {
 };
 
 function generateItem(type: string, label: string, cmdLine: string, fileUri: vscode.Uri = null, description: string = null) {
-	const workspace: vscode.WorkspaceFolder = util.isNullOrUndefined(fileUri) ?
+	const workspace: vscode.WorkspaceFolder = fileUri == null ?
 		vscode.workspace.workspaceFolders[0] :
 		vscode.workspace.getWorkspaceFolder(fileUri);
 
@@ -28,7 +28,7 @@ function generateItem(type: string, label: string, cmdLine: string, fileUri: vsc
 
 	const workspaceName = workspace ? workspace.name : "";
 
-	if (util.isNullOrUndefined(description)) {
+	if (description == null) {
 		description = vscode.workspace.asRelativePath(fileUri);
 	}
 
@@ -85,7 +85,7 @@ class VSLoader extends TaskLoader {
 
 					const cmdLine = "label" in task ? task.label : task.taskName;
 
-					if (util.isNullOrUndefined(cmdLine)) {
+					if (cmdLine === null || cmdLine === undefined) {
 						continue;
 					}
 
